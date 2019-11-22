@@ -1,6 +1,7 @@
 use std::fs;
+use Answer;
 
-pub fn fn day1_part1() {
+pub fn fn day1_part1() -> Answer<i32> {
     let filenames = [
         // "2018:day:1:input.txt",
         "2018:day:1:input_test1.txt"
@@ -18,4 +19,5 @@ pub fn fn day1_part1() {
         }
         println!("{}", total)
     }
+    return Answer(total)
 }
