@@ -32,7 +32,16 @@ pub fn read_ints(question: Question) -> Input<Vec<i32>> {
     return Input { question, data };
 }
 
+pub fn read_strs(question: Question) -> Input<Vec<String>> {
+    return Input { question, data: read_strings(question) };
+}
+
 impl<T> Answer<T> where T: std::fmt::Debug {
+    pub fn save_as(&self, suffix: &str) {
+        let filename: String = format!("{}:day:{}:output_{}.txt", self.question.year, self.question.day, suffix);
+        fs::write(filename, format!("{:#?}\n", self.result)).expect("Unable to write file");
+    }
+
     pub fn save(&self) {
         let filename: String = format!("{}:day:{}:output.txt", self.question.year, self.question.day);
         fs::write(filename, format!("{:#?}\n", self.result)).expect("Unable to write file");

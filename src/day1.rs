@@ -1,23 +1,34 @@
-use std::fs;
-use Answer;
+use std::collections::HashSet;
+use super::helpers::Input;
+use super::helpers::Answer;
 
-pub fn fn day1_part1() -> Answer<i32> {
-    let filenames = [
-        // "2018:day:1:input.txt",
-        "2018:day:1:input_test1.txt"
-    ]
-
-    for filename in filenames {
-        let contents: String =
-        fs::read_to_string(filename).expect("Something went wrong reading the file");
-        let mut total = 0;
-        for number_string in contents.split("\n") {
-            if number_string.len() != 0 {
-                println!("Parsing number {}", number_string);
-                total += number_string.parse::<i32>().unwrap();
-            }
-        }
-        println!("{}", total)
+pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
+    let mut total = 0;
+    for number in input.data {
+        total += number;
     }
-    return Answer(total)
+    return Answer { question: input.question, result: total };
+}
+
+pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
+    let mut total = 0;
+    let mut seen: HashSet<i32> = HashSet::new();
+    seen.insert(0);
+
+    let mut found = false;
+    let mut x = 0;
+
+    while !found {
+        let number = input.data[x % input.data.len()];
+        x += 1;
+        total += number;
+        if seen.contains(&total) {
+            // println!("Already seen this frequency: {}", total);
+            found = true;
+        } else {
+            // println!("New frequency: {}", total);
+            seen.insert(total);
+        }
+    }
+    return Answer { question: input.question, result: total };
 }
