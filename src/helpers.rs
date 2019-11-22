@@ -16,7 +16,7 @@ pub struct Input<T> {
     pub data: T,
 }
 
-fn read_strings(question: Question) -> Vec<String> {
+fn read_raw(question: Question) -> Vec<String> {
     let filename = format!("{}:day:{}:input.txt", question.year, question.day);
     let contents: String = fs::read_to_string(filename).expect("file not found");
     let result: Vec<&str> = contents.split('\n').collect();
@@ -28,12 +28,12 @@ fn read_strings(question: Question) -> Vec<String> {
 }
 
 pub fn read_ints(question: Question) -> Input<Vec<i32>> {
-    let data: Vec<i32> = read_strings(question).iter().map(|x| x.parse::<i32>().unwrap()).collect();
+    let data: Vec<i32> = read_raw(question).iter().map(|x| x.parse::<i32>().unwrap()).collect();
     return Input { question, data };
 }
 
-pub fn read_strs(question: Question) -> Input<Vec<String>> {
-    return Input { question, data: read_strings(question) };
+pub fn read_strings(question: Question) -> Input<Vec<String>> {
+    return Input { question, data: read_raw(question) };
 }
 
 impl<T> Answer<T> where T: std::fmt::Debug {
