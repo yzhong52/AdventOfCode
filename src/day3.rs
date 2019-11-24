@@ -39,7 +39,7 @@ pub fn part1(input: Vec<String>) {
     for r in &rects {
         for x in r.x..r.x + r.width {
             for y in r.y..r.y + r.height {
-                println!("{}, {}", x, y);
+                // println!("{}, {}", x, y);
                 grid[x as usize][y as usize] += 1;
             }
         }
