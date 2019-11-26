@@ -1,24 +1,37 @@
 use super::helpers::parser::*;
 use super::helpers::models::*;
+use std::collections::HashSet;
+
+#[allow(dead_code)]
+fn print(array: &Vec<Vec<i32>>) {
+    let size_x = array.len();
+    let size_y = array[0].len();
+    for y in 0..size_y {
+        for x in 0..size_x {
+            print!("{:2} ", array[x][y]);
+        }
+        println!();
+    }
+    println!("-------------");
+}
 
 pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
     let points = input.data;
-    println!("Points {:?}", points);
+    // println!("Points {:?}", points);
 
-    let init = '-';
-    let invalid = '.';
+    let init: i32 = -1;
+    let invalid: i32 = -2;
 
-    let max_x = points.iter().map(|p| p.x).max().unwrap();
-    let max_y = points.iter().map(|p| p.y).max().unwrap();
+    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize;
+    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize;
 
-    let mut array: Vec<Vec<char>> = vec![vec![init; (max_y + 1) as usize]; (max_x + 1) as usize];
+    let mut array: Vec<Vec<i32>> = vec![vec![init; max_y + 1]; max_x + 1];
 
     for (index, point) in points.iter().enumerate() {
-        array[point.x as usize][point.y as usize] = ((index) as u8 + 'a' as u8) as char
+        array[point.x as usize][point.y as usize] = index as i32
     }
 
-    println!("{:?}", array);
-
+    let total_points_count = points.len();
     let mut layer = points;
     let dirs: [[i32; 2]; 4] = [
         [0, 1],
@@ -41,7 +54,7 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
             for dir in dirs.iter() {
                 let next = Point { x: p.x as i32 + dir[0], y: p.y as i32 + dir[1] };
 
-                if next.x >= 0 && next.x <= max_x && next.y >= 0 && next.y <= max_y {
+                if next.x >= 0 && next.x <= max_x as i32 && next.y >= 0 && next.y <= max_y as i32 {
                     let current_value = array[next.x as usize][next.y as usize];
 
                     if current_value == init {
@@ -56,22 +69,34 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
 
         layer = next_layer;
 
+        // print(&array);
+    }
 
-        for i in 0..=max_y as usize {
-            for j in 0..=max_x as usize {
-                print!("{} ", array[j][i]);
+    // print(&array);
+
+    let mut infinity: HashSet<i32> = HashSet::new();
+
+    let size_x = array.len();
+    let size_y = array[0].len();
+    for y in 0..size_y {
+        infinity.insert(array[0][y]);
+        infinity.insert(array[max_x][y]);
+    }
+    for x in 0..size_x {
+        infinity.insert(array[x][0]);
+        infinity.insert(array[x][max_y]);
+    }
+    // println!("{:?}", infinity);
+
+    let mut counts = vec![0; total_points_count];
+    for y in 0..size_y {
+        for x in 0..size_x {
+            if !infinity.contains(&array[x][y]) {
+                counts[array[x][y] as usize] += 1;
             }
-            println!();
         }
-        println!("--..---------");
     }
+    // println!("{:?}", counts);
 
-    for i in 0..=max_y as usize {
-        for j in 0..=max_x as usize {
-            print!("{} ", array[j][i]);
-        }
-        println!();
-    }
-
-    Answer { question: input.question, result: 0 }
+    Answer { question: input.question, result: *counts.iter().max().unwrap() }
 }
