@@ -50,7 +50,7 @@ fn convert_to_point(input: &String) -> Point {
         .map(|x| x.to_string().parse::<i32>().unwrap())
         .collect();
 
-    Point { x: p[0], y: p[0] }
+    Point { x: p[0], y: p[1] }
 }
 
 pub fn read_points(question: Question) -> Input<Vec<Point>> {

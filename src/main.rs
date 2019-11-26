@@ -1,16 +1,16 @@
-mod day1;
-mod day2;
-mod day4;
-mod day5;
-
 mod helpers {
     pub mod models;
     pub mod parser;
 }
 
+mod day1;
+mod day2;
+mod day4;
+mod day5;
 mod day6;
 
 use helpers::parser::*;
+
 
 fn main() {
     day1::part1(read_ints(Question { year: 2018, day: 1 })).save_as("part1");
