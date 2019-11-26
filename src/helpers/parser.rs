@@ -63,6 +63,10 @@ pub fn read_points(question: Question) -> Input<Vec<Point>> {
 }
 
 impl<T> Answer<T> where T: std::fmt::Display {
+    pub fn save_part2(&self) {
+        self.save_as("part2")
+    }
+
     pub fn save_as(&self, suffix: &str) {
         let filename: String = format!("{}:day:{}:output_{}.txt", self.question.year, self.question.day, suffix);
         fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
