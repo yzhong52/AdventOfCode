@@ -1,5 +1,4 @@
-use super::helpers::Input;
-use super::helpers::Answer;
+use super::helpers::parser::*;
 use std::collections::HashMap;
 
 pub fn day2(input: Input<Vec<String>>) -> Answer<i32> {

@@ -2,8 +2,7 @@
 
 use std::num::ParseIntError;
 use std::collections::HashMap;
-use super::helpers::Input;
-use super::helpers::Answer;
+use super::helpers::parser::*;
 
 fn cut(line: &str, from: char, to: char) -> String {
     let p1 = line.split(from).last().unwrap();

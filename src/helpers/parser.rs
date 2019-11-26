@@ -1,5 +1,7 @@
 use std::fs;
 
+use super::models::*;
+
 #[derive(Copy, Clone)]
 pub struct Question {
     pub year: i16,
@@ -17,7 +19,8 @@ pub struct Input<T> {
 }
 
 fn read_raw(question: Question) -> Vec<String> {
-    let filename = format!("{}:day:{}:input.txt", question.year, question.day);
+    let filename: String = format!("{}:day:{}:input.txt", question.year, question.day);
+    println!("Reading file from {}", filename);
     let contents: String = fs::read_to_string(filename).expect("file not found");
     let result: Vec<&str> = contents.split('\n').collect();
 
@@ -36,14 +39,37 @@ pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw(question) };
 }
 
-impl<T> Answer<T> where T: std::fmt::Debug {
+pub fn read_string(question: Question) -> Input<String> {
+    return Input { question, data: read_raw(question).first().unwrap().to_string() };
+}
+
+fn convert_to_point(input: &String) -> Point {
+    let p: Vec<i32> = input.split(", ")
+        .collect::<Vec<&str>>()
+        .iter()
+        .map(|x| x.to_string().parse::<i32>().unwrap())
+        .collect();
+
+    Point { x: p[0], y: p[1] }
+}
+
+pub fn read_points(question: Question) -> Input<Vec<Point>> {
+    let points: Vec<Point> = read_raw(question)
+        .iter()
+        .map(|x| convert_to_point(x))
+        .collect();
+
+    Input { question, data: points }
+}
+
+impl<T> Answer<T> where T: std::fmt::Display {
     pub fn save_as(&self, suffix: &str) {
         let filename: String = format!("{}:day:{}:output_{}.txt", self.question.year, self.question.day, suffix);
-        fs::write(filename, format!("{:#?}\n", self.result)).expect("Unable to write file");
+        fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }
 
     pub fn save(&self) {
         let filename: String = format!("{}:day:{}:output.txt", self.question.year, self.question.day);
-        fs::write(filename, format!("{:#?}\n", self.result)).expect("Unable to write file");
+        fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }
 }
