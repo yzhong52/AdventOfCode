@@ -21,7 +21,7 @@ fn parse_minute(line: &str) -> i32 {
     return target.parse::<i32>().unwrap();
 }
 
-pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
+pub fn helper(input: &Input<Vec<String>>) -> HashMap<i32, [i32; 60]> {
     let mut sorted = input.data.clone();
     sorted.sort();
 
@@ -54,6 +54,11 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
         }
     }
 
+    return map;
+}
+
+pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
+    let map = helper(&input);
     let mut global_maximum_total_sleep = 0;
     let mut result: i32 = 0;
 
@@ -77,4 +82,24 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
     }
 
     return Answer { question: input.question, result: result };
+}
+
+
+pub fn part2(input: Input<Vec<String>>) -> Answer<i32> {
+    let map = helper(&input);
+
+    let mut result: i32 = 0;
+
+    let mut maximum_sleep = 0;
+
+    for (guard_id, sleep_counts) in map.iter() {
+        for (time, count) in sleep_counts.iter().enumerate() {
+            if maximum_sleep < *count {
+                maximum_sleep = *count;
+                result = *guard_id * time as i32;
+            }
+        }
+    }
+
+    return Answer { question: input.question, result };
 }
