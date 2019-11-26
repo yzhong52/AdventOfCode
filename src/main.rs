@@ -2,12 +2,15 @@ mod day1;
 mod day2;
 mod day4;
 mod day5;
-mod helpers;
 
-use helpers::Question;
-use helpers::read_ints;
-use crate::helpers::read_strings;
-use crate::helpers::read_string;
+mod helpers {
+    pub mod models;
+    pub mod parser;
+}
+
+mod day6;
+
+use helpers::parser::*;
 
 fn main() {
     day1::part1(read_ints(Question { year: 2018, day: 1 })).save_as("part1");
@@ -17,4 +20,6 @@ fn main() {
 
     day5::part1(read_string(Question { year: 2018, day: 5 })).save_as("part1");
     day5::part2(read_string(Question { year: 2018, day: 5 })).save_as("part2");
+
+    day6::part1(read_points(Question { year: 2018, day: 6 })).save_as("part1");
 }

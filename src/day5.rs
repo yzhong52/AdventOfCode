@@ -1,5 +1,5 @@
-use super::helpers::Input;
-use super::helpers::Answer;
+use super::helpers::parser::*;
+
 use std::cmp::min;
 
 fn diff(c1: &char, c2: &char) -> i32 {
@@ -13,15 +13,15 @@ pub fn remains(input: String) -> Vec<char> {
         match stack.last() {
             Some(c) => {
                 if diff(&x, c) == diff(&'A', &'a') {
-                    println!("Has some value {} - {} match", c, x);
+                    // println!("Has some value {} - {} match", c, x);
                     stack.pop();
                 } else {
-                    println!("Has some value {} pushed", c);
+                    // println!("Has some value {} pushed", c);
                     stack.push(x);
                 }
             }
             None => {
-                println!("It is empty");
+                // println!("It is empty");
                 stack.push(x);
             }
         }
@@ -30,12 +30,12 @@ pub fn remains(input: String) -> Vec<char> {
 }
 
 pub fn part1(input: Input<String>) -> Answer<usize> {
-    let mut stack: Vec<char> = remains(input.data);
+    let stack = remains(input.data);
     return Answer { question: input.question, result: stack.len() };
 }
 
 pub fn part2(input: Input<String>) -> Answer<usize> {
-    let part1_result: Vec<char> = remains(input.data);
+    let part1_result = remains(input.data);
 
     let mut result = part1_result.len();
 

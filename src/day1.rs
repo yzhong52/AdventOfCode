@@ -1,6 +1,5 @@
 use std::collections::HashSet;
-use super::helpers::Input;
-use super::helpers::Answer;
+use super::helpers::parser::*;
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
     let mut total = 0;
