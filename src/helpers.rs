@@ -36,6 +36,10 @@ pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw(question) };
 }
 
+pub fn read_string(question: Question) -> Input<String> {
+    return Input { question, data: read_raw(question).first().unwrap().to_string() };
+}
+
 impl<T> Answer<T> where T: std::fmt::Debug {
     pub fn save_as(&self, suffix: &str) {
         let filename: String = format!("{}:day:{}:output_{}.txt", self.question.year, self.question.day, suffix);
