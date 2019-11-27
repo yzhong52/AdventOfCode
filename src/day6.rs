@@ -100,3 +100,7 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
 
     Answer { question: input.question, result: *counts.iter().max().unwrap() }
 }
+
+pub fn part2(input: Input<Vec<Point>>) -> Answer<usize> {
+    Answer { question: input.question, result: 0 }
+}

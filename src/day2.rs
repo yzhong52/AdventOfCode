@@ -1,7 +1,7 @@
 use super::helpers::parser::*;
 use std::collections::HashMap;
 
-pub fn day2(input: Input<Vec<String>>) -> Answer<i32> {
+pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
     let mut two_count = 0;
     let mut three_count = 0;
 
