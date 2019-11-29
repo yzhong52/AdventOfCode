@@ -102,5 +102,28 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
 }
 
 pub fn part2(input: Input<Vec<Point>>) -> Answer<usize> {
-    Answer { question: input.question, result: 0 }
+    let points = &input.data;
+
+    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize;
+    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize;
+
+    let mut safe_count = 0;
+
+    for x in 0..=max_x {
+        for y in 0..=max_y {
+            let mut total = 0;
+            for p in points {
+                total += i32::abs(p.x - x as i32);
+                total += i32::abs(p.y - y as i32);
+            }
+
+
+            if total < 10000 {
+                println!("This total is {}", total);
+                safe_count += 1;
+            }
+        }
+    }
+
+    Answer { question: input.question, result: safe_count }
 }
