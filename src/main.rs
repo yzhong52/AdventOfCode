@@ -8,6 +8,7 @@ mod day2;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 use helpers::parser::*;
 
@@ -26,4 +27,6 @@ fn main() {
 
     day6::part1(read_points(Question { year: 2018, day: 6 })).save_part1();
     day6::part2(read_points(Question { year: 2018, day: 6 })).save_part2();
+
+    day7::part1(read_strings(Question { year: 2018, day: 7 })).save_part1();
 }

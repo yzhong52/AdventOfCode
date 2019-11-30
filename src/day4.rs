@@ -4,19 +4,14 @@ use std::num::ParseIntError;
 use std::collections::HashMap;
 use super::helpers::parser::*;
 
-fn cut(line: &str, from: char, to: char) -> String {
-    let p1 = line.split(from).last().unwrap();
-    return p1.split(to).next().unwrap().to_string();
-}
-
 fn parse_guard_id(line: &str) -> Result<i32, ParseIntError> {
     // Guard #1381 begins shift
-    return cut(line, '#', ' ').parse::<i32>();
+    return extract_between(line, '#', ' ').parse::<i32>();
 }
 
 fn parse_minute(line: &str) -> i32 {
     // [1518-11-04 00:36] falls asleep
-    let target = cut(line, ':', ']');
+    let target = extract_between(line, ':', ']');
     return target.parse::<i32>().unwrap();
 }
 
@@ -80,7 +75,7 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
         }
     }
 
-    return Answer { question: input.question, result: result };
+    return Answer { question: input.question, result };
 }
 
 

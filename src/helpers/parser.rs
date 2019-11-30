@@ -76,3 +76,15 @@ impl<T> Answer<T> where T: std::fmt::Display {
         fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }
 }
+
+// Not sure how to make the templating working with
+// use std::str::pattern::Pattern;
+pub(crate) fn extract_between(line: &str, left: char, right: char) -> String {
+    let p1 = line.split(left).last().unwrap();
+    return p1.split(right).next().unwrap().to_string();
+}
+
+pub fn extract_between_plus(line: &str, left: &str, right: &str) -> String {
+    let p1 = line.split(left).last().unwrap();
+    return p1.split(right).next().unwrap().to_string();
+}

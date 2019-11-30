@@ -119,7 +119,6 @@ pub fn part2(input: Input<Vec<Point>>) -> Answer<usize> {
 
 
             if total < 10000 {
-                println!("This total is {}", total);
                 safe_count += 1;
             }
         }
