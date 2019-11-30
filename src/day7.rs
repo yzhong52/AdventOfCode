@@ -71,12 +71,13 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<String> {
 }
 
 pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
-    let mut result: String = String::new();
     let mut workers = [0; 5];
+    let mut assigned_job = vec![String::new(); 5];
 
     let dependent_map: HashMap<String, HashSet<String>> = index_dependency(&input.data);
     let mut prerequisite_map: HashMap<String, HashSet<String>> = index_prerequisite(&input.data);
 
+    // Find jobs that without prerequisite
     let mut heap: BinaryHeap<Reverse<String>> = BinaryHeap::new();
     for (key, prerequisite) in &prerequisite_map {
         if prerequisite.len() == 0 {
@@ -86,16 +87,34 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
 
     let mut result: String = String::new();
     while !heap.is_empty() {
-        let minimum_finished_time = workers.iter().min().unwrap();
-        let mut minimum_available_worker = workers.iter().filter(|x| *x == minimum_finished_time).count();
+        let soonest_finished_time = workers.iter().min().unwrap().clone();
+        let mut available_worker = workers.iter().filter(|x| **x == soonest_finished_time).count().clone();
 
         let mut next_up_tasks: Vec<Reverse<String>> = Vec::new();
-        while !heap.is_empty() && minimum_available_worker > 0 {
-            minimum_available_worker -= 1;
+        while !heap.is_empty() && available_worker > 0 {
+            available_worker -= 1;
             next_up_tasks.push(heap.pop().unwrap());
         }
+        println!("next_up_tasks: {:?}", next_up_tasks.iter().map(|x| x.0.to_string()).collect::<Vec<String>>());
 
+        let mut available_worker_index: usize = 0;
         for current in next_up_tasks {
+            let ch = current.0.chars().next().unwrap();
+            let finish_time: i32 = 1 + (ch as i32 - 'A' as i32) + 1;
+
+            while workers[available_worker_index] != soonest_finished_time {
+                available_worker_index += 1
+            }
+
+            result += &assigned_job[available_worker_index];
+            workers[available_worker_index] = workers[available_worker_index] + finish_time;
+            assigned_job[available_worker_index] = current.0.to_string();
+            available_worker_index += 1;
+
+            println!("Workers finish time: {:?}", workers);
+            println!("Workers assigned task: {:?}", assigned_job);
+
+            // Remove prerequisite for dependents
             let dependent = dependent_map.get(&current.0).unwrap();
             for child in dependent {
                 let prerequisite = prerequisite_map.get_mut(child).unwrap();
@@ -105,7 +124,6 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
                     heap.push(Reverse(child.to_string()));
                 }
             }
-            result += &current.0;
         }
     }
 
