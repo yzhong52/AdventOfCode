@@ -29,4 +29,5 @@ fn main() {
     day6::part2(read_points(Question { year: 2018, day: 6 })).save_part2();
 
     day7::part1(read_strings(Question { year: 2018, day: 7 })).save_part1();
+    day7::part2(read_strings(Question { year: 2018, day: 7 })).save_part2();
 }
