@@ -38,6 +38,7 @@ fn main() {
     y2018::day7::part2(read_strings(Question { year: 2018, day: 7 })).save_part2();
 
     y2018::day8::part1(read_ints_by(Question { year: 2018, day: 8 }, ' ')).save_part1();
+    y2018::day8::part2(read_ints_by(Question { year: 2018, day: 8 }, ' ')).save_part2();
 
     y2019::day1::part1(read_ints(Question { year: 2019, day: 1 })).save_part1();
     y2019::day1::part2(read_ints(Question { year: 2019, day: 1 })).save_part2();
