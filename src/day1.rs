@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use super::helpers::parser::*;
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    let mut total = input.data.iter().sum();
+    let total = input.data.iter().sum();
     return Answer { question: input.question, result: total };
 }
 
