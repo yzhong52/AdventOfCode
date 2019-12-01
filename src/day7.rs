@@ -70,9 +70,9 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<String> {
     Answer { question: input.question, result }
 }
 
-pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
+pub fn part2(input: Input<Vec<String>>) -> Answer<i32> {
     const TOTAL_WORKER_COUNT: usize = 5;
-    const JOB_CONSTANT_AMOUNT: i32 = 30;
+    const JOB_CONSTANT_AMOUNT: i32 = 60;
 
     let mut workers = [0; TOTAL_WORKER_COUNT];
     let mut assigned_job = vec![String::new(); TOTAL_WORKER_COUNT];
@@ -87,8 +87,6 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
             ready_tasks.push(Reverse(key.to_string()));
         }
     }
-
-    let mut result: String = String::new();
 
     // The earliest that the next worker will become available
     let mut soonest_finished_time: i32 = 0;
@@ -113,7 +111,6 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
                     available_worker_index += 1
                 }
 
-                result += &assigned_job[available_worker_index];
                 workers[available_worker_index] = workers[available_worker_index] + finish_time;
                 assigned_job[available_worker_index] = current;
                 available_worker_index += 1;
@@ -152,5 +149,5 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<String> {
         }
     }
 
-    Answer { question: input.question, result }
+    Answer { question: input.question, result: soonest_finished_time }
 }
