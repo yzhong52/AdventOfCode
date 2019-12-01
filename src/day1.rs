@@ -2,10 +2,7 @@ use std::collections::HashSet;
 use super::helpers::parser::*;
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    let mut total = 0;
-    for number in input.data {
-        total += number;
-    }
+    let mut total = input.data.iter().sum();
     return Answer { question: input.question, result: total };
 }
 
@@ -15,11 +12,11 @@ pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
     seen.insert(0);
 
     let mut found = false;
-    let mut x = 0;
+    let mut index = 0;
 
     while !found {
-        let number = input.data[x % input.data.len()];
-        x += 1;
+        let number = input.data[index % input.data.len()];
+        index += 1;
         total += number;
         if seen.contains(&total) {
             // println!("Already seen this frequency: {}", total);
