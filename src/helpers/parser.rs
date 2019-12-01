@@ -19,10 +19,14 @@ pub struct Input<T> {
 }
 
 fn read_raw(question: Question) -> Vec<String> {
+    read_raw_by(question, '\n')
+}
+
+fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     let filename: String = format!("input/{}:day:{}:input.txt", question.year, question.day);
     println!("Reading file from {}", filename);
     let contents: String = fs::read_to_string(filename).expect("file not found");
-    let result: Vec<&str> = contents.split('\n').collect();
+    let result: Vec<&str> = contents.split(pat).collect();
 
     // Have to call iter() to get back a `Iter` type in order for `map` and `filter` to work
     // We `map` them to `String` and also `filter` out empty ones.
@@ -32,6 +36,17 @@ fn read_raw(question: Question) -> Vec<String> {
 
 pub fn read_ints(question: Question) -> Input<Vec<i32>> {
     let data: Vec<i32> = read_raw(question).iter().map(|x| x.parse::<i32>().unwrap()).collect();
+    return Input { question, data };
+}
+
+pub fn read_ints_by(question: Question, pat: char) -> Input<Vec<i32>> {
+    let data: Vec<i32> = read_raw_by(question, pat).iter()
+        .filter(|x| *x != "\n")
+        .map(|x| {
+            // Filter out dummy special chars
+            let s: String = x.chars().filter(|c| *c != '\n' && *c != ' ').collect();
+            s.parse::<i32>().unwrap()
+        }).collect();
     return Input { question, data };
 }
 
