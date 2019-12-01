@@ -100,7 +100,7 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<i32> {
                 available_worker_count -= 1;
                 next_up_tasks.push(ready_tasks.pop().unwrap().0);
             }
-            println!("next_up_tasks: {:?}", next_up_tasks);
+            // println!("next_up_tasks: {:?}", next_up_tasks);
 
             let mut available_worker_index: usize = 0;
             for current in next_up_tasks {
@@ -115,8 +115,8 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<i32> {
                 assigned_job[available_worker_index] = current;
                 available_worker_index += 1;
 
-                println!("Workers finish time: {:?}", workers);
-                println!("Workers assigned task: {:?}", assigned_job);
+                // println!("Workers finish time: {:?}", workers);
+                // println!("Workers assigned task: {:?}", assigned_job);
             }
         } else {
             // Finish running some task(s)
@@ -124,7 +124,7 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<i32> {
 
             for (w, a) in workers.iter().zip(assigned_job.iter()) {
                 if *w == soonest_finished_time {
-                    println!("Job '{}' finished at time '{}'.", a, w);
+                    // println!("Job '{}' finished at time '{}'.", a, w);
 
                     let current = a;
                     // Remove prerequisite for dependents
