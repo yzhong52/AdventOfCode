@@ -49,7 +49,6 @@ fn parse_tree2(numbers: &Vec<i32>, i: &mut usize) -> i32 {
     }
 }
 
-
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
     let mut index: usize = 0;
     let result = parse_tree(&input.data, &mut index);
