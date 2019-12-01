@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use super::helpers::parser::*;
+use super::super::helpers::parser::*;
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
     let total = input.data.iter().sum();

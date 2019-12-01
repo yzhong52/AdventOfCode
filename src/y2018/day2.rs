@@ -1,4 +1,4 @@
-use super::helpers::parser::*;
+use super::super::helpers::parser::*;
 use std::collections::HashMap;
 
 pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {

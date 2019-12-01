@@ -2,7 +2,7 @@
 
 use std::num::ParseIntError;
 use std::collections::HashMap;
-use super::helpers::parser::*;
+use super::super::helpers::parser::*;
 
 fn parse_guard_id(line: &str) -> Result<i32, ParseIntError> {
     // Guard #1381 begins shift
