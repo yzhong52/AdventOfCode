@@ -1,7 +1,6 @@
 use super::super::helpers::parser::*;
 use crate::helpers::models::Point;
 use std::collections::{HashSet, HashMap};
-use std::borrow::Borrow;
 
 fn get_offset(ch: char) -> Point {
     match ch {
@@ -72,7 +71,7 @@ pub fn part2(input: &Input<Vec<String>>) -> Answer<i32> {
             point.x = point.x + offset.x;
             point.y = point.y + offset.y;
             count = count + 1;
-            if !map.contains_key(&point) {
+            if !map.contains_key(&point) { 
                 map.insert(point.clone(), count);
             }
         }

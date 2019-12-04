@@ -8,6 +8,12 @@ pub struct Question {
     pub day: i8,
 }
 
+impl Question {
+    pub fn y2019(day: i8) -> Question {
+        return Question { year: 2019, day };
+    }
+}
+
 pub struct Answer<T> {
     pub question: Question,
     pub result: T,
