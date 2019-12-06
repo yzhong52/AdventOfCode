@@ -61,5 +61,5 @@ fn main() {
     y2019::day3::part2(&read_strings(Question { year: 2019, day: 3 })).save_part2();
 
     y2019::day4::part1(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
-    // y2019::day4::part2(&read_strings(Question { year: 2019, day: 3 })).save_part2();
+    y2019::day4::part2(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
 }
