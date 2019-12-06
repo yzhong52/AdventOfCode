@@ -94,6 +94,11 @@ impl<T> Answer<T> where T: std::fmt::Display {
 
     fn save_as(&self, suffix: &str) {
         let filename: String = format!("output/{}:day:{}:{}.txt", self.question.year, self.question.day, suffix);
+        println!("Result for question {year} day {day} {part} is: {result}",
+                 year = self.question.year,
+                 day = self.question.day,
+                 part = suffix,
+                 result = self.result);
         println!("Saving file to {}", filename);
         fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }

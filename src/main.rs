@@ -24,8 +24,10 @@ mod y2019 {
 
 use helpers::parser::*;
 
-
-fn main() {
+fn complete(run: bool) {
+    if run == false {
+        return;
+    }
     y2018::day1::part1(read_ints(Question { year: 2018, day: 1 })).save_part1();
     y2018::day1::part2(read_ints(Question { year: 2018, day: 1 })).save_part2();
 
@@ -63,7 +65,12 @@ fn main() {
 
     y2019::day4::part1(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
-
+}
+fn main() {
+    complete(false);
     y2019::day5::part1(read_ints_by(Question::y2019(5), ',')).save_part1();
     y2019::day5::part2(read_ints_by(Question::y2019(5), ',')).save_part2();
+
+
+
 }
