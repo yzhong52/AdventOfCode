@@ -11,7 +11,7 @@ pub fn part1(input: Input<Day9>) -> Answer<i32> {
     list.push_back(0);
 
     let current = list.front().unwrap();
-
+    println!("{}", current);
 
     Answer { question: input.question, result: 10 }
 }

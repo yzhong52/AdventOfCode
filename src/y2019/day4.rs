@@ -1,6 +1,4 @@
 use super::super::helpers::parser::*;
-use crate::helpers::models::Point;
-use std::collections::{HashSet, HashMap};
 use std::ops::RangeInclusive;
 
 fn meet_the_rule(number: i32) -> bool {
@@ -16,10 +14,6 @@ fn meet_the_rule(number: i32) -> bool {
         }
         same_digit = same_digit || (digit == last_digit);
         last_digit = digit;
-    }
-
-    if same_digit {
-        println!("found one {}", number);
     }
     return same_digit;
 }

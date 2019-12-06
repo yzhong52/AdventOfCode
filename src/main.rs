@@ -19,6 +19,7 @@ mod y2019 {
     pub mod day2;
     pub mod day3;
     pub mod day4;
+    pub mod day5;
 }
 
 use helpers::parser::*;
@@ -53,13 +54,16 @@ fn main() {
     y2019::day1::part1(read_ints(Question { year: 2019, day: 1 })).save_part1();
     y2019::day1::part2(read_ints(Question { year: 2019, day: 1 })).save_part2();
 
-    let y2019_day2_input = read_ints_by(Question { year: 2019, day: 2 }, ',');
+    let y2019_day2_input = read_ints_by(Question::y2019(2), ',');
     y2019::day2::part1(&y2019_day2_input).save_part1();
     y2019::day2::part2(&y2019_day2_input).save_part2();
 
-    y2019::day3::part1(&read_strings(Question { year: 2019, day: 3 })).save_part1();
-    y2019::day3::part2(&read_strings(Question { year: 2019, day: 3 })).save_part2();
+    y2019::day3::part1(&read_strings(Question::y2019(3))).save_part1();
+    y2019::day3::part2(&read_strings(Question::y2019(3))).save_part2();
 
     y2019::day4::part1(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(&Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
+
+    y2019::day5::part1(read_ints_by(Question::y2019(5), ',')).save_part1();
+    y2019::day5::part2(read_ints_by(Question::y2019(5), ',')).save_part2();
 }
