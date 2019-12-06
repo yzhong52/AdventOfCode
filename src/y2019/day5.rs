@@ -3,8 +3,12 @@ use super::super::helpers::parser::*;
 const POSITION_MODE: i32 = 0;
 const IMMEDIATE_MODE: i32 = 1;
 
-const ADDITIONS_OPERATION: i32 = 1;
-const MULTIPLICATION_OPERATION: i32 = 2;
+const OPERATION_ADDITIONS: i32 = 1;
+const OPERATION_MULTIPLICATION: i32 = 2;
+const OPERATION_JUMP_IF_TRUE: i32 = 5;
+const OPERATION_JUMP_IF_FALSE: i32 = 6;
+const OPERATION_LESS_THAN: i32 = 7;
+const OPERATION_EQUAL: i32 = 8;
 
 fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
     let mut numbers = values.clone();
@@ -14,12 +18,12 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
     let mut index: usize = 0;
     while numbers[index] != 99 {
         let current_instruction = numbers[index];
-        let operation = current_instruction % 100;
+        let operation_code = current_instruction % 100;
         index += 1;
 
-        println!("Operation token is {}", operation);
-        match operation {
-            ADDITIONS_OPERATION | MULTIPLICATION_OPERATION => {
+        println!("Operation token is {}", operation_code);
+        match operation_code {
+            OPERATION_ADDITIONS | OPERATION_MULTIPLICATION => {
                 let value1: i32 = match current_instruction / 100 % 10 {
                     POSITION_MODE => {
                         println!("Value1 is at '{}' is '{}'", numbers[index], numbers[numbers[index] as usize]);
@@ -40,14 +44,14 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
                 };
                 index += 1;
 
-                let calculated_result: i32 = match operation {
-                    ADDITIONS_OPERATION => value1 + value2,
-                    MULTIPLICATION_OPERATION => value1 * value2,
+                let calculated_result: i32 = match operation_code {
+                    OPERATION_ADDITIONS => value1 + value2,
+                    OPERATION_MULTIPLICATION => value1 * value2,
                     i => unimplemented!("{}", i),
                 };
 
                 // write result
-                match operation / 10000 % 1000 {
+                match operation_code / 10000 % 1000 {
                     POSITION_MODE => {
                         // TODO: Yuchen - gives errors on one line
                         // numbers[numbers[index] as usize] = calculated_result
