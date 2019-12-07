@@ -43,6 +43,33 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<u32> {
     return Answer { question: input.question, result };
 }
 
-pub fn part2(input: Input<Vec<String>>) -> Answer<u32> {
-    return Answer { question: input.question, result: 0 };
+
+fn path_to_root(orbits_map: &HashMap<String, String>, orbit: String) -> Vec<String> {
+    let mut stack = vec![orbit.clone()];
+
+    let mut runner = orbit;
+    while orbits_map.contains_key(&runner) {
+        runner = (*orbits_map.get(&runner).unwrap()).to_string();
+        stack.push(runner.clone());
+    }
+    return stack;
+}
+
+pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
+    let orbits_map: HashMap<String, String> = index_graph(input.data);
+
+    let mut your_path = path_to_root(&orbits_map, "YOU".to_string());
+    let mut santa_path = path_to_root(&orbits_map, "SAN".to_string());
+
+    your_path.reverse();
+    santa_path.reverse();
+
+
+    let mut i = 0;
+    while i < your_path.len() && i < santa_path.len() && your_path[i] == santa_path[i] {
+        i += 1
+    }
+
+    let result = your_path.len() - i + santa_path.len() - i - 2;
+    return Answer { question: input.question, result };
 }
