@@ -20,10 +20,11 @@ fn parse_number(numbers: &Vec<i32>, mode: i32, index: usize) -> i32 {
     }
 }
 
-fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
+pub fn compute(values: &Vec<i32>, input_values: Vec<i32>) -> i32 {
+    let mut input_index = 0;
     let mut numbers = values.clone();
 
-    let mut output_number: Option<i32> = Some(initial_value);
+    let mut output_number: Option<i32> = None;
 
     let mut index: usize = 0;
     while numbers[index] != 99 {
@@ -50,7 +51,8 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
             }
             OPERATION_INPUT_3 => {
                 let position = numbers[index] as usize;
-                numbers[position] = initial_value;
+                numbers[position] = input_values[input_index];
+                input_index += 1;
                 index += 1;
             }
             OPERATION_OUTPUT_4 => {
@@ -73,10 +75,14 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
     output_number.unwrap()
 }
 
+fn compute_day5(values: Vec<i32>, initial_value: i32) -> i32 {
+    compute(&values, vec![initial_value])
+}
+
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    Answer { question: input.question, result: compute(input.data, 1) }
+    Answer { question: input.question, result: compute_day5(input.data, 1) }
 }
 
 pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
-    Answer { question: input.question, result: compute(input.data, 5) }
+    Answer { question: input.question, result: compute_day5(input.data, 5) }
 }

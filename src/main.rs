@@ -24,6 +24,7 @@ mod y2019 {
     pub mod day4;
     pub mod day5;
     pub mod day6;
+    pub mod day7;
 }
 
 use helpers::parser::*;
@@ -71,6 +72,9 @@ fn run_completed() {
 
     y2019::day5::part1(read_ints_by_comma(Question::y2019(5))).save_part1();
     y2019::day5::part2(read_ints_by_comma(Question::y2019(5))).save_part2();
+
+    y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
+    y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
 }
 
 fn main() {
@@ -88,6 +92,8 @@ fn main() {
     };
     y2018::day9::part1(y2018_day9_input).save_part1();
 
-    y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
-    y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
+
+    y2019::day7::part1(read_ints_by_comma(Question::y2019(7))).save_part1();
+    y2019::day7::part2(read_ints_by_comma(Question::y2019(7))).save_part2();
+
 }
