@@ -46,7 +46,7 @@ fn meet_the_rule_part2(number: i32) -> bool {
     return same_digit_count == 2 || same_digit_repeated_twice;
 }
 
-pub fn part1(input: &Input<RangeInclusive<i32>>) -> Answer<i32> {
+pub fn part1(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
     let mut count = 0;
     for i in input.data.clone() {
         // TODO: Yuchen when need to clone here?
@@ -56,7 +56,7 @@ pub fn part1(input: &Input<RangeInclusive<i32>>) -> Answer<i32> {
 }
 
 
-pub fn part2(input: &Input<RangeInclusive<i32>>) -> Answer<i32> {
+pub fn part2(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
     let mut count = 0;
     for i in input.data.clone() {
         // TODO: Yuchen when need to clone here?

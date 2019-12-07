@@ -22,11 +22,11 @@ fn compute(input: &Vec<i32>, noun: i32, verb: i32) -> i32 {
     numbers[0]
 }
 
-pub fn part1(input: &Input<Vec<i32>>) -> Answer<i32> {
+pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
     Answer { question: input.question, result: compute(&input.data, 12, 2) }
 }
 
-pub fn part2(input: &Input<Vec<i32>>) -> Answer<i32> {
+pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
     for noun in 0..100 {
         for verb in 0..100 {
             if compute(&input.data, noun, verb) == 19690720 {

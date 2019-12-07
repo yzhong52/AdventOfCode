@@ -9,8 +9,12 @@ pub struct Question {
 }
 
 impl Question {
+    pub fn y2018(day: i8) -> Question {
+        Question { year: 2018, day }
+    }
+
     pub fn y2019(day: i8) -> Question {
-        return Question { year: 2019, day };
+        Question { year: 2019, day }
     }
 }
 
@@ -45,6 +49,7 @@ pub fn read_ints(question: Question) -> Input<Vec<i32>> {
     return Input { question, data };
 }
 
+
 pub fn read_ints_by(question: Question, pat: char) -> Input<Vec<i32>> {
     let data: Vec<i32> = read_raw_by(question, pat).iter()
         .filter(|x| *x != "\n")
@@ -54,6 +59,14 @@ pub fn read_ints_by(question: Question, pat: char) -> Input<Vec<i32>> {
             s.parse::<i32>().unwrap()
         }).collect();
     return Input { question, data };
+}
+
+pub fn read_ints_by_comma(question: Question) -> Input<Vec<i32>> {
+    return read_ints_by(question, ',');
+}
+
+pub fn read_ints_by_space(question: Question) -> Input<Vec<i32>> {
+    return read_ints_by(question, ' ');
 }
 
 pub fn read_strings(question: Question) -> Input<Vec<String>> {

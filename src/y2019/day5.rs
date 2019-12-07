@@ -31,7 +31,7 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
         let operation_code = current_instruction % 100;
         let mode1 = current_instruction / 100 % 10;
         let mode2 = current_instruction / 1000 % 10;
-        let mode3 = current_instruction / 10000 % 10;
+
         index += 1;
 
         match operation_code {
