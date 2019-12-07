@@ -45,15 +45,7 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
             OPERATION_ADDITION_1 | OPERATION_MULTIPLICATION_2 | OPERATION_LESS_THAN_7 | OPERATION_EQUAL_8 => {
                 let parameter1 = parse_number(&numbers, mode1, index);
                 let parameter2 = parse_number(&numbers, mode2, index + 1);
-                let parameter3 = match mode3 {
-                    POSITION_MODE => numbers[index + 2] as usize,
-                    IMMEDIATE_MODE => {
-                        // TODO: Yuchen - not needed.
-                        println!("IMMEDIATE_MODE for parameter 3");
-                        index + 2
-                    },
-                    i => unimplemented!("{}", i),
-                };
+                let parameter3 = numbers[index + 2] as usize;
                 numbers[parameter3] = match operation_code {
                     OPERATION_ADDITION_1 => parameter1 + parameter2,
                     OPERATION_MULTIPLICATION_2 => parameter1 * parameter2,
@@ -64,34 +56,31 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
                 index += 3;
             }
             OPERATION_INPUT_3 => {
-                println!("OPT Input");
                 let position = numbers[index] as usize;
                 numbers[position] = initial_value;
                 index += 1;
             }
             OPERATION_OUTPUT_4 => {
-                println!("OPT Output");
-                output_number = Some(numbers[numbers[index] as usize]);
+                let parameter1 = parse_number(&numbers, mode1, index);
+                output_number = Some(parameter1);
                 index += 1;
             }
             OPERATION_JUMP_IF_TRUE_5 | OPERATION_JUMP_IF_FALSE_6 => {
-                println!("OPT Jump");
                 let parameter1 = parse_number(&numbers, mode1, index);
                 let parameter2 = parse_number(&numbers, mode2, index + 1);
-                println!("parameter1 {} parameter2 {}", parameter1, parameter2);
                 match operation_code {
                     OPERATION_JUMP_IF_TRUE_5 => {
-                        if parameter1 != 0 {
-                            index = parameter2 as usize
+                        index = if parameter1 != 0 {
+                            parameter2 as usize
                         } else {
-                            index += 2
+                            index + 2
                         }
                     }
                     OPERATION_JUMP_IF_FALSE_6 => {
-                        if parameter1 == 0 {
-                            index = parameter2 as usize
+                        index = if parameter1 == 0 {
+                            parameter2 as usize
                         } else {
-                            index += 2
+                            index + 2
                         }
                     }
                     i => unimplemented!("{}", i),
@@ -123,5 +112,5 @@ pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
     let data = vec![3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31,
                     1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
                     999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99];
-    Answer { question: input.question, result: compute(data, 5) }
+    Answer { question: input.question, result: compute(input.data, 5) }
 }
