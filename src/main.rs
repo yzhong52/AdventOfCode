@@ -70,7 +70,4 @@ fn main() {
     complete(false);
     y2019::day5::part1(read_ints_by(Question::y2019(5), ',')).save_part1();
     y2019::day5::part2(read_ints_by(Question::y2019(5), ',')).save_part2();
-
-
-
 }
