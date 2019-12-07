@@ -14,10 +14,7 @@ const OPERATION_EQUAL_8: i32 = 8;
 
 fn parse_number(numbers: &Vec<i32>, mode: i32, index: usize) -> i32 {
     match mode {
-        POSITION_MODE => {
-            println!("Value1 is at '{}' is '{}'", numbers[index], numbers[numbers[index] as usize]);
-            numbers[numbers[index] as usize]
-        }
+        POSITION_MODE => numbers[numbers[index] as usize],
         IMMEDIATE_MODE => numbers[index as usize],
         i => unimplemented!("{}", i),
     }
@@ -27,20 +24,16 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
     let mut numbers = values.clone();
 
     let mut output_number: Option<i32> = Some(initial_value);
-    println!("{:?}", numbers);
 
     let mut index: usize = 0;
     while numbers[index] != 99 {
         let current_instruction = numbers[index];
-        index += 1;
-
         let operation_code = current_instruction % 100;
         let mode1 = current_instruction / 100 % 10;
         let mode2 = current_instruction / 1000 % 10;
         let mode3 = current_instruction / 10000 % 10;
+        index += 1;
 
-        println!("Current instruction is {}", current_instruction);
-        println!("Operation token is {}", operation_code);
         match operation_code {
             OPERATION_ADDITION_1 | OPERATION_MULTIPLICATION_2 | OPERATION_LESS_THAN_7 | OPERATION_EQUAL_8 => {
                 let parameter1 = parse_number(&numbers, mode1, index);
@@ -61,56 +54,29 @@ fn compute(values: Vec<i32>, initial_value: i32) -> i32 {
                 index += 1;
             }
             OPERATION_OUTPUT_4 => {
-                let parameter1 = parse_number(&numbers, mode1, index);
-                output_number = Some(parameter1);
+                output_number = Some(parse_number(&numbers, mode1, index));
                 index += 1;
             }
             OPERATION_JUMP_IF_TRUE_5 | OPERATION_JUMP_IF_FALSE_6 => {
                 let parameter1 = parse_number(&numbers, mode1, index);
                 let parameter2 = parse_number(&numbers, mode2, index + 1);
-                match operation_code {
-                    OPERATION_JUMP_IF_TRUE_5 => {
-                        index = if parameter1 != 0 {
-                            parameter2 as usize
-                        } else {
-                            index + 2
-                        }
-                    }
-                    OPERATION_JUMP_IF_FALSE_6 => {
-                        index = if parameter1 == 0 {
-                            parameter2 as usize
-                        } else {
-                            index + 2
-                        }
-                    }
-                    i => unimplemented!("{}", i),
+                index = match operation_code {
+                    OPERATION_JUMP_IF_TRUE_5 if parameter1 != 0 => parameter2 as usize,
+                    OPERATION_JUMP_IF_FALSE_6 if parameter1 == 0 => parameter2 as usize,
+                    _ => index + 2,
                 }
-                println!("Index {}", index);
             }
             i => unimplemented!("{}", i),
         };
-        println!("Index is set to {}", index);
-
-        for x in numbers.iter().enumerate() {
-            print!("[{}]{},\t", x.0, x.1);
-            if (x.0 + 1) % 10 == 0 {
-                println!();
-            }
-        }
-        println!("\n\n----");
     }
 
     output_number.unwrap()
 }
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    // Answer { question: input.question, result: compute(input.data, 1) }
-    Answer { question: input.question, result: 0 }
+    Answer { question: input.question, result: compute(input.data, 1) }
 }
 
 pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
-    let data = vec![3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31,
-                    1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
-                    999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99];
     Answer { question: input.question, result: compute(input.data, 5) }
 }
