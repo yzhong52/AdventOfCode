@@ -69,6 +69,10 @@ pub fn read_ints_by_space(question: Question) -> Input<Vec<i32>> {
     return read_ints_by(question, ' ');
 }
 
+pub fn read_ints_by_line(question: Question) -> Input<Vec<i32>> {
+    return read_ints_by(question, '\n');
+}
+
 pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw(question) };
 }
@@ -112,7 +116,7 @@ impl<T> Answer<T> where T: std::fmt::Display {
                  day = self.question.day,
                  part = suffix,
                  result = self.result);
-        println!("Saving file to {}", filename);
+        println!("Saving file to {}\n", filename);
         fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }
 }

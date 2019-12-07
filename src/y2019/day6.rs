@@ -30,7 +30,7 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<u32> {
             stack.push(runner);
         }
 
-        let mut last_count = **counts.get(&*runner).get_or_insert(&0);
+        let mut last_count = **counts.get(runner).get_or_insert(&0);
 
         while stack.len() > 0 {
             counts.insert(stack.pop().unwrap(), last_count);

@@ -8,6 +8,7 @@ mod helpers {
 mod y2018 {
     pub mod day1;
     pub mod day2;
+    pub mod day3;
     pub mod day4;
     pub mod day5;
     pub mod day6;
@@ -28,11 +29,16 @@ mod y2019 {
 use helpers::parser::*;
 
 fn run_completed() {
+    // ### 2018 ###
+
     y2018::day1::part1(read_ints(Question::y2018(1))).save_part1();
     y2018::day1::part2(read_ints(Question::y2018(1))).save_part2();
 
     y2018::day2::part1(read_strings(Question::y2018(2))).save_part1();
     // TODO: Yuchen - day 2 part 2
+
+    y2018::day3::part1(read_strings(Question::y2018(3))).save_part1();
+    y2018::day3::part2(read_strings(Question::y2018(3))).save_part2();
 
     y2018::day4::part1(read_strings(Question::y2018(4))).save_part1();
     y2018::day4::part2(read_strings(Question::y2018(4))).save_part2();
@@ -49,8 +55,10 @@ fn run_completed() {
     y2018::day8::part1(read_ints_by_space(Question::y2018(8))).save_part1();
     y2018::day8::part2(read_ints_by_space(Question::y2018(8))).save_part2();
 
-    y2019::day1::part1(read_ints_by_comma(Question::y2019(1))).save_part1();
-    y2019::day1::part2(read_ints_by_comma(Question::y2019(1))).save_part2();
+    // ### 2019 ###
+
+    y2019::day1::part1(read_ints_by_line(Question::y2019(1))).save_part1();
+    y2019::day1::part2(read_ints_by_line(Question::y2019(1))).save_part2();
 
     y2019::day2::part1(read_ints_by_comma(Question::y2019(2))).save_part1();
     y2019::day2::part2(read_ints_by_comma(Question::y2019(2))).save_part2();
@@ -66,10 +74,12 @@ fn run_completed() {
 }
 
 fn main() {
-    match env::args().next() {
-        Some(arg) if arg == "run_all".to_string() => run_completed(),
-        _ => ()
-    };
+    for arg in env::args() {
+        match arg {
+            s if s == "run_all".to_string() => run_completed(),
+            _ => ()
+        };
+    }
 
     // TODO: day 9
     let y2018_day9_input = Input {
