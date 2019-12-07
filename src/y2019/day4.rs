@@ -47,20 +47,11 @@ fn meet_the_rule_part2(number: i32) -> bool {
 }
 
 pub fn part1(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
-    let mut count = 0;
-    for i in input.data.clone() {
-        // TODO: Yuchen when need to clone here?
-        count += meet_the_rule(i) as i32;
-    }
-    Answer { question: input.question, result: count }
+    let result: i32 = input.data.map(meet_the_rule).map(|x| x as i32).sum();
+    Answer { question: input.question, result }
 }
 
-
 pub fn part2(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
-    let mut count = 0;
-    for i in input.data.clone() {
-        // TODO: Yuchen when need to clone here?
-        count += meet_the_rule_part2(i) as i32;
-    }
-    Answer { question: input.question, result: count }
+    let result: i32 = input.data.map(meet_the_rule_part2).map(|x| x as i32).sum();
+    Answer { question: input.question, result }
 }
