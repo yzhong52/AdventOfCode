@@ -21,15 +21,16 @@ fn parse_number(numbers: &Vec<i32>, mode: i32, index: usize) -> i32 {
     }
 }
 
-enum IntCodeResult {
+pub enum IntCodeResult {
     Output(i32),
     Halted,
 }
 
-struct IntCodeComputer {
-    index: usize,
-    numbers: Vec<i32>,
-    input_queue: VecDeque<i32>,
+#[derive(Clone)]
+pub struct IntCodeComputer {
+    pub index: usize,
+    pub numbers: Vec<i32>,
+    pub input_queue: VecDeque<i32>,
 }
 
 impl IntCodeComputer {
