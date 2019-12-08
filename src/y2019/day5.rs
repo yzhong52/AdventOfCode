@@ -28,16 +28,14 @@ enum IntCodeResult {
 
 struct IntCodeComputer {
     index: usize,
-    values: Vec<i32>,
+    numbers: Vec<i32>,
     input_queue: VecDeque<i32>,
 }
 
 impl IntCodeComputer {
     pub fn run(&mut self) -> IntCodeResult {
-        let mut numbers = self.values.clone();
-
-        while numbers[self.index] != 99 {
-            let current_instruction = numbers[self.index];
+        while self.numbers[self.index] != 99 {
+            let current_instruction = self.numbers[self.index];
             let operation_code = current_instruction % 100;
             let mode1 = current_instruction / 100 % 10;
             let mode2 = current_instruction / 1000 % 10;
@@ -46,10 +44,10 @@ impl IntCodeComputer {
 
             match operation_code {
                 OPERATION_ADDITION_1 | OPERATION_MULTIPLICATION_2 | OPERATION_LESS_THAN_7 | OPERATION_EQUAL_8 => {
-                    let parameter1 = parse_number(&numbers, mode1, self.index);
-                    let parameter2 = parse_number(&numbers, mode2, self.index + 1);
-                    let parameter3 = numbers[self.index + 2] as usize;
-                    numbers[parameter3] = match operation_code {
+                    let parameter1 = parse_number(&self.numbers, mode1, self.index);
+                    let parameter2 = parse_number(&self.numbers, mode2, self.index + 1);
+                    let parameter3 = self.numbers[self.index + 2] as usize;
+                    self.numbers[parameter3] = match operation_code {
                         OPERATION_ADDITION_1 => parameter1 + parameter2,
                         OPERATION_MULTIPLICATION_2 => parameter1 * parameter2,
                         OPERATION_LESS_THAN_7 => (parameter1 < parameter2) as i32,
@@ -59,19 +57,18 @@ impl IntCodeComputer {
                     self.index += 3;
                 }
                 OPERATION_INPUT_3 => {
-                    let position = numbers[self.index] as usize;
-                    numbers[position] = self.input_queue.pop_front().unwrap();
+                    let position = self.numbers[self.index] as usize;
+                    self.numbers[position] = self.input_queue.pop_front().unwrap();
                     self.index += 1;
                 }
                 OPERATION_OUTPUT_4 => {
-                    let output_number = parse_number(&numbers, mode1, self.index);
+                    let output_number = parse_number(&self.numbers, mode1, self.index);
                     self.index += 1;
-                    println!("TODO: Yuchen - {}", output_number);
                     return IntCodeResult::Output(output_number);
                 }
                 OPERATION_JUMP_IF_TRUE_5 | OPERATION_JUMP_IF_FALSE_6 => {
-                    let parameter1 = parse_number(&numbers, mode1, self.index);
-                    let parameter2 = parse_number(&numbers, mode2, self.index + 1);
+                    let parameter1 = parse_number(&self.numbers, mode1, self.index);
+                    let parameter2 = parse_number(&self.numbers, mode2, self.index + 1);
                     self.index = match operation_code {
                         OPERATION_JUMP_IF_TRUE_5 if parameter1 != 0 => parameter2 as usize,
                         OPERATION_JUMP_IF_FALSE_6 if parameter1 == 0 => parameter2 as usize,
@@ -81,7 +78,6 @@ impl IntCodeComputer {
                 i => unimplemented!("{}", i),
             };
         }
-
 
         IntCodeResult::Halted
     }
@@ -124,6 +120,7 @@ pub fn compute(values: &Vec<i32>, input_values: Vec<i32>) -> i32 {
             }
             OPERATION_OUTPUT_4 => {
                 output_number = Some(parse_number(&numbers, mode1, index));
+                print!("{:?},", output_number.unwrap());
                 index += 1;
             }
             OPERATION_JUMP_IF_TRUE_5 | OPERATION_JUMP_IF_FALSE_6 => {
@@ -143,11 +140,15 @@ pub fn compute(values: &Vec<i32>, input_values: Vec<i32>) -> i32 {
 }
 
 fn compute_day5(values: Vec<i32>, initial_value: i32) -> i32 {
-    let mut computer = IntCodeComputer { values, index: 0, input_queue: vec![initial_value].into_iter().collect() };
-    match computer.run() {
-        IntCodeResult::Output(value) => value,
-        IntCodeResult::Halted => 4
+    let mut computer = IntCodeComputer { numbers: values, index: 0, input_queue: vec![initial_value].into_iter().collect() };
+    let mut final_output = 0;
+    loop {
+        match computer.run() {
+            IntCodeResult::Output(value) => final_output = value,
+            IntCodeResult::Halted => break
+        }
     }
+    final_output
 }
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
