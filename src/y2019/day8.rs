@@ -1,15 +1,17 @@
 use super::super::helpers::parser::*;
 
-pub fn part1(input: Input<String>) -> Answer<usize> {
-    let pixels_count_per_layer = 25 * 6;
-    let num_of_layers = input.data.len() / pixels_count_per_layer;
+const PIXELS_COUNT_PER_LAYER: usize = 25 * 6;
+const NOT_INIT: char = '*';
 
-    let mut minimum_number_of_zeros = pixels_count_per_layer;
+pub fn part1(input: Input<String>) -> Answer<usize> {
+    let num_of_layers = input.data.len() / PIXELS_COUNT_PER_LAYER;
+
+    let mut minimum_number_of_zeros = PIXELS_COUNT_PER_LAYER;
     let mut result = 0;
     for layer_index in 0..num_of_layers {
         let layer: String = input.data.chars()
-            .skip(layer_index * pixels_count_per_layer)
-            .take(pixels_count_per_layer)
+            .skip(layer_index * PIXELS_COUNT_PER_LAYER)
+            .take(PIXELS_COUNT_PER_LAYER)
             .collect();
 
         let zeros = layer.chars().filter(|x| x == &'0').count();
@@ -25,27 +27,21 @@ pub fn part1(input: Input<String>) -> Answer<usize> {
 }
 
 pub fn part2(input: Input<String>) -> Answer<String> {
-    let pixels_count_per_layer = 25 * 6;
-    let num_of_layers = input.data.len() / pixels_count_per_layer;
+    let num_of_layers = input.data.len() / PIXELS_COUNT_PER_LAYER;
 
-    let mut visible_layer: Vec<char> = vec!['2'; pixels_count_per_layer];
+    let mut visible_layer: Vec<char> = vec![NOT_INIT; PIXELS_COUNT_PER_LAYER];
 
     for layer_index in 0..num_of_layers {
         let layer: String = input.data.chars()
-            .skip(layer_index * pixels_count_per_layer)
-            .take(pixels_count_per_layer)
+            .skip(layer_index * PIXELS_COUNT_PER_LAYER)
+            .take(PIXELS_COUNT_PER_LAYER)
             .collect();
 
         for (i, c) in layer.chars().into_iter().enumerate() {
-            if visible_layer[i] == '2' && c != '2' {
+            if visible_layer[i] == NOT_INIT && c != '2' {
                 visible_layer[i] = c;
             }
         }
-
-        for c in &visible_layer {
-            print!("{}", c);
-        }
-        println!()
     }
 
     let result: String = visible_layer.into_iter().collect();
