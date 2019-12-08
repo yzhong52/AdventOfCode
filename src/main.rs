@@ -36,7 +36,7 @@ fn run_completed() {
     y2018::day1::part2(read_ints(Question::y2018(1))).save_part2();
 
     y2018::day2::part1(read_strings(Question::y2018(2))).save_part1();
-    // TODO: Yuchen - day 2 part 2
+    y2018::day2::part2(read_strings(Question::y2018(2))).save_part2();
 
     y2018::day3::part1(read_strings(Question::y2018(3))).save_part1();
     y2018::day3::part2(read_strings(Question::y2018(3))).save_part2();
@@ -70,9 +70,14 @@ fn run_completed() {
     y2019::day4::part1(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
 
+    y2019::day5::part1(read_ints_by_comma(Question::y2019(5))).save_part1();
+    y2019::day5::part2(read_ints_by_comma(Question::y2019(5))).save_part2();
 
     y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
     y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
+
+    y2019::day7::part1(read_ints_by_comma(Question::y2019(7))).save_part1();
+    y2019::day7::part2(read_ints_by_comma(Question::y2019(7))).save_part2();
 }
 
 fn main() {
@@ -83,18 +88,9 @@ fn main() {
         };
     }
 
-//    // TODO: day 9
-//    let y2018_day9_input = Input {
-//        question: Question::y2018(9),
-//        data: y2018::day9::Day9 { players: 9, last_marble: 25 },
-//    };
-//    y2018::day9::part1(y2018_day9_input).save_part1();
-
-
-    y2019::day5::part1(read_ints_by_comma(Question::y2019(5))).save_part1();
-    y2019::day5::part2(read_ints_by_comma(Question::y2019(5))).save_part2();
-
-    y2019::day7::part1(read_ints_by_comma(Question::y2019(7))).save_part1();
-    y2019::day7::part2(read_ints_by_comma(Question::y2019(7))).save_part2();
-
+    let y2018_day9_input = Input {
+        question: Question::y2018(9),
+        data: y2018::day9::Day9 { players: 9, last_marble: 25 },
+    };
+    y2018::day9::part1(y2018_day9_input).save_part1();
 }
