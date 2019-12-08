@@ -28,7 +28,7 @@ pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
     for phases in possible_phases {
         let mut phase_setting = 0;
         for phase in phases {
-            phase_setting = compute(&input.data, vec![phase, phase_setting]);
+            phase_setting = run_till_halt(&input.data, vec![phase, phase_setting]);
         }
         result = i32::max(result, phase_setting);
     }
