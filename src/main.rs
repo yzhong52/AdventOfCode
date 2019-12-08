@@ -88,9 +88,6 @@ fn main() {
         };
     }
 
-    let y2018_day9_input = Input {
-        question: Question::y2018(9),
-        data: y2018::day9::Day9 { players: 9, last_marble: 25 },
-    };
-    y2018::day9::part1(y2018_day9_input).save_part1();
+    y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1();
+    y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
 }
