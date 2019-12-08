@@ -1,5 +1,4 @@
 use super::super::helpers::parser::*;
-use std::collections::LinkedList;
 
 
 pub fn part1(input: Input<(usize, i32)>) -> Answer<i32> {
@@ -31,10 +30,6 @@ pub fn part1(input: Input<(usize, i32)>) -> Answer<i32> {
         }
 
         player_id = (player_id + 1) % number_of_players;
-
-        if marble % 10000 == 0 {
-            println!("{}", marble);
-        }
     }
 
     Answer { question: input.question, result: *scores.iter().max().unwrap() }

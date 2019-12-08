@@ -1,6 +1,5 @@
 use super::super::helpers::parser::*;
 use super::day5::*;
-use std::collections::VecDeque;
 
 fn combinations(current: Vec<i32>) -> Vec<Vec<i32>> {
     if current.len() == 1 {

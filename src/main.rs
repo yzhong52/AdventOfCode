@@ -25,6 +25,7 @@ mod y2019 {
     pub mod day5;
     pub mod day6;
     pub mod day7;
+    pub mod day8;
 }
 
 use helpers::parser::*;
@@ -90,4 +91,7 @@ fn main() {
 
     y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1();
     y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
+
+    y2019::day8::part1(read_string(Question::y2019(8))).save_part1();
+    y2019::day8::part2(read_string(Question::y2019(8))).save_part2();
 }
