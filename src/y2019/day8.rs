@@ -1,6 +1,8 @@
 use super::super::helpers::parser::*;
 
-const PIXELS_COUNT_PER_LAYER: usize = 25 * 6;
+const IMAGE_WIDTH: usize = 25;
+const IMAGE_HEIGHT: usize = 6;
+const PIXELS_COUNT_PER_LAYER: usize = IMAGE_WIDTH * IMAGE_HEIGHT;
 const NOT_INIT: char = '*';
 
 pub fn part1(input: Input<String>) -> Answer<usize> {
@@ -44,6 +46,18 @@ pub fn part2(input: Input<String>) -> Answer<String> {
         }
     }
 
-    let result: String = visible_layer.into_iter().collect();
+    let mut result: String = String::new();
+    result.push('\n');
+    for j in 0..IMAGE_HEIGHT {
+        for i in 0..IMAGE_WIDTH {
+            if visible_layer[j * 25 + i] == '1' {
+                result.push_str("# ");
+            } else {
+                result.push_str("  ");
+            }
+        }
+        result.push('\n');
+    }
+
     return Answer { question: input.question, result };
 }
