@@ -78,8 +78,8 @@ fn run_completed() {
     y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
     y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
 
-    y2019::day7::part1(read_ints_by_comma(Question::y2019(7))).save_part1();
-    y2019::day7::part2(read_ints_by_comma(Question::y2019(7))).save_part2();
+    y2019::day7::part1(read_numbers_by_comma(Question::y2019(7))).save_part1();
+    y2019::day7::part2(read_numbers_by_comma(Question::y2019(7))).save_part2();
 
     y2019::day8::part1(read_string(Question::y2019(8))).save_part1();
     y2019::day8::part2(read_string(Question::y2019(8))).save_part2();

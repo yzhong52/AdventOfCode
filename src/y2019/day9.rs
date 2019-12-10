@@ -36,7 +36,7 @@ impl SuperIntCodeComputer {
         match mode {
             POSITION_MODE => self.read(self.read(self.index) as usize),
             IMMEDIATE_MODE => self.read(self.index as usize),
-            RELATIVE_MODE => self.read((self.read(self.index) + relative_base as i128) as usize),
+            RELATIVE_MODE => self.read(self.read(self.index) as usize + relative_base),
             i => unimplemented!("{}", i),
         }
     }
