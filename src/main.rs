@@ -96,6 +96,6 @@ fn main() {
     y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1();
     y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
 
-    y2019::day9::part1(read_ints_by_comma(Question::y2019(9))).save_part1();
-    y2019::day9::part2(read_ints_by_comma(Question::y2019(9))).save_part2();
+    y2019::day9::part1(read_numbers_by_comma(Question::y2019(9))).save_part1();
+    y2019::day9::part2(read_numbers_by_comma(Question::y2019(9))).save_part2();
 }

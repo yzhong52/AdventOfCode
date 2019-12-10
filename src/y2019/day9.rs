@@ -1,68 +1,132 @@
 use super::super::helpers::parser::*;
-use super::day5::*;
 
-fn combinations(current: Vec<i32>) -> Vec<Vec<i32>> {
-    if current.len() == 1 {
-        return vec![current];
-    } else {
-        let mut result: Vec<Vec<i32>> = vec![];
+use std::collections::{VecDeque, HashMap};
 
-        for i in 0..current.len() {
-            let mut remain = current.clone();
-            let removed_phase = remain[i];
-            remain.remove(i);
-            let next = combinations(remain.clone());
-            for mut n in next {
-                n.push(removed_phase);
-                result.push(n)
-            }
-        }
-        result
-    }
+const POSITION_MODE: i128 = 0;
+const IMMEDIATE_MODE: i128 = 1;
+const RELATIVE_MODE: i128 = 2;
+
+const OPERATION_ADDITION_1: i128 = 1;
+const OPERATION_MULTIPLICATION_2: i128 = 2;
+const OPERATION_INPUT_3: i128 = 3;
+const OPERATION_OUTPUT_4: i128 = 4;
+const OPERATION_JUMP_IF_TRUE_5: i128 = 5;
+const OPERATION_JUMP_IF_FALSE_6: i128 = 6;
+const OPERATION_LESS_THAN_7: i128 = 7;
+const OPERATION_EQUAL_8: i128 = 8;
+const OPERATION_RELATIVE_BASE_OFFSET: i128 = 9;
+
+pub enum SuperIntCodeResult {
+    Output(i128),
+    Halted,
 }
 
-pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    let possible_phases = combinations(vec![0, 1, 2, 3, 4]);
+#[derive(Clone)]
+pub struct SuperIntCodeComputer {
+    pub index: usize,
+    pub numbers: Vec<i128>,
+    pub input_queue: VecDeque<i128>,
+    pub relative_base: usize,
 
-    let mut result = 0;
-    for phases in possible_phases {
-        let mut phase_setting = 0;
-        for phase in phases {
-            phase_setting = run_till_halt(&input.data, vec![phase, phase_setting]);
-        }
-        result = i32::max(result, phase_setting);
-    }
-    Answer { question: input.question, result }
+    pub external_numbers: HashMap<i128, i128>
 }
 
-pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
-    let possible_phases = combinations(vec![5, 6, 7, 8, 9]);
+impl SuperIntCodeComputer {
+    fn parse_number(&self, mode: i128, relative_base: usize) -> i128 {
+        match mode {
+            POSITION_MODE => self.numbers[self.numbers[self.index] as usize],
+            IMMEDIATE_MODE => self.numbers[self.index as usize],
+            RELATIVE_MODE => self.numbers[(self.numbers[self.index] + relative_base as i128) as usize],
+            i => unimplemented!("{}", i),
+        }
+    }
 
-    let mut result = 0;
+    pub fn run(&mut self) -> SuperIntCodeResult {
+        while self.numbers[self.index] != 99 {
+            let current_instruction = self.numbers[self.index];
+            let operation_code = current_instruction % 100;
+            let mode1 = current_instruction / 100 % 10;
+            let mode2 = current_instruction / 1000 % 10;
 
-    for phases in possible_phases {
-        let mut signal = 0;
-        let mut index = 0;
+            self.index += 1;
 
-        let mut computers: Vec<IntCodeComputer> = phases.iter().map(|phase| {
-            let input_queue = vec![*phase].into_iter().collect();
-            IntCodeComputer { numbers: input.data.clone(), index: 0, input_queue, relative_base: 0 }
-        }).collect();
-
-        loop {
-            computers[index].input_queue.push_back(signal);
-
-            match computers[index].run() {
-                IntCodeResult::Output(val) => {
-                    signal = val
+            match operation_code {
+                OPERATION_ADDITION_1 | OPERATION_MULTIPLICATION_2 | OPERATION_LESS_THAN_7 | OPERATION_EQUAL_8 => {
+                    let parameter1 = self.parse_number(mode1, self.relative_base);
+                    self.index += 1;
+                    let parameter2 = self.parse_number( mode2, self.relative_base);
+                    self.index += 1;
+                    let parameter3 = self.numbers[self.index] as usize;
+                    self.index += 1;
+                    self.numbers[parameter3] = match operation_code {
+                        OPERATION_ADDITION_1 => parameter1 + parameter2,
+                        OPERATION_MULTIPLICATION_2 => parameter1 * parameter2,
+                        OPERATION_LESS_THAN_7 => (parameter1 < parameter2) as i128,
+                        OPERATION_EQUAL_8 => (parameter1 == parameter2) as i128,
+                        i => unimplemented!("{}", i),
+                    };
                 }
-                IntCodeResult::Halted => break,
-            }
+                OPERATION_INPUT_3 => {
+                    let position = self.numbers[self.index] as usize;
+                    self.numbers[position] = self.input_queue.pop_front().unwrap();
+                    self.index += 1;
+                }
+                OPERATION_OUTPUT_4 => {
+                    let output_number = self.parse_number( mode1, self.relative_base);
+                    self.index += 1;
+                    return SuperIntCodeResult::Output(output_number);
+                }
+                OPERATION_JUMP_IF_TRUE_5 | OPERATION_JUMP_IF_FALSE_6 => {
+                    let parameter1 = self.parse_number( mode1, self.relative_base);
+                    self.index += 1;
+                    let parameter2 = self.parse_number( mode2, self.relative_base);
+                    self.index += 1;
 
-            index = (index + 1) % 5;
+                    self.index = match operation_code {
+                        OPERATION_JUMP_IF_TRUE_5 if parameter1 != 0 => parameter2 as usize,
+                        OPERATION_JUMP_IF_FALSE_6 if parameter1 == 0 => parameter2 as usize,
+                        _ => self.index,
+                    }
+                }
+                OPERATION_RELATIVE_BASE_OFFSET => {
+                    let parameter1 = self.parse_number( mode1, self.relative_base);
+                    self.index += 1;
+                    self.relative_base += (self.relative_base as i128 + parameter1) as usize;
+                }
+                i => unimplemented!("{}", i),
+            };
         }
 
-        result = i32::max(result, signal);
+        SuperIntCodeResult::Halted
     }
-    Answer { question: input.question, result }
+}
+
+pub fn run_till_halt(values: &Vec<i128>, inputs: Vec<i128>) -> i128 {
+    let mut computer = SuperIntCodeComputer {
+        numbers: values.clone(),
+        index: 0,
+        input_queue: inputs.into_iter().collect(),
+        relative_base: 0,
+        external_numbers: HashMap::new()
+    };
+    let mut final_output = 0;
+    loop {
+        match computer.run() {
+            SuperIntCodeResult::Output(value) => final_output = value,
+            SuperIntCodeResult::Halted => break
+        }
+    }
+    final_output
+}
+
+fn run_day5(values: &Vec<i128>, input_value: i128) -> i128 {
+    run_till_halt(values, vec![input_value])
+}
+
+pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
+    Answer { question: input.question, result: run_day5(&input.data, 1) }
+}
+
+pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
+    Answer { question: input.question, result: run_day5(&input.data, 5) }
 }
