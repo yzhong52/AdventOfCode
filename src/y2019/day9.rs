@@ -41,20 +41,20 @@ impl SuperIntCodeComputer {
         }
     }
 
-    fn read(&self, index: usize) -> i128 {
+    fn read(&self, pos: usize) -> i128 {
         let default_value = 0 as i128;
-        if index < self.numbers.len() {
-            self.numbers[index]
+        if pos < self.numbers.len() {
+            self.numbers[pos]
         } else {
-            *self.external_numbers.get(&index).unwrap_or_else({ || &default_value })
+            *self.external_numbers.get(&pos).unwrap_or_else({ || &default_value })
         }
     }
 
-    fn save(&mut self, index: usize, value: i128) {
-        if index < self.numbers.len() {
-            self.numbers[index] = value;
+    fn save(&mut self, pos: usize, value: i128) {
+        if pos < self.numbers.len() {
+            self.numbers[pos] = value;
         } else {
-            self.external_numbers.insert(index, value);
+            self.external_numbers.insert(pos, value);
         }
     }
 
@@ -85,9 +85,10 @@ impl SuperIntCodeComputer {
                 }
                 OPERATION_INPUT_3 => {
                     let position = self.read(self.index) as usize;
+                    self.index += 1;
+
                     let value = self.input_queue.pop_front().unwrap();
                     self.save(position, value);
-                    self.index += 1;
                 }
                 OPERATION_OUTPUT_4 => {
                     let output_number = self.parse_number(mode1, self.relative_base);
