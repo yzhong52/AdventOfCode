@@ -39,17 +39,21 @@ impl SuperIntCodeComputer {
         match mode {
             POSITION_MODE => self.read(self.read(self.index) as usize),
             IMMEDIATE_MODE => self.read(self.index as usize),
-            RELATIVE_MODE => self.read(self.read(self.index) as usize + relative_base),
+            RELATIVE_MODE => {
+                // self.read(self.index) can be negative, therefore we need to convert it to int first
+                let position = self.read(self.index) + relative_base as i128;
+                self.read(position as usize)
+            },
             i => unimplemented!("{}", i),
         }
     }
 
-    fn save_number(&mut self, mode: i128, position: usize, value: i128) {
+    fn save_number(&mut self, mode: i128, position: i128, value: i128) {
         match mode {
-            POSITION_MODE => self.save(position, value),
+            POSITION_MODE => self.save(position as usize, value),
             RELATIVE_MODE => {
-                println!("-----> Saving in relative mode");
-                self.save(position + self.relative_base, value)
+                let relative_position = (position + self.relative_base as i128) as usize;
+                self.save(relative_position, value)
             }
             i => unimplemented!("{}", i),
         }
@@ -99,14 +103,14 @@ impl SuperIntCodeComputer {
                     let parameter3 = self.read(self.index);
                     self.index += 1;
 
-                    self.save_number(mode3, parameter3 as usize, value);
+                    self.save_number(mode3, parameter3, value);
                 }
                 OPERATION_INPUT_3 => {
                     let position = self.read(self.index);
                     self.index += 1;
 
                     let value = self.input_queue.pop_front().unwrap();
-                    self.save_number(mode1, position as usize, value);
+                    self.save_number(mode1, position, value);
                 }
                 OPERATION_OUTPUT_4 => {
                     println!("OPERATION_OUTPUT_4 {} {} {}", current_instruction, mode1, self.relative_base);
@@ -131,7 +135,6 @@ impl SuperIntCodeComputer {
                     let parameter1 = self.parse_number(mode1, self.relative_base);
                     self.index += 1;
                     self.relative_base = (self.relative_base as i128 + parameter1) as usize;
-                    println!("OPERATION_RELATIVE_BASE_OFFSET_9 {} {} {}", self.relative_base, parameter1, current_instruction);
 
                 }
                 i => unimplemented!("{}", i),
@@ -172,5 +175,5 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    Answer { question: input.question, result: 0 }
+    Answer { question: input.question, result: run_day9(&input.data, 2) }
 }
