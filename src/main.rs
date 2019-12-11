@@ -46,8 +46,8 @@ fn run_completed() {
     y2018::day4::part1(read_strings(Question::y2018(4))).save_part1();
     y2018::day4::part2(read_strings(Question::y2018(4))).save_part2();
 
-    y2018::day5::part1(read_string(Question::y2018(5))).save_part1();
-    y2018::day5::part2(read_string(Question::y2018(5))).save_part2();
+    y2018::day5::part1(read_single_string(Question::y2018(5))).save_part1();
+    y2018::day5::part2(read_single_string(Question::y2018(5))).save_part2();
 
     y2018::day6::part1(read_points(Question::y2018(6))).save_part1();
     y2018::day6::part2(read_points(Question::y2018(6))).save_part2();
@@ -55,16 +55,16 @@ fn run_completed() {
     y2018::day7::part1(read_strings(Question::y2018(7))).save_part1();
     y2018::day7::part2(read_strings(Question::y2018(7))).save_part2();
 
-    y2018::day8::part1(read_ints_by_space(Question::y2018(8))).save_part1();
-    y2018::day8::part2(read_ints_by_space(Question::y2018(8))).save_part2();
+    y2018::day8::part1(read_numbers_space(Question::y2018(8))).save_part1();
+    y2018::day8::part2(read_numbers_space(Question::y2018(8))).save_part2();
 
     // ### 2019 ###
 
-    y2019::day1::part1(read_ints_by_line(Question::y2019(1))).save_part1();
-    y2019::day1::part2(read_ints_by_line(Question::y2019(1))).save_part2();
+    y2019::day1::part1(read_numbers_by_line(Question::y2019(1))).save_part1();
+    y2019::day1::part2(read_numbers_by_line(Question::y2019(1))).save_part2();
 
-    y2019::day2::part1(read_ints_by_comma(Question::y2019(2))).save_part1();
-    y2019::day2::part2(read_ints_by_comma(Question::y2019(2))).save_part2();
+    y2019::day2::part1(read_numbers_by_comma(Question::y2019(2))).save_part1();
+    y2019::day2::part2(read_numbers_by_comma(Question::y2019(2))).save_part2();
 
     y2019::day3::part1(&read_strings(Question::y2019(3))).save_part1();
     y2019::day3::part2(&read_strings(Question::y2019(3))).save_part2();
@@ -72,8 +72,8 @@ fn run_completed() {
     y2019::day4::part1(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
 
-    y2019::day5::part1(read_ints_by_comma(Question::y2019(5))).save_part1();
-    y2019::day5::part2(read_ints_by_comma(Question::y2019(5))).save_part2();
+    y2019::day5::part1(read_numbers_by_comma(Question::y2019(5))).save_part1();
+    y2019::day5::part2(read_numbers_by_comma(Question::y2019(5))).save_part2();
 
     y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
     y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
@@ -81,8 +81,11 @@ fn run_completed() {
     y2019::day7::part1(read_numbers_by_comma(Question::y2019(7))).save_part1();
     y2019::day7::part2(read_numbers_by_comma(Question::y2019(7))).save_part2();
 
-    y2019::day8::part1(read_string(Question::y2019(8))).save_part1();
-    y2019::day8::part2(read_string(Question::y2019(8))).save_part2();
+    y2019::day8::part1(read_single_string(Question::y2019(8))).save_part1();
+    y2019::day8::part2(read_single_string(Question::y2019(8))).save_part2();
+
+    y2019::day9::part1(read_numbers_by_comma(Question::y2019(9))).save_part1();
+    y2019::day9::part2(read_numbers_by_comma(Question::y2019(9))).save_part2();
 }
 
 fn main() {
@@ -97,5 +100,5 @@ fn main() {
     y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
 
     y2019::day9::part1(read_numbers_by_comma(Question::y2019(9))).save_part1();
-    y2019::day9::part2(read_numbers_by_comma(Question::y2019(9))).save_part2();
+
 }

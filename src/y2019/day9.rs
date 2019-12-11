@@ -30,7 +30,6 @@ pub struct SuperIntCodeComputer {
     pub numbers: Vec<i128>,
     pub input_queue: VecDeque<i128>,
     pub relative_base: usize,
-
     pub external_numbers: HashMap<usize, i128>,
 }
 

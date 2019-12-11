@@ -28,10 +28,6 @@ pub struct Input<T> {
     pub data: T,
 }
 
-fn read_raw(question: Question) -> Vec<String> {
-    read_raw_by(question, '\n')
-}
-
 fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     let filename: String = format!("input/{}:day:{}:input.txt", question.year, question.day);
     println!("Reading file from {}", filename);
@@ -44,11 +40,14 @@ fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     return result.iter().map(|x| x.to_string()).filter(|x| !x.is_empty()).collect();
 }
 
+fn read_raw(question: Question) -> Vec<String> {
+    read_raw_by(question, '\n')
+}
+
 pub fn read_ints(question: Question) -> Input<Vec<i32>> {
     let data: Vec<i32> = read_raw(question).iter().map(|x| x.parse::<i32>().unwrap()).collect();
     return Input { question, data };
 }
-
 
 pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
@@ -62,20 +61,18 @@ pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
     return Input { question, data };
 }
 
-pub fn read_ints_by_comma(question: Question) -> Input<Vec<i32>> {
-    return read_numbers_by(question, ',');
-}
-
 pub fn read_numbers_by_comma<T>(question: Question) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, ',');
 }
 
-pub fn read_ints_by_space(question: Question) -> Input<Vec<i32>> {
+pub fn read_numbers_space<T>(question: Question) -> Input<Vec<T>>
+    where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, ' ');
 }
 
-pub fn read_ints_by_line(question: Question) -> Input<Vec<i32>> {
+pub fn read_numbers_by_line<T>(question: Question) -> Input<Vec<T>>
+    where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, '\n');
 }
 
@@ -83,7 +80,7 @@ pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw(question) };
 }
 
-pub fn read_string(question: Question) -> Input<String> {
+pub fn read_single_string(question: Question) -> Input<String> {
     return Input { question, data: read_raw(question).first().unwrap().to_string() };
 }
 
