@@ -40,13 +40,8 @@ fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     return result.iter().map(|x| x.to_string()).filter(|x| !x.is_empty()).collect();
 }
 
-fn read_raw(question: Question) -> Vec<String> {
+fn read_raw_by_line(question: Question) -> Vec<String> {
     read_raw_by(question, '\n')
-}
-
-pub fn read_ints(question: Question) -> Input<Vec<i32>> {
-    let data: Vec<i32> = read_raw(question).iter().map(|x| x.parse::<i32>().unwrap()).collect();
-    return Input { question, data };
 }
 
 pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
@@ -77,27 +72,25 @@ pub fn read_numbers_by_line<T>(question: Question) -> Input<Vec<T>>
 }
 
 pub fn read_strings(question: Question) -> Input<Vec<String>> {
-    return Input { question, data: read_raw(question) };
+    return Input { question, data: read_raw_by_line(question) };
 }
 
 pub fn read_single_string(question: Question) -> Input<String> {
-    return Input { question, data: read_raw(question).first().unwrap().to_string() };
-}
-
-fn convert_to_point(input: &String) -> Point {
-    let p: Vec<i32> = input.split(", ")
-        .collect::<Vec<&str>>()
-        .iter()
-        .map(|x| x.to_string().parse::<i32>().unwrap())
-        .collect();
-
-    Point { x: p[0], y: p[1] }
+    return Input { question, data: read_raw_by_line(question).first().unwrap().to_string() };
 }
 
 pub fn read_points(question: Question) -> Input<Vec<Point>> {
-    let points: Vec<Point> = read_raw(question)
+    let points: Vec<Point> = read_raw_by_line(question)
         .iter()
-        .map(|x| convert_to_point(x))
+        .map(|input| {
+            let p: Vec<i32> = input.split(", ")
+                .collect::<Vec<&str>>()
+                .iter()
+                .map(|x| x.to_string().parse::<i32>().unwrap())
+                .collect();
+
+            Point { x: p[0], y: p[1] }
+        })
         .collect();
 
     Input { question, data: points }

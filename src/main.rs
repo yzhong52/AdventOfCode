@@ -34,8 +34,8 @@ use helpers::parser::*;
 fn run_completed() {
     // ### 2018 ###
 
-    y2018::day1::part1(read_ints(Question::y2018(1))).save_part1();
-    y2018::day1::part2(read_ints(Question::y2018(1))).save_part2();
+    y2018::day1::part1(read_numbers_by_line(Question::y2018(1))).save_part1();
+    y2018::day1::part2(read_numbers_by_line(Question::y2018(1))).save_part2();
 
     y2018::day2::part1(read_strings(Question::y2018(2))).save_part1();
     y2018::day2::part2(read_strings(Question::y2018(2))).save_part2();

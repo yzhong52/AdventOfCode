@@ -112,7 +112,6 @@ impl SuperIntCodeComputer {
                     self.save_number(mode1, position, value);
                 }
                 OPERATION_OUTPUT_4 => {
-                    println!("OPERATION_OUTPUT_4 {} {} {}", current_instruction, mode1, self.relative_base);
                     let output_number = self.parse_number(mode1, self.relative_base);
                     self.index += 1;
                     return SuperIntCodeResult::Output(output_number);
