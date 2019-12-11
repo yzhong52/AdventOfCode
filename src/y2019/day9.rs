@@ -4,6 +4,9 @@ use std::collections::{VecDeque, HashMap};
 
 const POSITION_MODE: i128 = 0;
 const IMMEDIATE_MODE: i128 = 1;
+// Parameters in mode 2, relative mode, behave very similarly to parameters in position mode: the
+// parameter is interpreted as a position. Like position mode, parameters in relative mode can be
+// read from or written to.
 const RELATIVE_MODE: i128 = 2;
 
 const OPERATION_ADDITION_1: i128 = 1;
@@ -41,6 +44,17 @@ impl SuperIntCodeComputer {
         }
     }
 
+    fn save_number(&mut self, mode: i128, position: usize, value: i128) {
+        match mode {
+            POSITION_MODE => self.save(position, value),
+            RELATIVE_MODE => {
+                println!("-----> Saving in relative mode");
+                self.save(position + self.relative_base, value)
+            }
+            i => unimplemented!("{}", i),
+        }
+    }
+
     fn read(&self, pos: usize) -> i128 {
         let default_value = 0 as i128;
         if pos < self.numbers.len() {
@@ -64,6 +78,7 @@ impl SuperIntCodeComputer {
             let operation_code = current_instruction % 100;
             let mode1 = current_instruction / 100 % 10;
             let mode2 = current_instruction / 1000 % 10;
+            let mode3 = current_instruction / 10000 % 10;
             self.index += 1;
 
             match operation_code {
@@ -72,8 +87,7 @@ impl SuperIntCodeComputer {
                     self.index += 1;
                     let parameter2 = self.parse_number(mode2, self.relative_base);
                     self.index += 1;
-                    let parameter3 = self.read(self.index) as usize;
-                    self.index += 1;
+
                     let value = match operation_code {
                         OPERATION_ADDITION_1 => parameter1 + parameter2,
                         OPERATION_MULTIPLICATION_2 => parameter1 * parameter2,
@@ -81,16 +95,21 @@ impl SuperIntCodeComputer {
                         OPERATION_EQUAL_8 => (parameter1 == parameter2) as i128,
                         i => unimplemented!("{}", i),
                     };
-                    self.save(parameter3, value);
+
+                    let parameter3 = self.read(self.index);
+                    self.index += 1;
+
+                    self.save_number(mode3, parameter3 as usize, value);
                 }
                 OPERATION_INPUT_3 => {
-                    let position = self.read(self.index) as usize;
+                    let position = self.read(self.index);
                     self.index += 1;
 
                     let value = self.input_queue.pop_front().unwrap();
-                    self.save(position, value);
+                    self.save_number(mode1, position as usize, value);
                 }
                 OPERATION_OUTPUT_4 => {
+                    println!("OPERATION_OUTPUT_4 {} {} {}", current_instruction, mode1, self.relative_base);
                     let output_number = self.parse_number(mode1, self.relative_base);
                     self.index += 1;
                     return SuperIntCodeResult::Output(output_number);
@@ -108,9 +127,12 @@ impl SuperIntCodeComputer {
                     };
                 }
                 OPERATION_RELATIVE_BASE_OFFSET_9 => {
-                    let parameter1 = self.read(self.index);
+                    // let parameter1 = self.read(self.index);
+                    let parameter1 = self.parse_number(mode1, self.relative_base);
                     self.index += 1;
                     self.relative_base = (self.relative_base as i128 + parameter1) as usize;
+                    println!("OPERATION_RELATIVE_BASE_OFFSET_9 {} {} {}", self.relative_base, parameter1, current_instruction);
+
                 }
                 i => unimplemented!("{}", i),
             };
