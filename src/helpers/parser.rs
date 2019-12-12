@@ -96,6 +96,17 @@ pub fn read_points(question: Question) -> Input<Vec<Point>> {
     Input { question, data: points }
 }
 
+pub fn read_grid(question: Question) -> Input<Vec<Vec<char>>> {
+    let grid: Vec<Vec<char>> = read_raw_by_line(question)
+        .iter()
+        .map(|input| {
+            input.chars().collect::<Vec<char>>()
+        })
+        .collect();
+
+    Input { question, data: grid }
+}
+
 impl<T> Answer<T> where T: std::fmt::Display {
     pub fn save_part1(&self) {
         self.save_as("part1")
