@@ -101,5 +101,6 @@ fn main() {
     y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
 
     y2019::day10::part1(read_grid(Question::y2019(10))).save_part1();
+    y2019::day10::part2(read_grid(Question::y2019(10))).save_part2();
 
 }
