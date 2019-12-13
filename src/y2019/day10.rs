@@ -68,32 +68,15 @@ impl std::cmp::PartialOrd for Point {
 }
 
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
-    let (_, (x, y)) = get_target(&input.data);
-
-    let mut result = 0;
-    let mut target = (0, 0);
-    for (i, row) in input.data.iter().enumerate() {
-        for (j, c) in row.iter().enumerate() {
-            if c == &'#' {
-                let count = count_visible(&input.data, i, j);
-                if result < count {
-                    result = count;
-                    target = (i, j);
-                }
-            }
-        }
-    }
-    println!("{:?}", target);
-
+    let (_, (x,  y)) = get_target(&input.data);
 
     let mut map: HashMap<(bool, i32), BinaryHeap<Point>> = HashMap::new();
-
     for (i, row) in input.data.iter().enumerate() {
         for (j, c) in row.iter().enumerate() {
             if c == &'#' {
-                let diff_x = x as i32 - i as i32;
-                let diff_y = y as i32 - j as i32;
-
+                // Swapping the x and y here so that it is easier to think about the quadrant
+                let diff_x = j as i32 - y as i32;
+                let diff_y = x as i32 - i as i32;
 
                 match (diff_x, diff_y) {
                     (0, 0) => (),
@@ -125,17 +108,16 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let mut index = 0;
     let mut vaporized_count = 0;
     let mut last_point = Point { x: 0, y: 0 };
-    while vaporized_count < 200 {
+    while vaporized_count < 200 && index < 10000 {
         let key = keys[index % keys.len()];
 
         let heap = map.get_mut(&key).unwrap();
         if heap.len() > 0 {
             last_point = heap.pop().unwrap();
-            println!("{}: {},{}", vaporized_count, last_point.x + x as i32, last_point.y + y as i32);
             vaporized_count += 1;
         };
         index += 1;
     }
 
-    Answer { question: input.question, result: (last_point.x + x as i32) * 100 + (last_point.y + y as i32) }
+    Answer { question: input.question, result: (last_point.x + y as i32) * 100 + (x as i32 - last_point.y) }
 }
