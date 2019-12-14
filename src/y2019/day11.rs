@@ -2,30 +2,15 @@ use super::super::helpers::parser::*;
 use super::day9::*;
 use std::collections::{HashMap, VecDeque};
 use crate::helpers::models::Point;
-use std::cmp::min;
 
-fn combinations(current: Vec<i128>) -> Vec<Vec<i128>> {
-    if current.len() == 1 {
-        return vec![current];
-    } else {
-        let mut result: Vec<Vec<i128>> = vec![];
+const WHITE_COLOR: bool = true;
+const BLACK_COLOR: bool = false;
 
-        for i in 0..current.len() {
-            let mut remain = current.clone();
-            let removed_phase = remain[i];
-            remain.remove(i);
-            let next = combinations(remain.clone());
-            for mut n in next {
-                n.push(removed_phase);
-                result.push(n)
-            }
-        }
-        result
-    }
-}
+const TURN_LEFT: i128 = 0;
+const TURN_RIGHT: i128 = 1;
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
-    let map = painting(&input);
+    let map = painting(&input.data, WHITE_COLOR);
 
     let mut min_x = 0;
     let mut max_x = 0;
@@ -45,14 +30,17 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
 
     for (p, color) in map {
         if color {
-            hull[(p.y - min_y) as usize][(p.x - min_x) as usize] = '*'
+            hull[(max_y - p.y) as usize][(p.x - min_x) as usize] = '*'
         }
     }
 
     let mut result = String::new();
+    result.push('\n');
     for row in hull {
         for c in row {
+            result.push(' ');
             result.push(c);
+            result.push(' ');
         }
         result.push('\n');
     }
@@ -60,11 +48,12 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
     Answer { question: input.question, result }
 }
 
-fn painting(input: &Input<Vec<i128>>) -> HashMap<Point, bool> {
+fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<Point, bool> {
     let mut map: HashMap<Point, bool> = HashMap::new();
+    map.insert(Point::origin(), initial_color);
 
     let mut robot = SuperIntCodeComputer {
-        numbers: input.data.clone(),
+        numbers: input.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,
@@ -76,13 +65,8 @@ fn painting(input: &Input<Vec<i128>>) -> HashMap<Point, bool> {
     loop {
         let color = map.get(&pos).unwrap_or(&false);
         robot.input_queue.push_back(*color as i128);
-
-        println!("Pos: {:?}, Color: {}", pos, *color);
-
         match robot.run() {
             SuperIntCodeResult::Output(val) => {
-                println!("Value {}", val);
-
                 map.insert(pos.clone(), val != 0);
             }
             SuperIntCodeResult::Halted => break,
@@ -90,11 +74,9 @@ fn painting(input: &Input<Vec<i128>>) -> HashMap<Point, bool> {
 
         match robot.run() {
             SuperIntCodeResult::Output(val) => {
-                println!("Value {}", val);
-
                 match val {
-                    0 => dir = Point { x: -dir.y, y: dir.x }, // Turn left 90 degrees
-                    1 => dir = Point { x: dir.y, y: -dir.x }, // Turn right 90 degrees
+                    TURN_LEFT => dir = Point { x: -dir.y, y: dir.x }, // Turn left 90 degrees
+                    TURN_RIGHT => dir = Point { x: dir.y, y: -dir.x }, // Turn right 90 degrees
                     _ => unimplemented!()
                 }
             }
@@ -108,6 +90,6 @@ fn painting(input: &Input<Vec<i128>>) -> HashMap<Point, bool> {
 }
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let map = painting(&input);
+    let map = painting(&input.data, BLACK_COLOR);
     Answer { question: input.question, result: map.len() }
 }

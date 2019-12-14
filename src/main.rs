@@ -60,6 +60,9 @@ fn run_completed() {
     y2018::day8::part1(read_numbers_space(Question::y2018(8))).save_part1();
     y2018::day8::part2(read_numbers_space(Question::y2018(8))).save_part2();
 
+    y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1(); // TODO: Yuchen -
+    y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2(); // TODO: Yuchen -
+
     // ### 2019 ###
 
     y2019::day1::part1(read_numbers_by_line(Question::y2019(1))).save_part1();
@@ -102,8 +105,6 @@ fn main() {
             _ => ()
         };
     }
-//    y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1();
-//    y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2();
 
     y2019::day11::part1(read_numbers_by_comma(Question::y2019(11))).save_part1();
     y2019::day11::part2(read_numbers_by_comma(Question::y2019(11))).save_part2();
