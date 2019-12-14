@@ -29,6 +29,7 @@ mod y2019 {
     pub mod day9;
     pub mod day10;
     pub mod day11;
+    pub mod day12;
 }
 
 use helpers::parser::*;
@@ -96,6 +97,10 @@ fn run_completed() {
     // Day 10: Monitoring Station
     y2019::day10::part1(read_grid(Question::y2019(10))).save_part1();
     y2019::day10::part2(read_grid(Question::y2019(10))).save_part2();
+
+    // Day 12: The N-Body Problem
+    y2019::day11::part1(read_numbers_by_comma(Question::y2019(11))).save_part1();
+    y2019::day11::part2(read_numbers_by_comma(Question::y2019(11))).save_part2();
 }
 
 fn main() {
@@ -106,6 +111,6 @@ fn main() {
         };
     }
 
-    y2019::day11::part1(read_numbers_by_comma(Question::y2019(11))).save_part1();
-    y2019::day11::part2(read_numbers_by_comma(Question::y2019(11))).save_part2();
+    y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
+    y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
 }
