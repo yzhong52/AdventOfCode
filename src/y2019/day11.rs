@@ -2,6 +2,7 @@ use super::super::helpers::parser::*;
 use super::day9::*;
 use std::collections::{HashMap, VecDeque};
 use crate::helpers::models::Point;
+use std::cmp::min;
 
 fn combinations(current: Vec<i128>) -> Vec<Vec<i128>> {
     if current.len() == 1 {
@@ -23,11 +24,43 @@ fn combinations(current: Vec<i128>) -> Vec<Vec<i128>> {
     }
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    Answer { question: input.question, result: 0 }
+pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
+    let map = painting(&input);
+
+    let mut min_x = 0;
+    let mut max_x = 0;
+
+    let mut min_y = 0;
+    let mut max_y = 0;
+
+    for p in map.keys() {
+        min_x = i32::min(p.x, min_x);
+        max_x = i32::max(p.x, max_x);
+
+        min_y = i32::min(p.y, min_y);
+        max_y = i32::max(p.y, max_y);
+    }
+
+    let mut hull = vec![vec![' '; (max_x - min_x + 1) as usize]; (max_y - min_y + 1) as usize];
+
+    for (p, color) in map {
+        if color {
+            hull[(p.y - min_y) as usize][(p.x - min_x) as usize] = '*'
+        }
+    }
+
+    let mut result = String::new();
+    for row in hull {
+        for c in row {
+            result.push(c);
+        }
+        result.push('\n');
+    }
+
+    Answer { question: input.question, result }
 }
 
-pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
+fn painting(input: &Input<Vec<i128>>) -> HashMap<Point, bool> {
     let mut map: HashMap<Point, bool> = HashMap::new();
 
     let mut robot = SuperIntCodeComputer {
@@ -71,5 +104,10 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
         pos.y = dir.y + pos.y;
     }
 
+    map
+}
+
+pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
+    let map = painting(&input);
     Answer { question: input.question, result: map.len() }
 }
