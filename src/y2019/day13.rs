@@ -89,8 +89,8 @@ impl ArcadeCabinet {
                 let x = match self.computer.run() {
                     SuperIntCodeResult::Output(val) => val,
                     SuperIntCodeResult::Halted => {
-                        println!("Game halted!");
-                        println!("{}", self.score);
+//                        println!("Game halted!");
+//                        println!("{}", self.score);
                         exit(0);
                     }
                 };
@@ -145,24 +145,23 @@ impl ArcadeCabinet {
                 if loop_count > 989 {
                     let mut screen_buffer: String = String::new();
                     for row in &self.screen {
+                        screen_buffer.push(' ');
                         for c in row {
                             screen_buffer.push(c.clone());
                         }
                         screen_buffer.push('\n');
                     }
-                    println!("{}", screen_buffer);
-                    println!("Current score: {}", self.score);
+                    println!("\n{}\n", screen_buffer);
+                    println!(" Current score: {}", self.score);
 
-                    println!("Pending input: {:?}", self.computer.input_queue);
-                    println!("Loop: {:?}", loop_count);
-                    println!("Paddle position: {:?}!", paddle_pos);
-                    println!("Ball score: {:?}", ball_pos);
-                    println!("-->");
-
-                    println!("Debug third {}", third);
+                    println!(" Pending input: {:?}", self.computer.input_queue);
+                    println!(" Run loop: {:?}", loop_count);
+                    println!(" Paddle position: {:?}", paddle_pos);
+                    println!(" Ball position: {:?}", ball_pos);
+                    println!(" -->");
 
                     match third {
-                        HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(1)),
+                        HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(5)),
                         _ => ()
                     };
                 }
