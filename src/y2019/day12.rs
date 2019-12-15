@@ -73,14 +73,14 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
 pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     let initial_points: Vec<Point3D> = parse_points(&input.data);
 
-    fn x(p: &Point3D) -> i32 { p.x }
-    fn y(p: &Point3D) -> i32 { p.y }
-    fn z(p: &Point3D) -> i32 { p.z }
+    fn to_x(p: &Point3D) -> i32 { p.x }
+    fn to_y(p: &Point3D) -> i32 { p.y }
+    fn to_z(p: &Point3D) -> i32 { p.z }
 
-    let dimensions: [fn(&Point3D) -> i32; 3] = [x, y, z];
+    let projections: [fn(&Point3D) -> i32; 3] = [to_x, to_y, to_z];
 
-    let results: Vec<usize> = dimensions.iter().map(|dimension_function| {
-        // TODO: Should this start with 0?
+    let dimensional_repeat_counts: Vec<usize> = projections.iter().map(|projection_function| {
+        // TODO: Shouldn't this start with 0?
         let mut index: usize = 1;
         let mut points: Vec<Point3D> = initial_points.clone();
         let mut velocities: Vec<Point3D> = vec![Point3D::origin(); points.len()];
@@ -90,41 +90,40 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
             update_positions(points.as_mut(), &velocities);
             index += 1;
 
-            if initial_points.iter().map(dimension_function).collect::<Vec<i32>>() == points.iter().map(dimension_function).collect::<Vec<i32>>() {
-                break
+            if initial_points.iter().map(projection_function).collect::<Vec<i32>>() == points.iter().map(projection_function).collect::<Vec<i32>>() {
+                break;
             }
         }
         index
     }).collect();
 
-    println!("{:?}", results);
+    let gcd = gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[1]]) *
+        gcd2(vec![dimensional_repeat_counts[1], dimensional_repeat_counts[2]]) *
+        gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[2]]) /
+        gcd2(dimensional_repeat_counts.clone());
 
-    println!("{}", gcd(results[0], results[2]));
-    println!("{}", gcd(results[1], results[2]));
-    println!("{}", gcd(results[1], results[0]));
-
-    let final_result = results[0] * results[1] * results[2];
-
-    for i in &results {
-        println!("{} {}", i, 332477126821644.0 / *i as f32);
-    }
-
-    for i in &results {
-        println!("{} {}", i, 83119281705411.0 / *i as f32);
-    }
+    let final_result = dimensional_repeat_counts[0] *
+        dimensional_repeat_counts[1] *
+        dimensional_repeat_counts[2] /
+        gcd;
 
     return Answer { question: input.question, result: final_result };
 }
 
-fn gcd(left: usize, right: usize) -> usize {
-    if left > right {
-        gcd(right, left)
+fn gcd2(mut nums: Vec<usize>) -> usize {
+    nums.sort();
+
+    let minimum_value = nums.first().unwrap();
+
+    let mut remainders: Vec<usize> = nums[1..].iter()
+        .map(|x| x % minimum_value)
+        .filter(|x| x > &0)
+        .collect();
+
+    if remainders.len() == 0 {
+        *minimum_value
     } else {
-        let remain = right % left;
-        if remain == 0 {
-            left
-        } else {
-            gcd(left, remain)
-        }
+        remainders.push(*minimum_value);
+        gcd2(remainders)
     }
 }
