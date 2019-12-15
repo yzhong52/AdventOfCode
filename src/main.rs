@@ -31,6 +31,7 @@ mod y2019 {
     pub mod day11;
     pub mod day12;
     pub mod day13;
+    pub mod day14;
 }
 
 use helpers::parser::*;
@@ -106,6 +107,10 @@ fn run_completed() {
     // Day 12: The N-Body Problem
     y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
     y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
+
+    // Day 13: Space Police
+    y2019::day13::part1(read_numbers_by_comma(Question::y2019(13))).save_part1();
+    y2019::day13::part2(read_numbers_by_comma(Question::y2019(13))).save_part2();
 }
 
 fn main() {
@@ -116,7 +121,7 @@ fn main() {
         };
     }
 
-    // Day 11: Space Police
-    y2019::day13::part1(read_numbers_by_comma(Question::y2019(13))).save_part1();
-    y2019::day13::part2(read_numbers_by_comma(Question::y2019(13))).save_part2();
+    // Day 14: Space Stoichiometry
+    y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
+    y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
 }

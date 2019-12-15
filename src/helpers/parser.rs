@@ -35,8 +35,8 @@ fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     let result: Vec<&str> = contents.split(pat).collect();
 
     // Have to call iter() to get back a `Iter` type in order for `map` and `filter` to work
-    // We `map` them to `String` and also `filter` out empty ones.
-    // Finally `collect` them back to a `Vec`.
+    // We `map` them from `str` to `String` and also `filter` out empty ones.
+    // Finally, `collect` them back to a `Vec`.
     return result.iter().map(|x| x.to_string()).filter(|x| !x.is_empty()).collect();
 }
 
