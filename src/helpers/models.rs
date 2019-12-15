@@ -1,14 +1,17 @@
 #[derive(Eq, PartialEq, Debug, Hash, Clone)]
-pub struct Point {
-    pub x: i32,
-    pub y: i32,
+pub struct _Point<T> {
+    pub x: T,
+    pub y: T,
 }
 
-impl Point {
-    pub fn origin() -> Point {
-        Point { x: 0, y: 0 }
+impl _Point<i32> {
+    pub fn origin() -> _Point<i32> {
+        _Point { x: 0, y: 0}
     }
 }
+
+pub type Point = _Point<i32>;
+pub type BigPoint = _Point<i128>;
 
 #[derive(Eq, PartialEq, Debug, Hash, Clone)]
 pub struct Point3D {
