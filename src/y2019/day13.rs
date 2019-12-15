@@ -1,10 +1,9 @@
 use super::super::helpers::parser::*;
 use super::day9::*;
 use std::collections::{HashMap, VecDeque};
-use crate::helpers::models::{BigPoint, Point};
+use crate::helpers::models::BigPoint;
 use std::thread::sleep;
 use std::time::Duration;
-use std::process::exit;
 
 // 0 is an empty tile. No game object appears in this tile.
 const EMPTY_TILE: i128 = 0;
@@ -68,109 +67,94 @@ impl ArcadeCabinet {
         self.computer.numbers[0] = 2;
     }
 
-    fn start(&mut self) {
-        let memory = self.computer.numbers.clone();
+    fn play(&mut self, debug: bool) -> i128 {
+        let mut paddle_pos: BigPoint = BigPoint::origin();
+        let mut loop_count = 0;
+        let mut ball_pos = BigPoint::origin();
 
+        // Game run loop
         loop {
-            let mut paddle_pos: BigPoint = BigPoint::origin();
-            let mut loop_count = 0;
+            let x = match self.computer.run() {
+                SuperIntCodeResult::Output(val) => val,
+                SuperIntCodeResult::Halted => break,
+            };
 
-            self.computer.numbers = memory.clone();
-            self.computer.index = 0;
-            self.computer.input_queue = VecDeque::new();
-            self.computer.relative_base = 0;
-            self.computer.external_numbers = HashMap::new();
+            let y = match self.computer.run() {
+                SuperIntCodeResult::Output(val) => val,
+                SuperIntCodeResult::Halted => unimplemented!(),
+            };
 
-            let mut ball_pos = BigPoint::origin();
-            println!("Game Restarted!!!!");
+            let third = match self.computer.run() {
+                SuperIntCodeResult::Output(val) => val,
+                SuperIntCodeResult::Halted => unimplemented!(),
+            };
 
-            // Game run loop
-            loop {
-                let x = match self.computer.run() {
-                    SuperIntCodeResult::Output(val) => val,
-                    SuperIntCodeResult::Halted => {
-//                        println!("Game halted!");
-//                        println!("{}", self.score);
-                        exit(0);
-                    }
+            if x >= 0 {
+                self.screen[y as usize][x as usize] = match third {
+                    EMPTY_TILE => ' ',
+                    WALL_TILE => '#',
+                    BLOCK_TILE => 'x',
+                    HORIZONTAL_PADDLE_TILE => '=',
+                    BALL_TILE => 'O',
+                    _ => unimplemented!()
                 };
 
-                let y = match self.computer.run() {
-                    SuperIntCodeResult::Output(val) => val,
-                    SuperIntCodeResult::Halted => unimplemented!(),
-                };
-
-                let third = match self.computer.run() {
-                    SuperIntCodeResult::Output(val) => val,
-                    SuperIntCodeResult::Halted => unimplemented!(),
-                };
-
-                if x >= 0 {
-                    self.screen[y as usize][x as usize] = match third {
-                        EMPTY_TILE => ' ',
-                        WALL_TILE => '#',
-                        BLOCK_TILE => 'x',
-                        HORIZONTAL_PADDLE_TILE => '=',
-                        BALL_TILE => 'O',
-                        _ => unimplemented!()
-                    };
-
-                    match third {
-                        HORIZONTAL_PADDLE_TILE => {
-                            paddle_pos.x = x;
-                            paddle_pos.y = y;
-                        }
-                        BALL_TILE => {
-                            ball_pos.x = x;
-                            ball_pos.y = y;
-                        }
-                        _ => ()
+                match third {
+                    HORIZONTAL_PADDLE_TILE => {
+                        paddle_pos.x = x;
+                        paddle_pos.y = y;
                     }
+                    BALL_TILE => {
+                        ball_pos.x = x;
+                        ball_pos.y = y;
+                    }
+                    _ => ()
+                }
 
-                    while self.computer.input_queue.len() > 0 {
-                        self.computer.input_queue.pop_front();
-                    }
-                    let position_difference = ball_pos.x - paddle_pos.x;
-                    if position_difference == 0 {
-                        self.computer.input_queue.push_back(0);
-                    } else {
-                        self.computer.input_queue.push_back(position_difference / position_difference.abs());
-                    }
+                while self.computer.input_queue.len() > 0 {
+                    self.computer.input_queue.pop_front();
+                }
+                let position_difference = ball_pos.x - paddle_pos.x;
+                if position_difference == 0 {
+                    self.computer.input_queue.push_back(0);
                 } else {
-                    self.score = third;
+                    self.computer.input_queue.push_back(position_difference / position_difference.abs());
                 }
+            } else {
+                self.score = third;
+            }
 
-                loop_count += 1;
+            loop_count += 1;
 
-                if loop_count > 989 {
-                    let mut screen_buffer: String = String::new();
-                    for row in &self.screen {
-                        screen_buffer.push(' ');
-                        for c in row {
-                            screen_buffer.push(c.clone());
-                        }
-                        screen_buffer.push('\n');
+            if debug {
+                let mut screen_buffer: String = String::new();
+                for row in &self.screen {
+                    screen_buffer.push(' ');
+                    for c in row {
+                        screen_buffer.push(c.clone());
                     }
-                    println!("\n{}\n", screen_buffer);
-                    println!(" Current score: {}", self.score);
-
-                    println!(" Pending input: {:?}", self.computer.input_queue);
-                    println!(" Run loop: {:?}", loop_count);
-                    println!(" Paddle position: {:?}", paddle_pos);
-                    println!(" Ball position: {:?}", ball_pos);
-                    println!(" -->");
-
-                    match third {
-                        HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(5)),
-                        _ => ()
-                    };
+                    screen_buffer.push('\n');
                 }
+                println!("\n{}\n", screen_buffer);
+                println!(" Current score: {}", self.score);
+
+                println!(" Pending input: {:?}", self.computer.input_queue);
+                println!(" Run loop: {:?}", loop_count);
+                println!(" Paddle position: {:?}", paddle_pos);
+                println!(" Ball position: {:?}", ball_pos);
+                println!(" -->");
+
+                match third {
+                    HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(10)),
+                    _ => ()
+                };
             }
         }
+        return self.score;
     }
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
+pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
 
     // Use part 1 to just get the size of the screen
     let map = play_game(&input.data);
@@ -190,7 +174,8 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
     let mut arcade = ArcadeCabinet { computer, screen, score: 0 };
 
     arcade.insert_coin();
-    arcade.start();
 
-    Answer { question: input.question, result: "1".to_string() }
+    let final_score = arcade.play(false);
+
+    Answer { question: input.question, result: final_score }
 }
