@@ -71,25 +71,18 @@ impl ArcadeCabinet {
     fn start(&mut self) {
         let memory = self.computer.numbers.clone();
 
-        let mut paddle_targets: VecDeque<i128> = VecDeque::from(vec![21, 27, 27, 19, 13, 7, 1, 7, 15, 21, 21, 21, 19, 19, 19, 19, 19]);
-
         loop {
             let mut paddle_pos: BigPoint = BigPoint::origin();
             let mut loop_count = 0;
-            let mut current_paddle_targets = paddle_targets.clone();
 
             self.computer.numbers = memory.clone();
             self.computer.index = 0;
             self.computer.input_queue = VecDeque::new();
             self.computer.relative_base = 0;
             self.computer.external_numbers = HashMap::new();
+
             let mut ball_pos = BigPoint::origin();
             println!("Game Restarted!!!!");
-            println!("Total Knowledge: ");
-            for t in &paddle_targets {
-                print!("{},", t);
-            };
-            println!();
 
             // Game run loop
             loop {
@@ -134,32 +127,14 @@ impl ArcadeCabinet {
                         _ => ()
                     }
 
-                    if ball_pos.y == paddle_pos.y - 1 as i128 && third == BALL_TILE {
-                        if current_paddle_targets.is_empty() {
-                            paddle_targets.push_back(x);
-                            println!("Restart!!!! New knowledge: {}", x);
-                            break;
-                        } else if *current_paddle_targets.front().unwrap() == x {
-                            current_paddle_targets.pop_front();
-                        } else {
-                            unimplemented!();
-                        }
+                    while self.computer.input_queue.len() > 0 {
+                        self.computer.input_queue.pop_front();
                     }
-
-                    if self.computer.input_queue.is_empty() {
-                        let action = match current_paddle_targets.front() {
-                            Some(target_position) => {
-                                println!("{} --! {}", target_position, paddle_pos.x);
-
-                                if target_position - paddle_pos.x == 0 {
-                                    0
-                                } else {
-                                    (target_position - paddle_pos.x) / (target_position - paddle_pos.x).abs()
-                                }
-                            }
-                            None => 0
-                        };
-                        self.computer.input_queue.push_back(action);
+                    let position_difference = ball_pos.x - paddle_pos.x;
+                    if position_difference == 0 {
+                        self.computer.input_queue.push_back(0);
+                    } else {
+                        self.computer.input_queue.push_back(position_difference / position_difference.abs());
                     }
                 } else {
                     self.score = third;
@@ -182,13 +157,12 @@ impl ArcadeCabinet {
                     println!("Loop: {:?}", loop_count);
                     println!("Paddle position: {:?}!", paddle_pos);
                     println!("Ball score: {:?}", ball_pos);
-                    println!("Knowledge: {:?}", current_paddle_targets);
                     println!("-->");
 
                     println!("Debug third {}", third);
 
                     match third {
-                        HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(200)),
+                        HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(1)),
                         _ => ()
                     };
                 }
