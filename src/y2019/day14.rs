@@ -66,7 +66,7 @@ fn run_simulation(
     required_materials[&SOURCE_MATERIAL.to_string()]
 }
 
-fn required_ore_for_one(reactions: &HashMap<String, (Vec<RequiredMaterial>, i64)> ) -> i64 {
+fn required_ore_for_one(reactions: &HashMap<String, (Vec<RequiredMaterial>, i64)>) -> i64 {
     let mut required_materials: HashMap<String, i64> = HashMap::new();
     required_materials.insert(TARGET_MATERIAL.to_string(), 1);
 
@@ -88,27 +88,27 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<i64> {
     let mut required_materials: HashMap<String, i64> = HashMap::new();
 
     let mut current_used_ore: i64 = 0;
+    let mut total_fuel_quantity: i64 = 0;
     let mut loop_index = 0;
     loop {
         let remaining_ore = MAXIMUM_ORE - current_used_ore;
 
         // With `remaining_ore` ORE, we can approximately produce
-        let target_quantity = i64::max(remaining_ore / single_fuel_required_ore / 2 - 1, 1);
+        let fuel_quantity = i64::max(remaining_ore / single_fuel_required_ore / 2 - 1, 1);
 
-        required_materials.insert(TARGET_MATERIAL.to_string(), target_quantity);
+        required_materials.insert(TARGET_MATERIAL.to_string(), fuel_quantity);
 
         let new_required_ore = run_simulation(&reactions, &mut required_materials);
         if new_required_ore > MAXIMUM_ORE {
             break;
         } else {
             current_used_ore = new_required_ore;
+            total_fuel_quantity += fuel_quantity;
         }
 
         loop_index += 1;
-        if loop_index % 1000 == 0 {
-            println!("{}/{} about {}", current_used_ore, MAXIMUM_ORE, current_used_ore as f32 / MAXIMUM_ORE as f32);
-        }
+        println!("Loop {}: total_fuel: {} ore used: {}", loop_index, total_fuel_quantity, current_used_ore);
     }
 
-    return Answer { question: input.question, result: current_used_ore };
+    return Answer { question: input.question, result: total_fuel_quantity };
 }
