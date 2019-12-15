@@ -134,7 +134,7 @@ impl ArcadeCabinet {
                         _ => ()
                     }
 
-                    if y == paddle_pos.y - 1 as i128 && third == BALL_TILE {
+                    if ball_pos.y == paddle_pos.y - 1 as i128 && third == BALL_TILE {
                         if current_paddle_targets.is_empty() {
                             paddle_targets.push_back(x);
                             println!("Restart!!!! New knowledge: {}", x);
@@ -148,11 +148,13 @@ impl ArcadeCabinet {
 
                     if self.computer.input_queue.is_empty() {
                         let action = match current_paddle_targets.front() {
-                            Some(target) => {
-                                if target - paddle_pos.x == 0 {
+                            Some(target_position) => {
+                                println!("{} --! {}", target_position, paddle_pos.x);
+
+                                if target_position - paddle_pos.x == 0 {
                                     0
                                 } else {
-                                    (target - paddle_pos.x) / (target - paddle_pos.x).abs()
+                                    (target_position - paddle_pos.x) / (target_position - paddle_pos.x).abs()
                                 }
                             }
                             None => 0
@@ -176,12 +178,14 @@ impl ArcadeCabinet {
                     println!("{}", screen_buffer);
                     println!("Current score: {}", self.score);
 
-                    println!("Pending input: {:?}", self.computer.input_queue.front());
+                    println!("Pending input: {:?}", self.computer.input_queue);
                     println!("Loop: {:?}", loop_count);
                     println!("Paddle position: {:?}!", paddle_pos);
                     println!("Ball score: {:?}", ball_pos);
                     println!("Knowledge: {:?}", current_paddle_targets);
                     println!("-->");
+
+                    println!("Debug third {}", third);
 
                     match third {
                         HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(200)),
