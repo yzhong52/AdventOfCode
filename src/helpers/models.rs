@@ -10,6 +10,12 @@ impl _Point<i32> {
     }
 }
 
+impl _Point<i128> {
+    pub fn origin() -> _Point<i128> {
+        _Point { x: 0, y: 0}
+    }
+}
+
 pub type Point = _Point<i32>;
 pub type BigPoint = _Point<i128>;
 
