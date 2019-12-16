@@ -63,7 +63,7 @@ impl std::cmp::Ord for Point {
 
 impl std::cmp::PartialOrd for Point {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
+        Some(self.cmp(&other))
     }
 }
 

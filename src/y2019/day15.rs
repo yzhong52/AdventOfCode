@@ -1,7 +1,7 @@
 use super::super::helpers::parser::*;
 use super::super::helpers::utils::*;
 use super::day9::*;
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, VecDeque, BinaryHeap, HashSet};
 use crate::helpers::models::BigPoint;
 use std::thread::sleep;
 use std::time::Duration;
@@ -39,8 +39,19 @@ struct Action {
     symbol: char,
 }
 
-fn lets_go(input: &Vec<i128>, debug: bool) -> HashMap<BigPoint, char> {
+struct Map {
+    map: HashMap<BigPoint, char>,
+    destination: BigPoint,
+}
 
+static MOVES: [Action; 4] = [
+    Action { input: NORTH, direction: BigPoint { x: 0, y: 1 }, symbol: '^' },
+    Action { input: SOUTH, direction: BigPoint { x: 0, y: -1 }, symbol: 'v' },
+    Action { input: WEST, direction: BigPoint { x: -1, y: 0 }, symbol: '<' },
+    Action { input: EAST, direction: BigPoint { x: 1, y: 0 }, symbol: '>' },
+];
+
+fn explore_map(input: &Vec<i128>, debug: bool) -> Map {
     let mut droid = SuperIntCodeComputer {
         numbers: input.clone(),
         index: 0,
@@ -78,7 +89,7 @@ fn lets_go(input: &Vec<i128>, debug: bool) -> HashMap<BigPoint, char> {
                     x: -current_move.direction.y,
                     y: current_move.direction.x,
                 };
-                next_move = moves.iter().find(|x| x.direction == new_direction).unwrap();
+                next_move = MOVES.iter().find(|x| x.direction == new_direction).unwrap();
             }
             SuperIntCodeResult::Output(RESPONSE_MOVED) => {
                 if droid_pos == BigPoint::origin() {
@@ -96,7 +107,7 @@ fn lets_go(input: &Vec<i128>, debug: bool) -> HashMap<BigPoint, char> {
                     x: current_move.direction.y,
                     y: -current_move.direction.x,
                 };
-                next_move = moves.iter().find(|x| x.direction == new_direction).unwrap();
+                next_move = MOVES.iter().find(|x| x.direction == new_direction).unwrap();
             }
             SuperIntCodeResult::Output(RESPONSE_DESTINATION) => {
                 map.insert(droid_pos.clone(), EMPTY);
@@ -115,16 +126,59 @@ fn lets_go(input: &Vec<i128>, debug: bool) -> HashMap<BigPoint, char> {
             println!("Target pos: {:?}", droid_pos);
             println!("Map size: {} x {}", buffer.len(), buffer[0].len());
 
-            sleep(Duration::from_millis(100));
+            sleep(Duration::from_millis(10));
         }
     }
 
-    map
+    Map { map, destination: destination_pos.unwrap() }
 }
 
+//// Sort by distance to the origin
+//impl std::cmp::Ord for BigPoint {
+//    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+//        let this = self.x * self.x + self.y * self.y;
+//        let that = other.x * other.x + other.y * other.y;
+//        that.cmp(&this)
+//    }
+//}
+//
+//impl std::cmp::PartialOrd for BigPoint {
+//    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+//        Some(self.cmp(&other))
+//    }
+//}
+
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    lets_go(&input.data, true);
-    Answer { question: input.question, result: 0 }
+    println!("???");
+    let map = explore_map(&input.data, false);
+
+//    let mut visited = HashSet::new();
+//
+//    let mut queue = BinaryHeap::new();
+//
+//    visited.insert(BigPoint::origin());
+//    queue.push((0, BigPoint::origin()));
+//
+    let mut distance_to_destination = 0;
+//    while queue.len() > 0 {
+//        let current_item = queue.pop().unwrap();
+//
+//        if current_item.1 == map.destination {
+//            distance_to_destination = current_item.0;
+//            break
+//        }
+//
+//        for m in MOVES.iter() {
+//            let new_position = current_item.1.clone() + m.direction.clone();
+//            if !visited.contains(&new_position) && map.map.get(&new_position).unwrap() != &WALL {
+//                queue.push((current_item.0 + 1, new_position.clone()));
+//                visited.insert(new_position);
+//            }
+//        };
+//        println!("{}", queue.len());
+//    }
+
+    Answer { question: input.question, result: distance_to_destination }
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
