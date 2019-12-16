@@ -19,6 +19,11 @@ impl _Point<i128> {
 pub type Point = _Point<i32>;
 pub type BigPoint = _Point<i128>;
 
+pub struct _Rect<P> {
+    pub lower: P,
+    pub upper: P,
+}
+
 #[derive(Eq, PartialEq, Debug, Hash, Clone)]
 pub struct Point3D {
     pub x: i32,

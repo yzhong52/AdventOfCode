@@ -1,4 +1,5 @@
 use super::super::helpers::parser::*;
+use super::super::helpers::utils::*;
 use super::day9::*;
 use std::collections::{HashMap, VecDeque};
 use crate::helpers::models::Point;
@@ -10,27 +11,15 @@ const TURN_LEFT: i128 = 0;
 const TURN_RIGHT: i128 = 1;
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
-    let map = painting(&input.data, WHITE_COLOR);
+    let map: HashMap<Point, bool> = painting(&input.data, WHITE_COLOR);
 
-    let mut min_x = 0;
-    let mut max_x = 0;
+    let rect = get_rectangle(&map);
 
-    let mut min_y = 0;
-    let mut max_y = 0;
+    let mut hull = vec![vec![' '; (rect.upper.x - rect.lower.x + 1) as usize]; (rect.upper.y - rect.lower.y + 1) as usize];
 
-    for p in map.keys() {
-        min_x = i32::min(p.x, min_x);
-        max_x = i32::max(p.x, max_x);
-
-        min_y = i32::min(p.y, min_y);
-        max_y = i32::max(p.y, max_y);
-    }
-
-    let mut hull = vec![vec![' '; (max_x - min_x + 1) as usize]; (max_y - min_y + 1) as usize];
-
-    for (p, color) in map {
-        if color {
-            hull[(max_y - p.y) as usize][(p.x - min_x) as usize] = '*'
+    for (p, color) in &map {
+        if *color {
+            hull[(rect.upper.y - p.y) as usize][(p.x - rect.lower.x) as usize] = '*'
         }
     }
 

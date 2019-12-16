@@ -3,6 +3,7 @@ use std::env;
 mod helpers {
     pub mod models;
     pub mod parser;
+    pub mod utils;
 }
 
 mod y2018 {
@@ -32,6 +33,7 @@ mod y2019 {
     pub mod day12;
     pub mod day13;
     pub mod day14;
+    pub mod day15;
 }
 
 use helpers::parser::*;
@@ -111,6 +113,11 @@ fn run_completed() {
     // Day 13: Space Police
     y2019::day13::part1(read_numbers_by_comma(Question::y2019(13))).save_part1();
     y2019::day13::part2(read_numbers_by_comma(Question::y2019(13))).save_part2();
+
+    // Day 14: Space Stoichiometry
+    y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
+    y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
+
 }
 
 fn main() {
@@ -121,7 +128,6 @@ fn main() {
         };
     }
 
-    // Day 14: Space Stoichiometry
-    y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
-    y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
+    y2019::day15::part1(read_numbers_by_comma(Question::y2019(15))).save_part1();
+    y2019::day15::part2(read_numbers_by_comma(Question::y2019(15))).save_part2();
 }
