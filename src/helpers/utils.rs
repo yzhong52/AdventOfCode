@@ -6,7 +6,7 @@ extern crate num;
 
 use num::Integer;
 
-pub fn get_rectangle<T, ValueType>(map: &HashMap<_Point<T>, ValueType>) -> _Rect<_Point<T>>
+pub fn get_rectangle<T, ValueType>(map: &HashMap<_Point<T>, ValueType>) -> Rect<_Point<T>>
     where T: Integer, T: Copy
 {
     let mut lower = map.keys().nth(0).unwrap().clone();
@@ -20,11 +20,39 @@ pub fn get_rectangle<T, ValueType>(map: &HashMap<_Point<T>, ValueType>) -> _Rect
         upper.y = p.y.max(upper.y);
     }
 
-    _Rect { lower, upper }
+    Rect { lower, upper }
 }
 
+// ^ y
+// |
+// |
+// |         x
+// + - - - - >
+pub(crate) fn get_screen_buffer(map: &HashMap<BigPoint, char>, fill: char) -> Vec<Vec<char>> {
+    let rect: Rect<_Point<i128>> = get_rectangle(&map);
 
-fn get_screen_buffer(map: HashMap<BigPoint, char>) -> Vec<Vec<char>> {
-    let rect: _Rect<_Point<i128>> = get_rectangle(&map);
-    vec![vec![' '; (rect.upper.y - rect.lower.y + 1) as usize]; (rect.upper.x - rect.lower.x) as usize]
+    let width = (rect.upper.x - rect.lower.x + 1) as usize;
+    let height = (rect.upper.y - rect.lower.y + 1) as usize;
+
+    let mut buffer = vec![vec![fill; width]; height];
+
+    for (p, c) in map {
+        buffer[(rect.upper.y - p.y) as usize][(p.x - rect.lower.x) as usize] = *c;
+    }
+
+    buffer
+}
+
+pub(crate) fn print(buffer: &Vec<Vec<char>>) {
+    let mut result = String::new();
+    result.push('\n');
+    for row in buffer {
+        for c in row {
+            result.push(' ');
+            result.push(*c);
+            result.push(' ');
+        }
+        result.push('\n');
+    }
+    println!("{}", result);
 }

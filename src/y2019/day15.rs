@@ -3,6 +3,9 @@ use super::super::helpers::utils::*;
 use super::day9::*;
 use std::collections::{HashMap, VecDeque};
 use crate::helpers::models::BigPoint;
+use std::thread::sleep;
+use std::time::Duration;
+use rand::prelude::*;
 
 //0: The repair droid hit a wall. Its position has not changed.
 const RESPONSE_WALL_HIT: i128 = 0;
@@ -13,6 +16,7 @@ const RESPONSE_DESTINATION: i128 = 2;
 
 // Moves
 type DIRECTION = i128;
+
 const NORTH: DIRECTION = 1;
 const SOUTH: i128 = 2;
 const WEST: i128 = 3;
@@ -20,14 +24,15 @@ const EAST: i128 = 4;
 
 // Annotations
 type Annotation = char;
-const START: char = '*';
-const TARGET: char = '*';
-const WALL: char = '#';
-const DROID: char = 'D';
+const START: Annotation = 'S';
+const TARGET: Annotation = 'T';
+const WALL: Annotation = '#';
+const DROID: Annotation = 'D';
+const EMPTY: Annotation = '.';
 
-fn lets_go(input: &Vec<i128>) -> HashMap<BigPoint, char> {
+fn lets_go(input: &Vec<i128>, debug: bool) -> HashMap<BigPoint, char> {
     let mut map: HashMap<BigPoint, char> = HashMap::new();
-    map.insert(BigPoint::origin(), '*');
+    map.insert(BigPoint::origin(), DROID);
 
     let mut droid = SuperIntCodeComputer {
         numbers: input.clone(),
@@ -38,39 +43,64 @@ fn lets_go(input: &Vec<i128>) -> HashMap<BigPoint, char> {
     };
 
     let command_index = 0;
-    let commands = [NORTH, SOUTH, WEST, EAST];
+    let moves = [NORTH, SOUTH, WEST, EAST];
 
     let directions: HashMap<DIRECTION, BigPoint> = [
         (NORTH, BigPoint { x: 0, y: 1 }),
         (SOUTH, BigPoint { x: 0, y: -1 }),
-        (WEST, BigPoint { x: -1, y: 1 }),
+        (WEST, BigPoint { x: -1, y: 0 }),
         (EAST, BigPoint { x: 1, y: 0 }),
     ].iter().cloned().collect();
 
+    let mut last_move = NORTH;
+    let mut droid_pos: BigPoint = BigPoint::origin();
+    let mut destination_pos: Option<BigPoint> = None;
+
+    let mut rng = rand::thread_rng();
+
     loop {
-        // droid.input_queue
-        let x = match droid.run() {
-            SuperIntCodeResult::Output(val) => val,
+        let move_index = rng.gen_range(0, moves.len());
+        last_move = moves[move_index];
+
+        droid.input_queue.push_back(last_move);
+
+        let direction = directions.get(&last_move).unwrap();
+
+        match droid.run() {
+            SuperIntCodeResult::Output(RESPONSE_WALL_HIT) => {
+                let wall_pos = droid_pos.clone() + direction.clone();
+                map.insert(wall_pos, WALL);
+            }
+            SuperIntCodeResult::Output(RESPONSE_MOVED) => {
+                map.insert(droid_pos.clone(), EMPTY);
+                droid_pos += direction.clone();
+                map.insert(droid_pos.clone(), DROID);
+            }
+            SuperIntCodeResult::Output(RESPONSE_DESTINATION) => {
+                map.insert(droid_pos.clone(), EMPTY);
+                droid_pos += direction.clone();
+                destination_pos = Some(droid_pos.clone());
+                map.insert(droid_pos.clone(), EMPTY);
+            }
             SuperIntCodeResult::Halted => break,
+            _ => unimplemented!()
         };
 
-        let y = match droid.run() {
-            SuperIntCodeResult::Output(val) => val,
-            SuperIntCodeResult::Halted => unimplemented!(),
-        };
+        if debug {
+            let buffer = get_screen_buffer(&map, ' ');
+            print(&buffer);
+            println!("Droid pos: {:?}", droid_pos);
+            println!("Target pos: {:?}", droid_pos);
 
-        let tile_id = match droid.run() {
-            SuperIntCodeResult::Output(val) => val,
-            SuperIntCodeResult::Halted => unimplemented!(),
-        };
-
-        map.insert(BigPoint { x, y }, '?');
+            sleep(Duration::from_millis(200));
+        }
     }
 
     map
 }
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
+    lets_go(&input.data, true);
     Answer { question: input.question, result: 0 }
 }
 
