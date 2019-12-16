@@ -149,12 +149,22 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
     ExploredMap { map, destination: destination_pos.unwrap() }
 }
 
-// Sort by distance to the origin
-impl std::cmp::Ord for BigPoint {
+#[derive(Eq, PartialEq, Debug, Hash, Clone)]
+struct TranverseItem {
+    distance: usize,
+    position: BigPoint,
+}
+
+impl std::cmp::Ord for TranverseItem {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        let this = self.x * self.x + self.y * self.y;
-        let that = other.x * other.x + other.y * other.y;
-        that.cmp(&this)
+        // reversed because we'd like to use this for minimum queue (binary heap)
+        other.distance.cmp(&self.distance)
+    }
+}
+
+impl std::cmp::PartialOrd for TranverseItem {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(&other))
     }
 }
 
@@ -166,27 +176,28 @@ fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigP
     let mut queue = BinaryHeap::new();
 
     visited.insert(source.clone());
-    queue.push((0, source));
+    queue.push(TranverseItem { distance: 0, position: source });
 
     let mut distance_to_destination = 0;
     while queue.len() > 0 {
         let current_item = queue.pop().unwrap();
-        println!("Current {:?}", current_item.clone());
-        println!("Queued {:?}", queue.len());
 
-        distance_to_destination = current_item.0;
+        distance_to_destination = current_item.distance;
 
         match target {
-            Some(value) if value == current_item.1.clone() => {
-                break
+            Some(value) if value == current_item.position.clone() => {
+                break;
             }
             _ => ()
         }
 
         for m in ACTIONS.iter() {
-            let new_position = current_item.1.clone() + m.direction.clone();
+            let new_position = current_item.position.clone() + m.direction.clone();
             if !visited.contains(&new_position) && map.get(&new_position).unwrap() != &WALL {
-                queue.push((current_item.0 + 1, new_position.clone()));
+                queue.push(TranverseItem {
+                    distance: current_item.distance + 1,
+                    position: new_position.clone(),
+                });
                 visited.insert(new_position);
             }
         };
@@ -195,11 +206,6 @@ fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigP
     distance_to_destination
 }
 
-impl std::cmp::PartialOrd for BigPoint {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(&other))
-    }
-}
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
     let explored = explore_map(&input.data, false);
@@ -216,7 +222,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let distance_to_destination = dijkstra(
         &explored.map,
         explored.destination,
-        None
+        None,
     );
     Answer { question: input.question, result: distance_to_destination }
 }
