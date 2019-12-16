@@ -1,5 +1,4 @@
-use std::collections::{HashMap, VecDeque};
-use super::super::helpers::parser::*;
+use std::collections::HashMap;
 use super::super::helpers::models::*;
 
 extern crate num;
@@ -28,13 +27,13 @@ pub fn get_rectangle<T, ValueType>(map: &HashMap<_Point<T>, ValueType>) -> Rect<
 // |
 // |         x
 // + - - - - >
-pub(crate) fn get_screen_buffer(map: &HashMap<BigPoint, char>, fill: char) -> Vec<Vec<char>> {
+pub(crate) fn get_screen_buffer(map: &HashMap<BigPoint, char>, fill: char, min_with: usize, min_height: usize) -> Vec<Vec<char>> {
     let rect: Rect<_Point<i128>> = get_rectangle(&map);
 
     let width = (rect.upper.x - rect.lower.x + 1) as usize;
     let height = (rect.upper.y - rect.lower.y + 1) as usize;
 
-    let mut buffer = vec![vec![fill; width]; height];
+    let mut buffer = vec![vec![fill; width.max(min_with)]; height.max(min_height)];
 
     for (p, c) in map {
         buffer[(rect.upper.y - p.y) as usize][(p.x - rect.lower.x) as usize] = *c;

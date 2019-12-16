@@ -1,5 +1,4 @@
 use std::ops;
-use std::ops::Add;
 
 #[derive(Eq, PartialEq, Debug, Hash, Clone)]
 pub struct _Point<T> {
