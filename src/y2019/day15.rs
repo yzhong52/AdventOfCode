@@ -39,7 +39,7 @@ struct Action {
     symbol: char,
 }
 
-struct Map {
+struct ExploredMap {
     map: HashMap<BigPoint, char>,
     destination: BigPoint,
 }
@@ -51,7 +51,7 @@ static ACTIONS: [Action; 4] = [
     Action { input: EAST, direction: BigPoint { x: 1, y: 0 }, symbol: '>' },
 ];
 
-fn explore_map(input: &Vec<i128>, debug: bool) -> Map {
+fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
     let mut droid = SuperIntCodeComputer {
         numbers: input.clone(),
         index: 0,
@@ -146,7 +146,7 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> Map {
         }
     }
 
-    Map { map, destination: destination_pos.unwrap() }
+    ExploredMap { map, destination: destination_pos.unwrap() }
 }
 
 // Sort by distance to the origin
@@ -158,6 +158,43 @@ impl std::cmp::Ord for BigPoint {
     }
 }
 
+// https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+// `target` is, if `None`, it will return the last furthest tile on the map
+fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigPoint>) -> usize {
+    let mut visited = HashSet::new();
+
+    let mut queue = BinaryHeap::new();
+
+    visited.insert(source.clone());
+    queue.push((0, source));
+
+    let mut distance_to_destination = 0;
+    while queue.len() > 0 {
+        let current_item = queue.pop().unwrap();
+        println!("Current {:?}", current_item.clone());
+        println!("Queued {:?}", queue.len());
+
+        distance_to_destination = current_item.0;
+
+        match target {
+            Some(value) if value == current_item.1.clone() => {
+                break
+            }
+            _ => ()
+        }
+
+        for m in ACTIONS.iter() {
+            let new_position = current_item.1.clone() + m.direction.clone();
+            if !visited.contains(&new_position) && map.get(&new_position).unwrap() != &WALL {
+                queue.push((current_item.0 + 1, new_position.clone()));
+                visited.insert(new_position);
+            }
+        };
+    }
+
+    distance_to_destination
+}
+
 impl std::cmp::PartialOrd for BigPoint {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(&other))
@@ -165,37 +202,21 @@ impl std::cmp::PartialOrd for BigPoint {
 }
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let map = explore_map(&input.data, true);
-
-    let mut visited = HashSet::new();
-
-    let mut queue = BinaryHeap::new();
-
-    visited.insert(BigPoint::origin());
-    queue.push((0, BigPoint::origin()));
-
-    let mut distance_to_destination = 0;
-    while queue.len() > 0 {
-        let current_item = queue.pop().unwrap();
-
-        if current_item.1 == map.destination {
-            distance_to_destination = current_item.0;
-            break;
-        }
-
-        for m in ACTIONS.iter() {
-            let new_position = current_item.1.clone() + m.direction.clone();
-            if !visited.contains(&new_position) && map.map.get(&new_position).unwrap() != &WALL {
-                queue.push((current_item.0 + 1, new_position.clone()));
-                visited.insert(new_position);
-            }
-        };
-        println!("{}", queue.len());
-    }
-
+    let explored = explore_map(&input.data, false);
+    let distance_to_destination = dijkstra(
+        &explored.map,
+        BigPoint::origin(),
+        Some(explored.destination),
+    );
     Answer { question: input.question, result: distance_to_destination }
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    Answer { question: input.question, result: 0 }
+pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
+    let explored = explore_map(&input.data, false);
+    let distance_to_destination = dijkstra(
+        &explored.map,
+        explored.destination,
+        None
+    );
+    Answer { question: input.question, result: distance_to_destination }
 }
