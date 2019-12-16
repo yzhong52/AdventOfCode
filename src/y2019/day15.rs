@@ -142,7 +142,7 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
             println!("Map size: {} x {}", buffer.len(), buffer[0].len());
             println!("Unknown tiles: {}", unknown_land.len());
 
-            sleep(Duration::from_millis(20));
+            sleep(Duration::from_millis(24));
         }
     }
 
@@ -208,7 +208,7 @@ fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigP
 
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let explored = explore_map(&input.data, false);
+    let explored = explore_map(&input.data, true);
     let distance_to_destination = dijkstra(
         &explored.map,
         BigPoint::origin(),
