@@ -34,6 +34,7 @@ mod y2019 {
     pub mod day13;
     pub mod day14;
     pub mod day15;
+    pub mod day16;
 }
 
 use helpers::parser::*;
@@ -118,6 +119,9 @@ fn run_completed() {
     y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
     y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
 
+    // Day 15: Oxygen System
+    y2019::day15::part1(read_numbers_by_comma(Question::y2019(15))).save_part1();
+    y2019::day15::part2(read_numbers_by_comma(Question::y2019(15))).save_part2();
 }
 
 fn main() {
@@ -128,6 +132,7 @@ fn main() {
         };
     }
 
-    y2019::day15::part1(read_numbers_by_comma(Question::y2019(15))).save_part1();
-    y2019::day15::part2(read_numbers_by_comma(Question::y2019(15))).save_part2();
+    // Day 16: Flawed Frequency Transmission
+    y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
+    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
 }
