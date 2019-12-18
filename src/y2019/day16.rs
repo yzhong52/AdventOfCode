@@ -27,10 +27,11 @@ pub fn part1(input: Input<String>) -> Answer<String> {
     return Answer { question: input.question, result };
 }
 
-const REPEATED_TIMES: usize = 1;
+const REPEATED_TIMES: usize = 10000;
 
 pub fn part2(input: Input<String>) -> Answer<String> {
     let initial_digits = parse(&input.data);
+    println!("Length is of the initial input: {}", initial_digits.len());
 
     // Repeat this `REPEATED_TIMES` times
     let mut digits = vec![vec![]; REPEATED_TIMES];
@@ -56,8 +57,11 @@ pub fn part2(input: Input<String>) -> Answer<String> {
 
                 let last_digit: i8 = (&total.abs() % 10) as i8;
                 next_digits[r1].push(last_digit);
+                println!("r2 {:?}", &r2);
             }
+            println!("r1 {:?}", &r1);
         }
+        println!("{:?}", &next_digits);
         digits = next_digits;
 
         println!("Do we need to speed up {}", phase);
