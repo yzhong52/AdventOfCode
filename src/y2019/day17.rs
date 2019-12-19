@@ -68,10 +68,8 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
     let mut map: HashMap<BigPoint, char> = HashMap::new();
     map.insert(BigPoint::origin(), next_action.symbol);
 
-    let mut unknown_land = HashSet::new();
-    for action in ACTIONS.iter() {
-        unknown_land.insert(BigPoint::origin() + action.direction.clone());
-    }
+    let mut scaffold = vec![vec![]; 0];
+    let mut row = vec![];
     loop {
         let current_move = next_action;
 
@@ -79,16 +77,37 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
 
         match droid.run() {
             SuperIntCodeResult::Output(value) => {
-                print!("{}", value as u8 as char)
-            },
+                match value as u8 as char {
+                    '\n' => {
+                        if row.len() > 0 {
+                            scaffold.push(row.clone());
+                        }
+
+                        row = vec![];
+                    }
+                    ch => {
+                        row.push(ch)
+                    }
+                }
+            }
             SuperIntCodeResult::Halted => break,
         };
-
-        if debug {
-
-            // sleep(Duration::from_millis(24));
-        }
     }
+
+    let mut result = 0;
+    for r in 1..&scaffold.len() - 1 {
+        for c in 1..&scaffold[r].len() - 1 {
+            if &scaffold[r][c] == &'#' && &scaffold[r + 1][c] == &'#' && &scaffold[r - 1][c] == &'#' && &scaffold[r][c + 1] == &'#' && &scaffold[r][c - 1] == &'#' {
+                print!("{} ", 'O');
+                result += r * c;
+            } else {
+                print!("{} ", scaffold[r][c])
+            }
+        }
+        println!()
+    }
+
+    println!("{}", result);
 
     ExploredMap { map, destination: BigPoint::origin() }
 }
