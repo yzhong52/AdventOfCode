@@ -102,39 +102,64 @@ fn path_search(
     let max_x = visited.len();
     let max_y = visited[0].len();
 
+    let mut action_taken = false;
     for next_dir in move_directions.iter() {
         let next_position = current_position.clone() + next_dir.clone();
 
         if next_position.x >= 0 && next_position.x < max_x as i128 &&
-            next_position.y >= 0 && next_position.y <= max_y as i128 &&
-            visited[next_position.x as usize][next_position.y as usize] == 0 && // haven't visit
-            scaffold[next_position.x as usize][next_position.y as usize] == '#' // is scaffold
-        {
-            if next_dir.x != facing_direction.x && next_dir.y != facing_direction.y {
-                // Let's assume the robot don't turn around 180 degrees for now
-                unimplemented!()
-            } else if next_dir.x == facing_direction.x || next_dir.y == facing_direction.y {
-                // Same direction, keep moving
-                let mut next_actions = actions.clone();
-                match next_actions.pop().unwrap() {
-                    Action::Forward(value) => {
-                        next_actions.push(Action::Forward(value + 1))
-                    }
-                    _ => unimplemented!()
-                }
+            next_position.y >= 0 && next_position.y < max_y as i128 {
+            let visited_count = visited[next_position.x as usize][next_position.y as usize];
+            let is_scaffold = scaffold[next_position.x as usize][next_position.y as usize] == '#';
+            let is_intersection = scaffold[next_position.x as usize][next_position.y as usize] == '0';
+//            println!("!!!");
+//            println!("{:?}", scaffold[next_position.x as usize][next_position.y as usize]);
+//            println!("{:?}", next_position);
+//            println!("visited_count {}", visited_count);
+//            println!("is_scaffold {}", is_scaffold);
+//            println!("is_intersection {}", is_intersection);
+            if visited_count == 0 && is_scaffold || is_intersection {
+//                println!("is_intersection {:?} {:?}", next_dir, facing_direction);
 
-                visited[next_position.x as usize][next_position.y as usize] += 1;
-                path_search(
-                    visited,
-                    next_actions,
-                    next_position.clone(),
-                    next_dir.clone(),
-                    &solutions,
-                    &scaffold,
-                );
-                visited[next_position.x as usize][next_position.y as usize] -= 1;
+                // Let's assume the robot don't turn around 180 degrees for now
+                if next_dir.clone().dot_product(facing_direction.clone()) >= 0 {
+                    let mut next_actions = actions.clone();
+
+                    action_taken = false;
+
+                    if facing_direction.turn_right() == *next_dir {
+                        next_actions.push(Action::TurnRight);
+                        next_actions.push(Action::Forward(0));
+                    } else if facing_direction.turn_left() == *next_dir {
+                        next_actions.push(Action::TurnLeft);
+                        next_actions.push(Action::Forward(0));
+                    }
+
+                    // Same direction, keep moving
+                    match next_actions.pop().unwrap() {
+                        Action::Forward(value) => {
+                            next_actions.push(Action::Forward(value + 1))
+                        }
+                        _ => unimplemented!()
+                    }
+
+                    visited[next_position.x as usize][next_position.y as usize] += 1;
+                    path_search(
+                        visited,
+                        next_actions,
+                        next_position.clone(),
+                        next_dir.clone(),
+                        &solutions,
+                        &scaffold,
+                    );
+                    visited[next_position.x as usize][next_position.y as usize] -= 1;
+                }
             }
         }
+    }
+
+    // if no action can be taken, then we reach the end
+    if !action_taken {
+        println!("{:?}", actions);
     }
 }
 
@@ -143,7 +168,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
 
     // find the starting position of the robot
     let start = start_pos(&scaffold);
-    println!("{:?}", start);
+    println!("Starting position is: {:?}", start);
 
     let mut visited: Vec<Vec<i32>> = vec![vec![0; scaffold[0].len()]; scaffold.len()];
     let solutions: Vec<Vec<Action>> = vec![vec![]];

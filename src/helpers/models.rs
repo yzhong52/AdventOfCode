@@ -25,15 +25,27 @@ impl<T> ops::Add<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Add {
     fn add(self, rhs: _Point<T>) -> _Point<T> {
         _Point {
             x: self.x + rhs.x,
-            y: self.y + rhs.y
+            y: self.y + rhs.y,
         }
     }
 }
 
-
+// TODO: Yuchen - move them into templates
 impl _Point<i128> {
     pub fn origin() -> _Point<i128> {
         _Point { x: 0, y: 0 }
+    }
+
+    pub fn turn_right(&self) -> _Point<i128> {
+        _Point { x: self.y, y: -self.x }
+    }
+
+    pub fn turn_left(&self) -> _Point<i128> {
+        _Point { x: -self.y, y: self.x }
+    }
+
+    pub fn dot_product(self, rhs: _Point<i128>) -> i128 {
+        self.x * rhs.x + self.y * rhs.y
     }
 }
 
