@@ -42,17 +42,21 @@ fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
 }
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let scaffold = detect_scaffold(&input.data, true);
+    let mut scaffold = detect_scaffold(&input.data, true);
 
     let mut result = 0;
     for r in 1..&scaffold.len() - 1 {
         for c in 1..&scaffold[r].len() - 1 {
             if &scaffold[r][c] == &'#' && &scaffold[r + 1][c] == &'#' && &scaffold[r - 1][c] == &'#' && &scaffold[r][c + 1] == &'#' && &scaffold[r][c - 1] == &'#' {
-                print!("{} ", 'O');
+                scaffold[r][c] = '0';
                 result += r * c;
-            } else {
-                print!("{} ", scaffold[r][c])
             }
+        }
+    }
+
+    for r in 0.. scaffold.len() {
+        for c in 0.. scaffold[r].len() {
+            print!("{} ", scaffold[r][c]);
         }
         println!()
     }
