@@ -6,6 +6,11 @@ use crate::helpers::models::{BigPoint, _Point};
 use std::thread::sleep;
 use std::time::Duration;
 use std::char;
+use std::fmt::{Debug, Formatter, Error};
+use std::process::exit;
+
+const INTERSECTION: char = 'O';
+const FRAME: char = '#';
 
 fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
     let mut vacuum_robot = SuperIntCodeComputer {
@@ -41,24 +46,31 @@ fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
     scaffold
 }
 
+fn annotate_intersections(mut scaffold: Vec<Vec<char>>) -> Vec<Vec<char>> {
+    for r in 1..&scaffold.len() - 1 {
+        for c in 1..&scaffold[r].len() - 1 {
+            if &scaffold[r][c] == &FRAME
+                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
+                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
+                scaffold[r][c] = INTERSECTION;
+            }
+        }
+    }
+    scaffold
+}
+
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
     let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
 
     let mut result = 0;
     for r in 1..&scaffold.len() - 1 {
         for c in 1..&scaffold[r].len() - 1 {
-            if &scaffold[r][c] == &'#' && &scaffold[r + 1][c] == &'#' && &scaffold[r - 1][c] == &'#' && &scaffold[r][c + 1] == &'#' && &scaffold[r][c - 1] == &'#' {
-                scaffold[r][c] = '0';
+            if &scaffold[r][c] == &FRAME
+                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
+                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
                 result += r * c;
             }
         }
-    }
-
-    for r in 0..scaffold.len() {
-        for c in 0..scaffold[r].len() {
-            print!("{} ", scaffold[r][c]);
-        }
-        println!()
     }
 
     Answer { question: input.question, result }
@@ -75,11 +87,21 @@ fn start_pos(scaffold: &Vec<Vec<char>>) -> BigPoint {
     BigPoint::origin()
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 enum Action {
     Forward(u8),
     TurnLeft,
     TurnRight,
+}
+
+impl Debug for Action {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        match self {
+            Action::Forward(value) => write!(f, "{}", value),
+            Action::TurnLeft => write!(f, "L"),
+            Action::TurnRight => write!(f, "R"),
+        }
+    }
 }
 
 
@@ -102,6 +124,19 @@ fn path_search(
     let max_x = visited.len();
     let max_y = visited[0].len();
 
+    println!("-->-->-->-->-->--> {:?}", actions);
+    for i in 0..max_x {
+        for j in 0..max_y {
+            if visited[i][j] > 0 {
+                print!("{} ", visited[i][j])
+            } else {
+                print!("{} ", scaffold[i][j]);
+            }
+        }
+        println!()
+    }
+    sleep(Duration::from_millis(200));
+
     let mut action_taken = false;
     for next_dir in move_directions.iter() {
         let next_position = current_position.clone() + next_dir.clone();
@@ -109,14 +144,9 @@ fn path_search(
         if next_position.x >= 0 && next_position.x < max_x as i128 &&
             next_position.y >= 0 && next_position.y < max_y as i128 {
             let visited_count = visited[next_position.x as usize][next_position.y as usize];
-            let is_scaffold = scaffold[next_position.x as usize][next_position.y as usize] == '#';
-            let is_intersection = scaffold[next_position.x as usize][next_position.y as usize] == '0';
-//            println!("!!!");
-//            println!("{:?}", scaffold[next_position.x as usize][next_position.y as usize]);
-//            println!("{:?}", next_position);
-//            println!("visited_count {}", visited_count);
-//            println!("is_scaffold {}", is_scaffold);
-//            println!("is_intersection {}", is_intersection);
+            let is_scaffold = scaffold[next_position.x as usize][next_position.y as usize] == FRAME;
+            let is_intersection = scaffold[next_position.x as usize][next_position.y as usize] == INTERSECTION;
+
             if visited_count == 0 && is_scaffold || is_intersection {
 //                println!("is_intersection {:?} {:?}", next_dir, facing_direction);
 
@@ -160,11 +190,14 @@ fn path_search(
     // if no action can be taken, then we reach the end
     if !action_taken {
         println!("{:?}", actions);
+        exit(0);
     }
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
+
+    scaffold = annotate_intersections(scaffold);
 
     // find the starting position of the robot
     let start = start_pos(&scaffold);
