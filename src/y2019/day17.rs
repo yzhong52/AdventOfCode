@@ -54,8 +54,8 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
         }
     }
 
-    for r in 0.. scaffold.len() {
-        for c in 0.. scaffold[r].len() {
+    for r in 0..scaffold.len() {
+        for c in 0..scaffold[r].len() {
             print!("{} ", scaffold[r][c]);
         }
         println!()
@@ -65,5 +65,7 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
+    let mut scaffold = detect_scaffold(&input.data, true);
+
     Answer { question: input.question, result: 0 }
 }
