@@ -46,18 +46,6 @@ fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
     scaffold
 }
 
-fn annotate_intersections(mut scaffold: Vec<Vec<char>>) -> Vec<Vec<char>> {
-    for r in 1..&scaffold.len() - 1 {
-        for c in 1..&scaffold[r].len() - 1 {
-            if &scaffold[r][c] == &FRAME
-                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
-                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
-                scaffold[r][c] = INTERSECTION;
-            }
-        }
-    }
-    scaffold
-}
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
     let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
@@ -106,20 +94,22 @@ impl Debug for Action {
 
 
 // TODO: Yuchen - let's assume we visit each place maximum once for now.
+// Ok, this has 200k different combination :'(
 fn path_search(
     visited: &mut Vec<Vec<i32>>,
+    to_visit: &mut HashSet<BigPoint>,
     actions: Vec<Action>,
     current_position: BigPoint,
     facing_direction: BigPoint,
-    solutions: &Vec<Vec<Action>>,
+    solutions: &mut Vec<Vec<Action>>,
     scaffold: &Vec<Vec<char>>)
 {
-    let move_directions: [_Point<i128>; 4] = [
-        BigPoint { x: -1, y: 0 },
-        BigPoint { x: 1, y: 0 },
-        BigPoint { x: 0, y: -1 },
-        BigPoint { x: 0, y: 1 },
-    ];
+    to_visit.remove(&current_position);
+
+    // if no action can be taken, then we reach the end
+    if to_visit.is_empty() {
+        solutions.push(actions.clone())
+    }
 
     let max_x = visited.len();
     let max_y = visited[0].len();
@@ -135,9 +125,13 @@ fn path_search(
         }
         println!()
     }
-    sleep(Duration::from_millis(200));
+    sleep(Duration::from_millis(80));
 
-    let mut action_taken = false;
+    let move_directions: Vec<BigPoint> = vec![
+        facing_direction.clone(),
+        facing_direction.turn_left(),
+        facing_direction.turn_right()
+    ];
     for next_dir in move_directions.iter() {
         let next_position = current_position.clone() + next_dir.clone();
 
@@ -148,13 +142,11 @@ fn path_search(
             let is_intersection = scaffold[next_position.x as usize][next_position.y as usize] == INTERSECTION;
 
             if visited_count == 0 && is_scaffold || is_intersection {
-//                println!("is_intersection {:?} {:?}", next_dir, facing_direction);
 
                 // Let's assume the robot don't turn around 180 degrees for now
                 if next_dir.clone().dot_product(facing_direction.clone()) >= 0 {
                     let mut next_actions = actions.clone();
 
-                    action_taken = false;
 
                     if facing_direction.turn_right() == *next_dir {
                         next_actions.push(Action::TurnRight);
@@ -175,10 +167,11 @@ fn path_search(
                     visited[next_position.x as usize][next_position.y as usize] += 1;
                     path_search(
                         visited,
+                        to_visit,
                         next_actions,
                         next_position.clone(),
                         next_dir.clone(),
-                        &solutions,
+                        solutions,
                         &scaffold,
                     );
                     visited[next_position.x as usize][next_position.y as usize] -= 1;
@@ -187,32 +180,38 @@ fn path_search(
         }
     }
 
-    // if no action can be taken, then we reach the end
-    if !action_taken {
-        println!("{:?}", actions);
-        exit(0);
-    }
+    to_visit.insert(current_position);
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
-
-    scaffold = annotate_intersections(scaffold);
+    let mut to_visit: HashSet<BigPoint> = HashSet::new();
+    for r in 1..&scaffold.len() - 1 {
+        for c in 1..&scaffold[r].len() - 1 {
+            if &scaffold[r][c] == &FRAME
+                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
+                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
+                scaffold[r][c] = INTERSECTION;
+                to_visit.insert(BigPoint { x: r as i128, y: c as i128 });
+            }
+        }
+    }
 
     // find the starting position of the robot
     let start = start_pos(&scaffold);
     println!("Starting position is: {:?}", start);
 
     let mut visited: Vec<Vec<i32>> = vec![vec![0; scaffold[0].len()]; scaffold.len()];
-    let solutions: Vec<Vec<Action>> = vec![vec![]];
+    let mut solutions: Vec<Vec<Action>> = vec![vec![]];
     let empty_actions: Vec<Action> = vec![];
     let direction = BigPoint { x: -1, y: 0 };
     path_search(
         visited.as_mut(),
+        &mut to_visit,
         empty_actions,
         start,
         direction,
-        &solutions,
+        solutions.as_mut(),
         &scaffold);
 
     println!("{}", solutions.len());
