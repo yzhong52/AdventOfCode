@@ -8,6 +8,7 @@ use std::time::Duration;
 use std::char;
 use std::fmt::{Debug, Formatter, Error};
 use std::process::exit;
+use rand::distributions::Open01;
 
 const INTERSECTION: char = 'O';
 const FRAME: char = '#';
@@ -102,32 +103,33 @@ fn path_search(
     current_position: BigPoint,
     facing_direction: BigPoint,
     solutions: &mut Vec<Vec<Action>>,
-    scaffold: &Vec<Vec<char>>)
+    scaffold: &Vec<Vec<char>>) -> Vec<Action>
 {
     to_visit.remove(&current_position);
 
     // if no action can be taken, then we reach the end
     if to_visit.is_empty() {
         solutions.push(actions.clone());
-        println!("{}", actions);
+        println!("!! {:?}", actions);
+        return actions;
         exit(0)
     }
 
     let max_x = visited.len();
     let max_y = visited[0].len();
 
-    println!("-->-->-->-->-->--> {:?}", actions);
-    for i in 0..max_x {
-        for j in 0..max_y {
-            if visited[i][j] > 0 {
-                print!("{} ", visited[i][j])
-            } else {
-                print!("{} ", scaffold[i][j]);
-            }
-        }
-        println!()
-    }
-    sleep(Duration::from_millis(80));
+//    println!("-->-->-->-->-->--> {:?}", actions);
+//    for i in 0..max_x {
+//        for j in 0..max_y {
+//            if visited[i][j] > 0 {
+//                print!("{} ", visited[i][j])
+//            } else {
+//                print!("{} ", scaffold[i][j]);
+//            }
+//        }
+//        println!()
+//    }
+//    sleep(Duration::from_millis(120));
 
     let move_directions: Vec<BigPoint> = vec![
         facing_direction.clone(),
@@ -167,7 +169,7 @@ fn path_search(
                     }
 
                     visited[next_position.x as usize][next_position.y as usize] += 1;
-                    path_search(
+                    let r = path_search(
                         visited,
                         to_visit,
                         next_actions,
@@ -176,6 +178,9 @@ fn path_search(
                         solutions,
                         &scaffold,
                     );
+                    if r.len() > 0 {
+                        return r;
+                    }
                     visited[next_position.x as usize][next_position.y as usize] -= 1;
                 }
             }
@@ -183,6 +188,8 @@ fn path_search(
     }
 
     to_visit.insert(current_position);
+
+    return vec![];
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
@@ -194,6 +201,13 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
                 && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
                 && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
                 scaffold[r][c] = INTERSECTION;
+            }
+        }
+    }
+
+    for r in 0..scaffold.len() {
+        for c in 0..scaffold[r].len() {
+            if &scaffold[r][c] == &FRAME {
                 to_visit.insert(BigPoint { x: r as i128, y: c as i128 });
             }
         }
@@ -207,18 +221,61 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let mut solutions: Vec<Vec<Action>> = vec![vec![]];
     let empty_actions: Vec<Action> = vec![];
     let direction = BigPoint { x: -1, y: 0 };
-    path_search(
+    let actions = path_search(
         visited.as_mut(),
         &mut to_visit,
         empty_actions,
         start,
         direction,
         solutions.as_mut(),
-        &scaffold
+        &scaffold,
     );
 
-    println!("{}", solutions.len());
-    println!("{:?}", solutions);
+    println!("{:?}", actions);
+
+    let main_routine = "A,B,B,A,C,A,A,C,B,C";
+
+    let function_a = "R,8,L,12,R,8";
+    let function_b = "R,12,L,8,R,10";
+    let function_c = "R,8,L,8,L,8,R,8,R,10";
+    let video_feed = "y";
+
+    let mut input_queue = VecDeque::new();
+    for row in &[main_routine, function_a, function_b, function_a, video_feed] {
+        for c in row.chars() {
+            input_queue.push_back(c as i128)
+        }
+        input_queue.push_back('\n' as i128)
+    }
+
+    let mut vacuum_robot = SuperIntCodeComputer {
+        numbers: input.data.clone(),
+        index: 0,
+        input_queue,
+        relative_base: 0,
+        external_numbers: HashMap::new(),
+    };
+
+    // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
+    vacuum_robot.numbers[0] = 2;
+
+//    let mut last_char = '\n';
+//    loop {
+//        loop {
+//            match vacuum_robot.run() {
+//                SuperIntCodeResult::Output(value) => {
+//                    if last_char == '\n' && value as u8 as char == '\n' {
+//                        println!();
+//                        sleep(Duration::from_millis(228))
+//                    }
+//
+//                    last_char = value as u8 as char;
+//                    print!("{} ", value as u8 as char);
+//                }
+//                SuperIntCodeResult::Halted => break,
+//            };
+//        }
+//    }
 
     Answer { question: input.question, result: 0 }
 }
