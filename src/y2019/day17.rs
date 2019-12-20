@@ -108,7 +108,9 @@ fn path_search(
 
     // if no action can be taken, then we reach the end
     if to_visit.is_empty() {
-        solutions.push(actions.clone())
+        solutions.push(actions.clone());
+        println!("{}", actions);
+        exit(0)
     }
 
     let max_x = visited.len();
@@ -212,7 +214,8 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
         start,
         direction,
         solutions.as_mut(),
-        &scaffold);
+        &scaffold
+    );
 
     println!("{}", solutions.len());
     println!("{:?}", solutions);
