@@ -238,10 +238,10 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let function_a = "R,8,L,12,R,8";
     let function_b = "R,12,L,8,R,10";
     let function_c = "R,8,L,8,L,8,R,8,R,10";
-    let video_feed = "y";
+    let video_feed = "n";
 
     let mut input_queue = VecDeque::new();
-    for row in &[main_routine, function_a, function_b, function_a, video_feed] {
+    for row in &[main_routine, function_a, function_b, function_c, video_feed] {
         for c in row.chars() {
             input_queue.push_back(c as i128)
         }
@@ -259,23 +259,27 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
     vacuum_robot.numbers[0] = 2;
 
-//    let mut last_char = '\n';
-//    loop {
-//        loop {
-//            match vacuum_robot.run() {
-//                SuperIntCodeResult::Output(value) => {
-//                    if last_char == '\n' && value as u8 as char == '\n' {
-//                        println!();
-//                        sleep(Duration::from_millis(228))
-//                    }
-//
-//                    last_char = value as u8 as char;
-//                    print!("{} ", value as u8 as char);
-//                }
-//                SuperIntCodeResult::Halted => break,
-//            };
-//        }
-//    }
+    let mut last_char = '\n';
+    loop {
+        loop {
+            match vacuum_robot.run() {
+                SuperIntCodeResult::Output(value) => {
+                    if last_char == '\n' && value as u8 as char == '\n' {
+                        println!();
+                        sleep(Duration::from_millis(128))
+                    }
+
+                    last_char = value as u8 as char;
+                    if value < 128 {
+                        print!("{} ", value as u8 as char);
+                     } else {
+                        println!("!!!!{} ", value);
+                    }
+                }
+                SuperIntCodeResult::Halted => break,
+            };
+        }
+    }
 
     Answer { question: input.question, result: 0 }
 }
