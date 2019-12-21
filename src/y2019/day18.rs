@@ -47,11 +47,15 @@ fn dfs(
     let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
 
     if keys.iter().all(|x| x > &0) {
-        println!("Depth: {}", depth);
-        println!("Visited: {:?}", visited_key);
         if depth < *result {
-            *result = depth
+            println!("Update result: {}", depth);
+            *result = depth;
+            return;
         }
+    }
+
+    if depth >= *result {
+        return;
     }
 
     if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
