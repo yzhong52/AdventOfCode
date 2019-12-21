@@ -1,19 +1,16 @@
 use super::super::helpers::parser::*;
-use super::super::helpers::utils::*;
 use super::day9::*;
-use std::collections::{HashMap, VecDeque, BinaryHeap, HashSet};
-use crate::helpers::models::{BigPoint, _Point};
+use std::collections::{HashMap, VecDeque, HashSet};
+use crate::helpers::models::BigPoint;
 use std::thread::sleep;
 use std::time::Duration;
 use std::char;
 use std::fmt::{Debug, Formatter, Error};
-use std::process::exit;
-use rand::distributions::Open01;
 
 const INTERSECTION: char = 'O';
 const FRAME: char = '#';
 
-fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
+fn detect_scaffold(input: &Vec<i128>) -> Vec<Vec<char>> {
     let mut vacuum_robot = SuperIntCodeComputer {
         numbers: input.clone(),
         index: 0,
@@ -49,7 +46,7 @@ fn detect_scaffold(input: &Vec<i128>, debug: bool) -> Vec<Vec<char>> {
 
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
+    let scaffold: Vec<Vec<char>> = detect_scaffold(&input.data);
 
     let mut result = 0;
     for r in 1..&scaffold.len() - 1 {
@@ -102,34 +99,18 @@ fn path_search(
     actions: Vec<Action>,
     current_position: BigPoint,
     facing_direction: BigPoint,
-    solutions: &mut Vec<Vec<Action>>,
     scaffold: &Vec<Vec<char>>) -> Vec<Action>
 {
     to_visit.remove(&current_position);
 
     // if no action can be taken, then we reach the end
     if to_visit.is_empty() {
-        solutions.push(actions.clone());
         println!("!! {:?}", actions);
         return actions;
-        exit(0)
     }
 
     let max_x = visited.len();
     let max_y = visited[0].len();
-
-//    println!("-->-->-->-->-->--> {:?}", actions);
-//    for i in 0..max_x {
-//        for j in 0..max_y {
-//            if visited[i][j] > 0 {
-//                print!("{} ", visited[i][j])
-//            } else {
-//                print!("{} ", scaffold[i][j]);
-//            }
-//        }
-//        println!()
-//    }
-//    sleep(Duration::from_millis(120));
 
     let move_directions: Vec<BigPoint> = vec![
         facing_direction.clone(),
@@ -175,7 +156,6 @@ fn path_search(
                         next_actions,
                         next_position.clone(),
                         next_dir.clone(),
-                        solutions,
                         &scaffold,
                     );
                     if r.len() > 0 {
@@ -193,7 +173,7 @@ fn path_search(
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
-    let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data, true);
+    let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data);
     let mut to_visit: HashSet<BigPoint> = HashSet::new();
     for r in 1..&scaffold.len() - 1 {
         for c in 1..&scaffold[r].len() - 1 {
@@ -218,7 +198,6 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     println!("Starting position is: {:?}", start);
 
     let mut visited: Vec<Vec<i32>> = vec![vec![0; scaffold[0].len()]; scaffold.len()];
-    let mut solutions: Vec<Vec<Action>> = vec![vec![]];
     let empty_actions: Vec<Action> = vec![];
     let direction = BigPoint { x: -1, y: 0 };
     let actions = path_search(
@@ -227,7 +206,6 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
         empty_actions,
         start,
         direction,
-        solutions.as_mut(),
         &scaffold,
     );
 
@@ -261,24 +239,22 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
 
     let mut last_char = '\n';
     loop {
-        loop {
-            match vacuum_robot.run() {
-                SuperIntCodeResult::Output(value) => {
-                    if last_char == '\n' && value as u8 as char == '\n' {
-                        println!();
-                        sleep(Duration::from_millis(128))
-                    }
-
-                    last_char = value as u8 as char;
-                    if value < 128 {
-                        print!("{} ", value as u8 as char);
-                     } else {
-                        println!("!!!!{} ", value);
-                    }
+        match vacuum_robot.run() {
+            SuperIntCodeResult::Output(value) => {
+                if last_char == '\n' && value as u8 as char == '\n' {
+                    println!();
+                    sleep(Duration::from_millis(128))
                 }
-                SuperIntCodeResult::Halted => break,
-            };
-        }
+
+                last_char = value as u8 as char;
+                if value < 128 {
+                    print!("{} ", value as u8 as char);
+                } else {
+                    println!("!!!!{} ", value);
+                }
+            }
+            SuperIntCodeResult::Halted => break,
+        };
     }
 
     Answer { question: input.question, result: 0 }
