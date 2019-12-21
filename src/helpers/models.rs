@@ -6,9 +6,31 @@ pub struct _Point<T> {
     pub y: T,
 }
 
-impl _Point<i32> {
-    pub fn origin() -> _Point<i32> {
-        _Point { x: 0, y: 0 }
+impl<T> _Point<T> where T: num::Integer, T: Copy {
+    pub fn origin() -> _Point<T> {
+        _Point { x: T::zero(), y: T::zero() }
+    }
+
+    pub fn is_valid(&self, max_x: T, max_y: T) -> bool {
+        return T::zero() <= self.x && self.x < max_x
+            && T::zero() <= self.y && self.y < max_y;
+    }
+
+    pub fn neighbours4(self, max_x: T, max_y: T) -> Vec<_Point<T>> {
+        let mut result: Vec<_Point<T>> = Vec::new();
+        if self.x > T::zero() {
+            result.push(_Point { x: self.x - T::one(), y: self.y });
+        }
+        if self.y > T::zero() {
+            result.push(_Point { x: self.x, y: self.y - T::one() });
+        }
+        if self.x + T::one() < max_x {
+            result.push(_Point { x: self.x + T::one(), y: self.y });
+        }
+        if self.y + T::one() < max_y {
+            result.push(_Point { x: self.x, y: self.y + T::one() })
+        }
+        result
     }
 }
 
@@ -32,10 +54,6 @@ impl<T> ops::Add<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Add {
 
 // TODO: Yuchen - move them into templates
 impl _Point<i128> {
-    pub fn origin() -> _Point<i128> {
-        _Point { x: 0, y: 0 }
-    }
-
     pub fn turn_right(&self) -> _Point<i128> {
         _Point { x: self.y, y: -self.x }
     }

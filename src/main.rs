@@ -36,6 +36,7 @@ mod y2019 {
     pub mod day15;
     pub mod day16;
     pub mod day17;
+    pub mod day18;
 }
 
 use helpers::parser::*;
@@ -124,6 +125,11 @@ fn run_completed() {
     y2019::day15::part1(read_numbers_by_comma(Question::y2019(15))).save_part1();
     y2019::day15::part2(read_numbers_by_comma(Question::y2019(15))).save_part2();
 
+    // Day 16: Flawed Frequency Transmission
+    y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
+    // TODO: Yuchen - part 2
+    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
+
     // Day 17: Set and Forget
     y2019::day17::part1(read_numbers_by_comma(Question::y2019(17))).save_part1();
     y2019::day17::part2(read_numbers_by_comma(Question::y2019(17))).save_part2();
@@ -137,11 +143,8 @@ fn main() {
         };
     }
 
-    // Day 16: Flawed Frequency Transmission
-    y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
-    // TODO: Yuchen - part 2
-    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
-
-
     // Day 18: Many-Worlds Interpretation
+    y2019::day18::part1(read_grid(Question::y2019(18))).save_part1();
+    y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
+
 }

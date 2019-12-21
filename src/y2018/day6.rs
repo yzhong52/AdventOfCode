@@ -54,7 +54,7 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
             for dir in dirs.iter() {
                 let next = Point { x: p.x as i32 + dir[0], y: p.y as i32 + dir[1] };
 
-                if next.x >= 0 && next.x <= max_x as i32 && next.y >= 0 && next.y <= max_y as i32 {
+                if next.is_valid(max_x as i32, max_y as i32) {
                     let current_value = array[next.x as usize][next.y as usize];
 
                     if current_value == init {
