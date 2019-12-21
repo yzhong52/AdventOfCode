@@ -42,17 +42,20 @@ fn dfs(
     current_position: _Point<usize>,
     visited: &mut HashMap<Visited, i32>,
     depth: i32,
-) -> Option<i32> {
+    result: &mut i32,
+) {
     let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
 
     if keys.iter().all(|x| x > &0) {
         println!("Depth: {}", depth);
         println!("Visited: {:?}", visited_key);
-        return Some(depth);
+        if depth < *result {
+            *result = depth
+        }
     }
 
     if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
-        return None;
+        return;
     }
     visited.insert(visited_key, depth);
 
@@ -64,38 +67,38 @@ fn dfs(
     for new_position in neighbours4 {
         match data[new_position.x][new_position.y] {
             EMPTY | ENTRANCE => {
-                let r = dfs(
+                dfs(
                     data,
                     keys.clone(),
                     new_position,
                     visited,
                     depth + 1,
+                    result,
                 );
-
             }
             value if 'a' <= value && value <= 'z' => {
                 // Pick up the key
                 let mut new_keys = keys.clone();
                 new_keys[value as usize - 'a' as usize] = 1;
-                let r = dfs(
+                dfs(
                     data,
                     new_keys,
                     new_position,
                     visited,
                     depth + 1,
+                    result,
                 );
-
             }
             value if 'A' <= value && value <= 'Z' => {
                 if keys[value as usize - 'A' as usize] > 0 {
-                    let r = dfs(
+                    dfs(
                         data,
                         keys.clone(),
                         new_position,
                         visited,
                         depth + 1,
+                        result,
                     );
-
                 }
             }
             WALL => (), // Oops, hit the wall
@@ -104,8 +107,6 @@ fn dfs(
             }
         }
     }
-
-    None
 }
 
 pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
@@ -113,14 +114,16 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let mut visited: HashMap<Visited, i32> = HashMap::new();
     let max_key = max_key(&input.data);
     let keys: Vec<i32> = vec![0; max_key];
-    let result = dfs(
+    let mut result: i32 = std::i32::MAX;
+    dfs(
         &input.data,
         keys,
         entrance,
         visited.borrow_mut(),
         0,
+        &mut result,
     );
-    Answer { question: input.question, result: 0 }
+    Answer { question: input.question, result }
 }
 
 
