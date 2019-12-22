@@ -143,6 +143,10 @@ fn run_completed() {
     // Day 19: Tractor Beam
     y2019::day19::part1(read_numbers_by_comma(Question::y2019(19))).save_part1();
     y2019::day19::part2(read_numbers_by_comma(Question::y2019(19))).save_part2();
+
+    // Day 20: Donut Maze
+    y2019::day20::part1(read_grid(Question::y2019(20))).save_part1();
+    y2019::day20::part2(read_grid(Question::y2019(20))).save_part2();
 }
 
 fn main() {
@@ -153,7 +157,5 @@ fn main() {
         };
     }
 
-    // Day 20: Donut Maze
-    y2019::day20::part1(read_grid(Question::y2019(20))).save_part1();
-    y2019::day20::part2(read_grid(Question::y2019(20))).save_part2();
+    // Day 21: Springdroid Adventure
 }
