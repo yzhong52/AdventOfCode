@@ -38,6 +38,7 @@ mod y2019 {
     pub mod day17;
     pub mod day18;
     pub mod day19;
+    pub mod day20;
 }
 
 use helpers::parser::*;
@@ -138,6 +139,10 @@ fn run_completed() {
     // Day 18: Many-Worlds Interpretation
     y2019::day18::part1(read_grid(Question::y2019(18))).save_part1();
     y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
+
+    // Day 19: Tractor Beam
+    y2019::day19::part1(read_numbers_by_comma(Question::y2019(19))).save_part1();
+    y2019::day19::part2(read_numbers_by_comma(Question::y2019(19))).save_part2();
 }
 
 fn main() {
@@ -148,8 +153,7 @@ fn main() {
         };
     }
 
-
-    // Day 19: Tractor Beam
-    // y2019::day19::part1(read_numbers_by_comma(Question::y2019(19))).save_part1();
-    y2019::day19::part2(read_numbers_by_comma(Question::y2019(19))).save_part2();
+    // Day 20: Donut Maze
+    y2019::day20::part1(read_grid(Question::y2019(20))).save_part1();
+    y2019::day20::part2(read_grid(Question::y2019(20))).save_part2();
 }

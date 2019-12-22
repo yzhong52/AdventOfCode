@@ -52,6 +52,17 @@ impl<T> ops::Add<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Add {
     }
 }
 
+impl<T> ops::Sub<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Sub {
+    type Output = _Point<T>;
+
+    fn sub(self, rhs: _Point<T>) -> _Point<T> {
+        _Point {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
 // TODO: Yuchen - move them into templates
 impl _Point<i128> {
     pub fn turn_right(&self) -> _Point<i128> {

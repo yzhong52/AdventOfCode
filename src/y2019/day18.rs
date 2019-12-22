@@ -1,5 +1,5 @@
 use super::super::helpers::parser::*;
-use crate::helpers::models::{_Point, Point};
+use crate::helpers::models::_Point;
 use std::collections::{HashMap, HashSet};
 use std::borrow::BorrowMut;
 
@@ -181,9 +181,6 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
             }
             data.push(row);
         }
-
-        let max_x1 = &data.len();
-        let max_y1 = &data[0].len();
 
         data[entrance.x][entrance.y] = ENTRANCE;
 

@@ -1,8 +1,5 @@
 use super::super::helpers::parser::*;
-use super::super::helpers::utils::*;
 use super::day9::*;
-use std::collections::{HashMap, VecDeque, BinaryHeap, HashSet};
-use crate::helpers::models::BigPoint;
 
 fn test_location(x: i128, y: i128, data: &Vec<i128>) -> i128 {
     let mut drone = SuperIntCodeComputer::new(data.clone());
@@ -42,7 +39,6 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
             y_size += 1;
         }
 
-        println!("{},{} - {},{}", x, y, x_size, y_size);
         if x_size >= 100 && y_size >= 100 {
             break;
         }
