@@ -16,7 +16,7 @@ impl<T> _Point<T> where T: num::Integer, T: Copy {
             && T::zero() <= self.y && self.y < max_y;
     }
 
-    pub fn neighbours4(self, max_x: T, max_y: T) -> Vec<_Point<T>> {
+    pub fn neighbours4(&self, max_x: T, max_y: T) -> Vec<_Point<T>> {
         let mut result: Vec<_Point<T>> = Vec::new();
         if self.x > T::zero() {
             result.push(_Point { x: self.x - T::one(), y: self.y });

@@ -11,29 +11,40 @@ impl Letter for char {
     }
 }
 
-fn search_portal(map: &Vec<Vec<char>>) {
-    let max_x = map.len();
-    let max_y = map[0].len();
+fn search_portal(maze: &Vec<Vec<char>>) {
+    let max_x = maze.len();
+    let max_y = maze[0].len();
     for i in 0..max_x {
         for j in 0..max_y {
-            if map[i][j].is_ascii_uppercase() {
-                let point = _Point { x: i, y: j };
-                let neighbours = point.neighbours4(max_x, max_y);
-                let other = neighbours
+            if maze[i][j].is_ascii_uppercase() {
+                let p1 = _Point { x: i, y: j };
+                let neighbours = p1.neighbours4(max_x, max_y);
+                let p2 = neighbours
                     .iter()
-                    .filter(|pos| map[pos.x][pos.y].is_ascii_uppercase())
+                    .filter(|pos| maze[pos.x][pos.y].is_ascii_uppercase())
                     .nth(0)
                     .unwrap();
 
-                let side1 = point.clone() + (point.clone() - other.clone());
-                let side2 = other.clone() + (other.clone() - point.clone());
+                let side1 = _Point {
+                    x: p1.x as i32 + p1.x as i32 - p2.x as i32,
+                    y: p1.y as i32 + p1.y as i32 - p2.y as i32,
+                };
+
+                let side2 = _Point {
+                    x: p2.x as i32 + p2.x as i32 - p1.x as i32,
+                    y: p2.y as i32 + p2.y as i32 - p1.y as i32,
+                };
+
                 let both_sides = [side1, side2];
+
                 let portal_pos = both_sides.iter()
-                    .filter(|x| x.is_valid(max_x, max_y) && map[x.x][x.y] == '.')
+                    .filter(|p| {
+                        p.is_valid(max_x as i32, max_y as i32) && maze[p.x as usize][p.y as usize] == '.'
+                    })
                     .nth(0)
                     .unwrap();
 
-                println!("{}{}: {:?}", map[point.x][point.y], map[other.x][other.y], portal_pos);
+                println!("{}{}: {:?}", maze[p1.x][p1.y], maze[p2.x][p2.y], portal_pos);
             }
         }
     }
