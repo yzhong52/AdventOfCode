@@ -34,6 +34,20 @@ pub struct SuperIntCodeComputer {
 }
 
 impl SuperIntCodeComputer {
+    pub fn new(numbers: Vec<i128>) -> SuperIntCodeComputer {
+        SuperIntCodeComputer {
+            numbers,
+            index: 0,
+            input_queue: VecDeque::new(),
+            relative_base: 0,
+            external_numbers: HashMap::new(),
+        }
+    }
+
+    pub fn input(&mut self, value: i128) {
+        self.input_queue.push_back(value);
+    }
+
     fn parse_number(&self, mode: i128, relative_base: usize) -> i128 {
         match mode {
             POSITION_MODE => self.read(self.read(self.index) as usize),
@@ -42,7 +56,7 @@ impl SuperIntCodeComputer {
                 // self.read(self.index) can be negative, therefore we need to convert it to int first
                 let position = self.read(self.index) + relative_base as i128;
                 self.read(position as usize)
-            },
+            }
             i => unimplemented!("{}", i),
         }
     }
@@ -133,7 +147,6 @@ impl SuperIntCodeComputer {
                     let parameter1 = self.parse_number(mode1, self.relative_base);
                     self.index += 1;
                     self.relative_base = (self.relative_base as i128 + parameter1) as usize;
-
                 }
                 i => unimplemented!("{}", i),
             };
