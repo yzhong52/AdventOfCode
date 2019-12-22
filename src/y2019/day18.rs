@@ -50,15 +50,11 @@ fn dfs(
         if depth < *result {
             println!("Update result: {}", depth);
             *result = depth;
-            return;
         }
-    }
-
-    if depth >= *result {
         return;
-    }
-
-    if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
+    } else if depth >= *result {
+        return;
+    } else if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
         return;
     }
     visited.insert(visited_key, depth);
