@@ -1,9 +1,11 @@
 use super::super::helpers::parser::*;
 use crate::helpers::models::_Point;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
-fn search_portal(maze: &Vec<Vec<char>>) -> HashMap<[char; 2], Vec<_Point<i32>>> {
-    let mut portals: HashMap<[char; 2], Vec<_Point<i32>>> = HashMap::new();
+const NOT_VISITED: i32 = -1;
+
+fn search_portal(maze: &Vec<Vec<char>>) -> HashMap<[char; 2], Vec<_Point<usize>>> {
+    let mut portals: HashMap<[char; 2], Vec<_Point<usize>>> = HashMap::new();
     let max_x = maze.len();
     let max_y = maze[0].len();
     for i in 0..max_x {
@@ -45,7 +47,10 @@ fn search_portal(maze: &Vec<Vec<char>>) -> HashMap<[char; 2], Vec<_Point<i32>>> 
 
 
                     let key = [maze[p1.x][p1.y], maze[p2.x][p2.y]];
-                    portals.entry(key).or_insert(vec![]).push(portal_pos.clone());
+                    portals.entry(key).or_insert(vec![]).push(_Point {
+                        x: portal_pos.x as usize,
+                        y: portal_pos.y as usize,
+                    });
                 }
             }
         }
@@ -53,13 +58,58 @@ fn search_portal(maze: &Vec<Vec<char>>) -> HashMap<[char; 2], Vec<_Point<i32>>> 
     portals
 }
 
-pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
-    let portals = search_portal(&input.data);
+pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
+    let maze = &input.data;
+    let named_portals = search_portal(maze);
 
-    for (pk, pv) in portals {
+    let mut portals = HashMap::new();
+    for pair in named_portals.values() {
+        if pair.len() == 2 {
+            portals.insert(pair[0].clone(), pair[1].clone());
+            portals.insert(pair[1].clone(), pair[0].clone());
+        }
+    }
+
+    for (pk, pv) in &named_portals {
         println!("{:?}: {:?}", pk, pv);
     }
-    Answer { question: input.question, result: 0 }
+
+    let max_x = maze.len();
+    let max_y = maze[0].len();
+
+    let mut distance = vec![vec![NOT_VISITED; max_y]; max_x];
+
+    let mut queue: VecDeque<_Point<usize>> = VecDeque::new();
+    let start = named_portals.get(&['A', 'A']).unwrap().first().unwrap();
+    let end = named_portals.get(&['Z', 'Z']).unwrap().first().unwrap();
+    queue.push_back(start.clone());
+    distance[start.x][start.y] = 0;
+
+    let mut total_distance = 0;
+    while let Some(current) = queue.pop_front() {
+        println!("Visiting {:?} -> {:?}", current, distance[current.x][current.y]);
+        if current == *end {
+            total_distance = distance[current.x][current.y];
+            break
+        }
+
+        let neighbours  = current.neighbours4(max_x, max_y);
+        for n in neighbours {
+            if maze[n.x][n.y] == '.' && distance[n.x][n.y] == NOT_VISITED {
+                distance[n.x][n.y] = distance[current.x][current.y] + 1;
+                queue.push_back(n.clone())
+            }
+        }
+
+        if let Some(warp_position) = portals.get(&current) {
+            if distance[warp_position.x][warp_position.y] == NOT_VISITED {
+                distance[warp_position.x][warp_position.y] = distance[current.x][current.y] + 1;
+                queue.push_back(warp_position.clone())
+            }
+        }
+    }
+
+    Answer { question: input.question, result: total_distance }
 }
 
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
