@@ -1,5 +1,5 @@
 use super::super::helpers::parser::*;
-use crate::helpers::models::_Point;
+use crate::helpers::models::{_Point, Point};
 use std::collections::HashMap;
 use std::borrow::BorrowMut;
 
@@ -127,6 +127,113 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
 }
 
 
+fn dfs2(
+    data: &Vec<Vec<char>>,
+    keys: Vec<i32>,
+    current_positions: [_Point<usize>; 4],
+    visited: &mut HashMap<Visited, i32>,
+    depth: i32,
+    result: &mut i32,
+) {
+    let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
+
+    if keys.iter().all(|x| x > &0) {
+        if depth < *result {
+            println!("Update result: {}", depth);
+            *result = depth;
+        }
+        return;
+    } else if depth >= *result {
+        return;
+    } else if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
+        return;
+    }
+    visited.insert(visited_key, depth);
+
+    let max_x = data.len();
+    let max_y = data[0].len();
+
+    let neighbours4 = current_position.neighbours4(max_x, max_y);
+
+    for new_position in neighbours4 {
+        match data[new_position.x][new_position.y] {
+            EMPTY | ENTRANCE => {
+                dfs(
+                    data,
+                    keys.clone(),
+                    new_position,
+                    visited,
+                    depth + 1,
+                    result,
+                );
+            }
+            value if 'a' <= value && value <= 'z' => {
+                // Pick up the key
+                let mut new_keys = keys.clone();
+                new_keys[value as usize - 'a' as usize] = 1;
+                dfs(
+                    data,
+                    new_keys,
+                    new_position,
+                    visited,
+                    depth + 1,
+                    result,
+                );
+            }
+            value if 'A' <= value && value <= 'Z' => {
+                if keys[value as usize - 'A' as usize] > 0 {
+                    dfs(
+                        data,
+                        keys.clone(),
+                        new_position,
+                        visited,
+                        depth + 1,
+                        result,
+                    );
+                }
+            }
+            WALL => (), // Oops, hit the wall
+            value => {
+                unimplemented!("Unknown land: {}", value)
+            }
+        }
+    }
+}
+
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
-    Answer { question: input.question, result: 0 }
+    let entrance = find_entrance(&input.data);
+    let mut data = input.data;
+
+    let swap = [
+        ['@', '#', '@'],
+        ['#', '#', '#'],
+        ['@', '#', '@'],
+    ];
+
+    for i in 0..3 {
+        for j in 0..3 {
+            data[i + entrance.x - 1][j + entrance.y - 1] = swap[i][j];
+        }
+    }
+
+    let entrances = [
+        _Point { x: entrance.x - 1, y: entrance.y - 1 },
+        _Point { x: entrance.x - 1, y: entrance.y + 1 },
+        _Point { x: entrance.x + 1, y: entrance.y - 1 },
+        _Point { x: entrance.x + 1, y: entrance.y + 1 },
+    ];
+
+    let mut visited: HashMap<Visited, i32> = HashMap::new();
+    let max_key = max_key(&input.data);
+    let keys: Vec<i32> = vec![0; max_key];
+    let mut result: i32 = std::i32::MAX;
+    dfs2(
+        &data,
+        keys,
+        entrances,
+        visited.borrow_mut(),
+        0,
+        &mut result,
+    );
+    Answer { question: input.question, result }
 }

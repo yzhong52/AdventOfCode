@@ -144,7 +144,7 @@ fn main() {
     }
 
     // Day 18: Many-Worlds Interpretation
-    y2019::day18::part1(read_grid(Question::y2019(18))).save_part1();
+    // y2019::day18::part1(read_grid(Question::y2019(18))).save_part1();
     y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
 
 }
