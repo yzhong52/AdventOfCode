@@ -27,7 +27,7 @@ pub enum SuperIntCodeResult {
 #[derive(Clone)]
 pub struct SuperIntCodeComputer {
     pub index: usize,
-    pub program: Vec<i128>,
+    pub instructions: Vec<i128>,
     pub input_queue: VecDeque<i128>,
     pub relative_base: usize,
     pub external_numbers: HashMap<usize, i128>,
@@ -36,7 +36,7 @@ pub struct SuperIntCodeComputer {
 impl SuperIntCodeComputer {
     pub fn new(numbers: Vec<i128>) -> SuperIntCodeComputer {
         SuperIntCodeComputer {
-            program: numbers,
+            instructions: numbers,
             index: 0,
             input_queue: VecDeque::new(),
             relative_base: 0,
@@ -74,16 +74,16 @@ impl SuperIntCodeComputer {
 
     fn read(&self, pos: usize) -> i128 {
         let default_value = 0 as i128;
-        if pos < self.program.len() {
-            self.program[pos]
+        if pos < self.instructions.len() {
+            self.instructions[pos]
         } else {
             *self.external_numbers.get(&pos).unwrap_or_else({ || &default_value })
         }
     }
 
     fn save(&mut self, pos: usize, value: i128) {
-        if pos < self.program.len() {
-            self.program[pos] = value;
+        if pos < self.instructions.len() {
+            self.instructions[pos] = value;
         } else {
             self.external_numbers.insert(pos, value);
         }
@@ -158,7 +158,7 @@ impl SuperIntCodeComputer {
 
 pub fn run_till_halt(values: &Vec<i128>, inputs: Vec<i128>) -> i128 {
     let mut computer = SuperIntCodeComputer {
-        program: values.clone(),
+        instructions: values.clone(),
         index: 0,
         input_queue: inputs.into_iter().collect(),
         relative_base: 0,

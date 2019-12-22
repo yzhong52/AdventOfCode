@@ -42,7 +42,7 @@ fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<Point, bool> {
     map.insert(Point::origin(), initial_color);
 
     let mut robot = SuperIntCodeComputer {
-        program: input.clone(),
+        instructions: input.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,
