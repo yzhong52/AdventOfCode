@@ -39,6 +39,10 @@ mod y2019 {
     pub mod day18;
     pub mod day19;
     pub mod day20;
+    pub mod day21;
+    pub mod day22;
+    pub mod day23;
+    pub mod day24;
 }
 
 use helpers::parser::*;
@@ -158,4 +162,6 @@ fn main() {
     }
 
     // Day 21: Springdroid Adventure
+    y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
+    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
 }

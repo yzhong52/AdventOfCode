@@ -34,9 +34,9 @@ pub struct SuperIntCodeComputer {
 }
 
 impl SuperIntCodeComputer {
-    pub fn new(numbers: Vec<i128>) -> SuperIntCodeComputer {
+    pub fn new(instructions: Vec<i128>) -> SuperIntCodeComputer {
         SuperIntCodeComputer {
-            instructions: numbers,
+            instructions,
             index: 0,
             input_queue: VecDeque::new(),
             relative_base: 0,
