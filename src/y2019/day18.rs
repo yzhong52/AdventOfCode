@@ -1,6 +1,6 @@
 use super::super::helpers::parser::*;
 use crate::helpers::models::{_Point, Point};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::borrow::BorrowMut;
 
 const ENTRANCE: char = '@';
@@ -18,12 +18,12 @@ fn find_entrance(data: &Vec<Vec<char>>) -> _Point<usize> {
     _Point::origin()
 }
 
-fn max_key(data: &Vec<Vec<char>>) -> usize {
-    let mut result = 0;
+fn all_keys(data: &Vec<Vec<char>>) -> HashSet<char> {
+    let mut result = HashSet::new();
     for i in 0..data.len() {
         for j in 0..data[0].len() {
             if data[i][j] >= 'a' && data[i][j] <= 'z' {
-                result = result.max(data[i][j] as usize - 'a' as usize + 1);
+                result.insert(data[i][j]);
             }
         }
     }
@@ -36,9 +36,21 @@ struct Visited {
     keys: Vec<i32>,
 }
 
+fn all_keys_found(
+    keys: &Vec<i32>,
+    all_keys: &HashSet<char>) -> bool {
+    for key in all_keys {
+        if keys[*key as u8 as usize - 'a' as u8 as usize] == 0 {
+            return false;
+        }
+    }
+    return true;
+}
+
 fn dfs(
     data: &Vec<Vec<char>>,
     keys: Vec<i32>,
+    all_keys: &HashSet<char>,
     current_position: _Point<usize>,
     visited: &mut HashMap<Visited, i32>,
     depth: i32,
@@ -46,7 +58,7 @@ fn dfs(
 ) {
     let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
 
-    if keys.iter().all(|x| x > &0) {
+    if all_keys_found(&keys, all_keys) {
         if depth < *result {
             println!("Update result: {}", depth);
             *result = depth;
@@ -70,6 +82,7 @@ fn dfs(
                 dfs(
                     data,
                     keys.clone(),
+                    all_keys,
                     new_position,
                     visited,
                     depth + 1,
@@ -83,6 +96,7 @@ fn dfs(
                 dfs(
                     data,
                     new_keys,
+                    all_keys,
                     new_position,
                     visited,
                     depth + 1,
@@ -94,6 +108,7 @@ fn dfs(
                     dfs(
                         data,
                         keys.clone(),
+                        all_keys,
                         new_position,
                         visited,
                         depth + 1,
@@ -112,12 +127,13 @@ fn dfs(
 pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let entrance = find_entrance(&input.data);
     let mut visited: HashMap<Visited, i32> = HashMap::new();
-    let max_key = max_key(&input.data);
-    let keys: Vec<i32> = vec![0; max_key];
+    let all_keys = all_keys(&input.data);
+    let keys: Vec<i32> = vec![0; 26];
     let mut result: i32 = std::i32::MAX;
     dfs(
         &input.data,
         keys,
+        &all_keys,
         entrance,
         visited.borrow_mut(),
         0,
@@ -126,114 +142,46 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     Answer { question: input.question, result }
 }
 
-
-fn dfs2(
-    data: &Vec<Vec<char>>,
-    keys: Vec<i32>,
-    current_positions: [_Point<usize>; 4],
-    visited: &mut HashMap<Visited, i32>,
-    depth: i32,
-    result: &mut i32,
-) {
-    let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
-
-    if keys.iter().all(|x| x > &0) {
-        if depth < *result {
-            println!("Update result: {}", depth);
-            *result = depth;
-        }
-        return;
-    } else if depth >= *result {
-        return;
-    } else if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
-        return;
-    }
-    visited.insert(visited_key, depth);
-
-    let max_x = data.len();
-    let max_y = data[0].len();
-
-    let neighbours4 = current_position.neighbours4(max_x, max_y);
-
-    for new_position in neighbours4 {
-        match data[new_position.x][new_position.y] {
-            EMPTY | ENTRANCE => {
-                dfs(
-                    data,
-                    keys.clone(),
-                    new_position,
-                    visited,
-                    depth + 1,
-                    result,
-                );
-            }
-            value if 'a' <= value && value <= 'z' => {
-                // Pick up the key
-                let mut new_keys = keys.clone();
-                new_keys[value as usize - 'a' as usize] = 1;
-                dfs(
-                    data,
-                    new_keys,
-                    new_position,
-                    visited,
-                    depth + 1,
-                    result,
-                );
-            }
-            value if 'A' <= value && value <= 'Z' => {
-                if keys[value as usize - 'A' as usize] > 0 {
-                    dfs(
-                        data,
-                        keys.clone(),
-                        new_position,
-                        visited,
-                        depth + 1,
-                        result,
-                    );
-                }
-            }
-            WALL => (), // Oops, hit the wall
-            value => {
-                unimplemented!("Unknown land: {}", value)
-            }
-        }
-    }
-}
-
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let entrance = find_entrance(&input.data);
-    let mut data = input.data;
 
-    let swap = [
-        ['@', '#', '@'],
-        ['#', '#', '#'],
-        ['@', '#', '@'],
+    let max_x = &input.data.len();
+    let max_y = &input.data[0].len();
+    let quadrant = [
+        (0..entrance.x, 0..entrance.y, _Point { x: entrance.x - 1, y: entrance.y - 1 }),
+        (0..entrance.x, entrance.y + 1..*max_y, _Point { x: entrance.x - 1, y: entrance.y + 1 }),
+        (entrance.x + 1..*max_x, 0..entrance.y, _Point { x: entrance.x + 1, y: entrance.y - 1 }),
+        (entrance.x + 1..*max_x, entrance.y + 1..*max_y, _Point { x: entrance.x + 1, y: entrance.y + 1 }),
     ];
 
-    for i in 0..3 {
-        for j in 0..3 {
-            data[i + entrance.x - 1][j + entrance.y - 1] = swap[i][j];
+    let mut final_result = 0;
+    for (x_range, y_range, entrance) in quadrant.iter() {
+        let mut data = vec![vec![]];
+
+        for i in x_range.clone() {
+            let mut row = vec![];
+            for j in x_range.clone() {
+                row.push(data[i][j]);
+            }
+            data.push(row);
         }
+
+        let mut visited: HashMap<Visited, i32> = HashMap::new();
+        let all_keys = all_keys(&data);
+        let keys: Vec<i32> = vec![0; 26];
+        let mut result: i32 = std::i32::MAX;
+        dfs(
+            &data,
+            keys,
+            &all_keys,
+            entrance.clone(),
+            visited.borrow_mut(),
+            0,
+            &mut result,
+        );
+
+        final_result += result;
     }
 
-    let entrances = [
-        _Point { x: entrance.x - 1, y: entrance.y - 1 },
-        _Point { x: entrance.x - 1, y: entrance.y + 1 },
-        _Point { x: entrance.x + 1, y: entrance.y - 1 },
-        _Point { x: entrance.x + 1, y: entrance.y + 1 },
-    ];
-
-    let mut visited: HashMap<Visited, i32> = HashMap::new();
-    let max_key = max_key(&input.data);
-    let keys: Vec<i32> = vec![0; max_key];
-    let mut result: i32 = std::i32::MAX;
-    dfs2(
-        &data,
-        keys,
-        entrances,
-        visited.borrow_mut(),
-        0,
-        &mut result,
-    );
-    Answer { question: input.question, result }
+    Answer { question: input.question, result: final_result }
 }
