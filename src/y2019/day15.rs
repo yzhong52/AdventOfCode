@@ -53,7 +53,7 @@ static ACTIONS: [Action; 4] = [
 
 fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
     let mut droid = SuperIntCodeComputer {
-        numbers: input.clone(),
+        program: input.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,

@@ -48,7 +48,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
 
         let mut computers: Vec<SuperIntCodeComputer> = phases.iter().map(|phase| {
             let input_queue = vec![*phase].into_iter().collect();
-            SuperIntCodeComputer { numbers: input.data.clone(), index: 0, input_queue, relative_base: 0, external_numbers: HashMap::new() }
+            SuperIntCodeComputer { program: input.data.clone(), index: 0, input_queue, relative_base: 0, external_numbers: HashMap::new() }
         }).collect();
 
         loop {

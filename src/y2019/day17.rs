@@ -12,7 +12,7 @@ const FRAME: char = '#';
 
 fn detect_scaffold(input: &Vec<i128>) -> Vec<Vec<char>> {
     let mut vacuum_robot = SuperIntCodeComputer {
-        numbers: input.clone(),
+        program: input.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,
@@ -227,7 +227,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     }
 
     let mut vacuum_robot = SuperIntCodeComputer {
-        numbers: input.data.clone(),
+        program: input.data.clone(),
         index: 0,
         input_queue,
         relative_base: 0,
@@ -235,7 +235,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     };
 
     // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
-    vacuum_robot.numbers[0] = 2;
+    vacuum_robot.program[0] = 2;
 
     let mut last_char = '\n';
     loop {

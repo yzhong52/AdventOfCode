@@ -21,7 +21,7 @@ fn play_game(input: &Vec<i128>) -> HashMap<BigPoint, i128> {
     let mut map: HashMap<BigPoint, i128> = HashMap::new();
 
     let mut robot = SuperIntCodeComputer {
-        numbers: input.clone(),
+        program: input.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,
@@ -64,7 +64,7 @@ struct ArcadeCabinet {
 
 impl ArcadeCabinet {
     fn insert_coin(&mut self) {
-        self.computer.numbers[0] = 2;
+        self.computer.program[0] = 2;
     }
 
     fn play(&mut self, debug: bool) -> i128 {
@@ -164,7 +164,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let screen: Vec<Vec<char>> = vec![vec!['?'; max_x as usize + 1]; max_y as usize + 1];
 
     let computer = SuperIntCodeComputer {
-        numbers: input.data.clone(),
+        program: input.data.clone(),
         index: 0,
         input_queue: VecDeque::new(),
         relative_base: 0,
