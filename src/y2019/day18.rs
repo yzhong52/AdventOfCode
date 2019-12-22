@@ -148,26 +148,60 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let max_x = &input.data.len();
     let max_y = &input.data[0].len();
     let quadrant = [
-        (0..entrance.x, 0..entrance.y, _Point { x: entrance.x - 1, y: entrance.y - 1 }),
-        (0..entrance.x, entrance.y + 1..*max_y, _Point { x: entrance.x - 1, y: entrance.y + 1 }),
-        (entrance.x + 1..*max_x, 0..entrance.y, _Point { x: entrance.x + 1, y: entrance.y - 1 }),
-        (entrance.x + 1..*max_x, entrance.y + 1..*max_y, _Point { x: entrance.x + 1, y: entrance.y + 1 }),
+        (
+            0..entrance.x,
+            0..entrance.y,
+            _Point { x: entrance.x - 1, y: entrance.y - 1 }
+        ),
+        (
+            0..entrance.x,
+            entrance.y + 1..*max_y,
+            _Point { x: entrance.x - 1, y: 0 }
+        ),
+        (
+            entrance.x + 1..*max_x,
+            0..entrance.y,
+            _Point { x: 0, y: entrance.y - 1 }
+        ),
+        (
+            entrance.x + 1..*max_x,
+            entrance.y + 1..*max_y,
+            _Point { x: 0, y: 0 }
+        ),
     ];
 
     let mut final_result = 0;
     for (x_range, y_range, entrance) in quadrant.iter() {
-        let mut data = vec![vec![]];
+        let mut data = vec![];
 
         for i in x_range.clone() {
             let mut row = vec![];
-            for j in x_range.clone() {
-                row.push(data[i][j]);
+            for j in y_range.clone() {
+                row.push(input.data[i][j]);
             }
             data.push(row);
         }
 
-        let mut visited: HashMap<Visited, i32> = HashMap::new();
+        let max_x1 = &data.len();
+        let max_y1 = &data[0].len();
+
+        data[entrance.x][entrance.y] = ENTRANCE;
+
         let all_keys = all_keys(&data);
+
+        // For all doors that are in the current quadrant, if there isn't a key, let's just remove it.
+        for i in 0..data.len() {
+            for j in 0..data[0].len() {
+                if data[i][j] >= 'A' && data[i][j] <= 'Z' {
+                    let key = (data[i][j] as u8 - 'A' as u8 + 'a' as u8) as char;
+                    if !all_keys.contains(&key) {
+                        data[i][j] = EMPTY;
+                    }
+                }
+            }
+        }
+
+        let mut visited: HashMap<Visited, i32> = HashMap::new();
         let keys: Vec<i32> = vec![0; 26];
         let mut result: i32 = std::i32::MAX;
         dfs(
