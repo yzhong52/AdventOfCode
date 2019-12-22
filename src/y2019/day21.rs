@@ -1,43 +1,72 @@
 use crate::helpers::parser::{Input, Answer};
 use crate::y2019::day9::{SuperIntCodeComputer, SuperIntCodeResult};
 
-pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
-    let mut springdroid = SuperIntCodeComputer::new(input.data.clone());
+struct Springdroid {
+    computer: SuperIntCodeComputer,
+}
 
-    // 73
-    let springscript = [
-        "NOT C T",
-        "AND D T",
-        "OR T J",
-        "NOT A T",
-        "OR T J",
-        "WALK",
-    ];
-
-    for script in springscript.iter() {
-        for c in script.chars() {
-            springdroid.input(c as u8 as i128);
-        }
-        springdroid.input('\n' as u8 as i128);
+impl Springdroid {
+    fn new(instructions: Vec<i128>) -> Springdroid {
+        Springdroid { computer: SuperIntCodeComputer::new(instructions) }
     }
 
-    loop {
-        match springdroid.run() {
-            SuperIntCodeResult::Output(value) => {
-                if value < 128 {
-                    print!("{}'", value as u8 as char);
-                } else {
-                    print!("{}'", value);
+    fn run(&mut self, script: &str) -> i128 {
+        let s: String = script.to_string()
+            .split('\n')
+            .map(|x| x.trim().to_string())
+            .filter(|x| x.len() > 0)
+            .collect::<Vec<String>>()
+            .join("\n");
+
+        for c in s.chars() {
+            self.computer.input(c as i128);
+        }
+        self.computer.input('\n' as i128); // That's why we need "EOF"
+
+        let mut output = 0;
+        loop {
+            match self.computer.run() {
+                SuperIntCodeResult::Output(value) => {
+                    if value < 128 {
+                        print!("{}", value as u8 as char);
+                    } else {
+                        output = value;
+                    }
                 }
-            },
-            SuperIntCodeResult::Halted => break,
+                SuperIntCodeResult::Halted => break,
+            }
         }
+        output
     }
+}
 
 
-    Answer { question: input.question, result: 0 }
+pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
+    let mut droid = Springdroid::new(input.data.clone());
+    let script = r#"
+        NOT C T
+        AND D T
+        OR T J
+        NOT A T
+        OR T J
+        WALK
+        "#;
+    let output = droid.run(script);
+
+    Answer { question: input.question, result: output }
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    Answer { question: input.question, result: 0 }
+    let mut droid = Springdroid::new(input.data.clone());
+    let script = r#"
+        NOT C T
+        AND D T
+        OR T J
+        NOT A T
+        OR T J
+        RUN
+        "#;
+    let output = droid.run(script);
+
+    Answer { question: input.question, result: output }
 }
