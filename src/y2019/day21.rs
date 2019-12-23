@@ -58,15 +58,31 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let mut droid = Springdroid::new(input.data.clone());
-    // Maximum 15 rows
+    // J = !A
+    // ......@..........
+    // .....@.@.........
+    // ....@...@........
+    // #####.###########
+    //      ABCDEFGH
+    //
+    // J = !B & !C & !E = !(B | C | E)
+    // .....@...@.......
+    // ....@.@.@.@......
+    // ...@...@...@.....
+    // #####..#.########
+    //     ABCDEFGH
+    //
+    // ....@...@.........
+    // ...@.@.@.@........
+    // ..@...@...@.......
+    // #####.##.########
+
     let script = r#"
-        NOT B J
-        NOT C T
-        OR J T
-        AND B J
-        AND D T
-        OR T J
-        NOT A T
+        NOT A J
+        OR B T
+        OR C T
+        OR E T
+        NOT T T
         OR T J
         RUN
         "#;
