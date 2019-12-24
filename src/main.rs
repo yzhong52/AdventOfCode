@@ -151,6 +151,12 @@ fn run_completed() {
     // Day 20: Donut Maze
     y2019::day20::part1(read_grid(Question::y2019(20))).save_part1();
     y2019::day20::part2(read_grid(Question::y2019(20))).save_part2();
+
+    // Day 21: Springdroid Adventure
+    y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
+
+    // Day 22: Slam Shuffle
+    y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
 }
 
 fn main() {
@@ -161,11 +167,8 @@ fn main() {
         };
     }
 
-    // Day 21: Springdroid Adventure
-    // y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
+    // TODO: Yuchen -
     // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-
-    // Day 22: Slam Shuffle
-    y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
-    y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
+    // TODO: Yuchen -
+    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 }
