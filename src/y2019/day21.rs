@@ -94,24 +94,18 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     //    ABCDEFGHI
 
     let script = r#"
-        NOT A J
-
-        OR G T
-        AND F T
-        OR I T
-        AND E T
-        OR B T
-        NOT T T
-        OR T J
-
-        OR I T
-        AND E T
         OR F T
         OR C T
-        NOT T T
+        AND B T
+        OR E T
+        AND A T
+        NOT T J
+
+        NOT I T
+        AND H T
+        AND D T
         OR T J
 
-        AND D J
         RUN
         "#;
     let output = droid.run(script);

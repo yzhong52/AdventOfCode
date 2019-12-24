@@ -162,8 +162,8 @@ fn main() {
     }
 
     // Day 21: Springdroid Adventure
-    y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
-    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
+    // y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
+    // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
 
     // Day 22: Slam Shuffle
     y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();

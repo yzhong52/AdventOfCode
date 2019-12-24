@@ -1,5 +1,37 @@
 # AdventOfCode
 
+## Day 21: Springdroid Adventure
+
+``` 
+#####.###########  J = !A 
+  ^^^A
+#####..#.########  J = !B & !E = !(B OR E)
+   ^ B? E
+#####.#..########  J = !C & !E & !F = !(C OR E OR F)
+  ^--C^EF
+######.##.##..####  j = !c & !f !i = !(c or f or i)
+   ^--c^-f-^i--^
+#####.###..#.####  j = TODO
+  ^^-C^^-GH^? 
+#####..##..#.####  j = TODO
+   ^-BC^-FG^I 
+#####..#...#.####  j = !i & (!e or !f or !g) & (!a or !b or !c)
+   ^-BC^EFG^I 
+#####.###..#.####  j = !I & H & D
+   ^-B-^-FG^I
+#####.###..#.####  j = !I & (!B or !C ) & H & D
+   ^-B-^-FG^I
+
+```
+
+ !A | !(B or E) | !(C OR E OR F)
+=!(A & (B or E) & (C OR E OR F))
+=!(A & (E OR (B & (C OR F))))
+
+J = J & (!A | !B | !C)
+  = J & !(A & B & C)
+  = !(J | (A & B & C))
+
 ## Day 17: Set and Forget
 
 ```
