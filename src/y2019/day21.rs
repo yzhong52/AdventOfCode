@@ -96,19 +96,18 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let script = r#"
         NOT A J
 
-        OR B T
-        OR E T
-        NOT T T
-        OR T J
-
-        OR C T
-        OR E T
-        NOT T T
-        OR T J
-
-        OR C T
+        OR G T
+        AND F T
         OR I T
+        AND E T
+        OR B T
+        NOT T T
+        OR T J
+
+        OR I T
+        AND E T
         OR F T
+        OR C T
         NOT T T
         OR T J
 
