@@ -21,10 +21,10 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
     const NOT_SET: i32 = -1;
     const INVALID: i32 = -2;
 
-    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize;
-    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize;
+    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize + 1;
+    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize + 1;
 
-    let mut closest: Vec<Vec<i32>> = vec![vec![NOT_SET; max_y + 1]; max_x + 1];
+    let mut closest: Vec<Vec<i32>> = vec![vec![NOT_SET; max_y]; max_x];
 
     for (index, point) in points.iter().enumerate() {
         closest[point.x as usize][point.y as usize] = index as i32
@@ -63,11 +63,11 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
 
     for y in 0..max_y {
         infinity.insert(closest[0][y]);
-        infinity.insert(closest[max_x][y]);
+        infinity.insert(closest[max_x - 1][y]);
     }
     for x in 0..max_x {
         infinity.insert(closest[x][0]);
-        infinity.insert(closest[x][max_y]);
+        infinity.insert(closest[x][max_y - 1]);
     }
 
     let mut counts = vec![0; total_points_count];
@@ -85,13 +85,13 @@ pub fn part1(input: Input<Vec<Point>>) -> Answer<usize> {
 pub fn part2(input: Input<Vec<Point>>) -> Answer<usize> {
     let points = &input.data;
 
-    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize;
-    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize;
+    let max_x = points.iter().map(|p| p.x).max().unwrap() as usize + 1;
+    let max_y = points.iter().map(|p| p.y).max().unwrap() as usize + 1;
 
     let mut safe_count = 0;
 
-    for x in 0..=max_x {
-        for y in 0..=max_y {
+    for x in 0.. max_x {
+        for y in 0.. max_y {
             let mut total = 0;
             for p in points {
                 total += i32::abs(p.x - x as i32);

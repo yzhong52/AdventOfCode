@@ -168,6 +168,7 @@ fn main() {
     }
 
     y2018::day6::part1(read_points(Question::y2018(6))).save_part1();
+    y2018::day6::part2(read_points(Question::y2018(6))).save_part2();
 
 
     // TODO: Yuchen -
