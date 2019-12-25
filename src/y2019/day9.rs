@@ -31,6 +31,7 @@ pub struct SuperIntCodeComputer {
     pub input_queue: VecDeque<i128>,
     pub relative_base: usize,
     pub external_numbers: HashMap<usize, i128>,
+    semaphore: Semaphore,
 }
 
 impl SuperIntCodeComputer {
@@ -41,11 +42,13 @@ impl SuperIntCodeComputer {
             input_queue: VecDeque::new(),
             relative_base: 0,
             external_numbers: HashMap::new(),
+            semaphore: Semaphore::new(),
         }
     }
 
     pub fn input(&mut self, value: i128) {
         self.input_queue.push_back(value);
+
     }
 
     fn parse_number(&self, mode: i128, relative_base: usize) -> i128 {
@@ -122,8 +125,13 @@ impl SuperIntCodeComputer {
                     let position = self.read(self.index);
                     self.index += 1;
 
-                    let value = self.input_queue.pop_front().unwrap();
-                    self.save_number(mode1, position, value);
+                    if let Some(value) = self.input_queue.pop_front() {
+                        self.save_number(mode1, position, value);
+                    } else {
+                        // TODO: Yuchen - maybe need to configure this as well
+                        // println!("Reading empty...");
+                        self.save_number(mode1, position, -1);
+                    }
                 }
                 OPERATION_OUTPUT_4 => {
                     let output_number = self.parse_number(mode1, self.relative_base);
