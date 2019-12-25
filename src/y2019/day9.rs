@@ -1,6 +1,7 @@
 use super::super::helpers::parser::*;
 
 use std::collections::{VecDeque, HashMap};
+use tokio::sync::Semaphore;
 
 const POSITION_MODE: i128 = 0;
 const IMMEDIATE_MODE: i128 = 1;
@@ -24,7 +25,6 @@ pub enum SuperIntCodeResult {
     Halted,
 }
 
-#[derive(Clone)]
 pub struct SuperIntCodeComputer {
     pub index: usize,
     pub instructions: Vec<i128>,
@@ -42,13 +42,12 @@ impl SuperIntCodeComputer {
             input_queue: VecDeque::new(),
             relative_base: 0,
             external_numbers: HashMap::new(),
-            semaphore: Semaphore::new(),
+            semaphore: Semaphore::new(0),
         }
     }
 
     pub fn input(&mut self, value: i128) {
         self.input_queue.push_back(value);
-
     }
 
     fn parse_number(&self, mode: i128, relative_base: usize) -> i128 {
@@ -165,13 +164,8 @@ impl SuperIntCodeComputer {
 }
 
 pub fn run_till_halt(values: &Vec<i128>, inputs: Vec<i128>) -> i128 {
-    let mut computer = SuperIntCodeComputer {
-        instructions: values.clone(),
-        index: 0,
-        input_queue: inputs.into_iter().collect(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut computer = SuperIntCodeComputer::new(values.clone());
+    computer.input_queue = inputs.into_iter().collect();
     let mut final_output = 0;
     loop {
         match computer.run() {

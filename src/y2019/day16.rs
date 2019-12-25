@@ -30,43 +30,37 @@ pub fn part1(input: Input<String>) -> Answer<String> {
 const REPEATED_TIMES: usize = 10000;
 
 pub fn part2(input: Input<String>) -> Answer<String> {
-    let initial_digits = parse(&input.data);
-    println!("Length is of the initial input: {}", initial_digits.len());
-
-    // Repeat this `REPEATED_TIMES` times
-    let mut digits = vec![vec![]; REPEATED_TIMES];
-    for i in 0 .. REPEATED_TIMES {
-        digits[i] = initial_digits.clone();
-    }
-
-    for phase in 0..100 {
-        let mut next_digits = vec![Vec::new(); REPEATED_TIMES];
-        for r1 in 0..REPEATED_TIMES {
-            for r2 in 0..digits[r1].len() {
-                let row = r1 * digits[r1].len() + r2 + 1;
-
-                let mut total: i128 = 0;
-                for c1 in 0..REPEATED_TIMES {
-                    for (c2, n) in digits[c1].iter().enumerate() {
-                        let column = c1 * digits[c1].len() + c2 + 1;
-                        let offset = column / row;
-                        let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
-                        total += patten as i128 * *n as i128;
-                    }
-                }
-
-                let last_digit: i8 = (&total.abs() % 10) as i8;
-                next_digits[r1].push(last_digit);
-                println!("r2 {:?}", &r2);
-            }
-            println!("r1 {:?}", &r1);
-        }
-        println!("{:?}", &next_digits);
-        digits = next_digits;
-
-        println!("Do we need to speed up {}", phase);
-    }
-
-    let result: String = digits[0][0..8].iter().map(ToString::to_string).collect();
-    return Answer { question: input.question, result };
+//    let initial_digits = parse(&input.data);
+//
+//    // Repeat this `REPEATED_TIMES` times
+//    let mut digits = vec![vec![]; REPEATED_TIMES];
+//    for i in 0 .. REPEATED_TIMES {
+//        digits[i] = initial_digits.clone();
+//    }
+//
+//    for phase in 0..100 {
+//        let mut next_digits = vec![Vec::new(); REPEATED_TIMES];
+//        for r1 in 0..REPEATED_TIMES {
+//            for r2 in 0..digits[r1].len() {
+//                let row = r1 * digits[r1].len() + r2 + 1;
+//
+//                let mut total: i128 = 0;
+//                for c1 in 0..REPEATED_TIMES {
+//                    for (c2, n) in digits[c1].iter().enumerate() {
+//                        let column = c1 * digits[c1].len() + c2 + 1;
+//                        let offset = column / row;
+//                        let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
+//                        total += patten as i128 * *n as i128;
+//                    }
+//                }
+//
+//                let last_digit: i8 = (&total.abs() % 10) as i8;
+//                next_digits[r1].push(last_digit);
+//            }
+//        }
+//        digits = next_digits;
+//    }
+//
+//    let result: String = digits[0][0..8].iter().map(ToString::to_string).collect();
+    return Answer { question: input.question, result: "0".to_string() };
 }

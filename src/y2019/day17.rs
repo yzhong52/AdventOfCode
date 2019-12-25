@@ -11,13 +11,7 @@ const INTERSECTION: char = 'O';
 const FRAME: char = '#';
 
 fn detect_scaffold(input: &Vec<i128>) -> Vec<Vec<char>> {
-    let mut vacuum_robot = SuperIntCodeComputer {
-        instructions: input.clone(),
-        index: 0,
-        input_queue: VecDeque::new(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut vacuum_robot = SuperIntCodeComputer::new(input.clone());
 
     let mut scaffold: Vec<Vec<char>> = vec![vec![]; 0];
     let mut row = vec![];
@@ -226,13 +220,8 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
         input_queue.push_back('\n' as i128)
     }
 
-    let mut vacuum_robot = SuperIntCodeComputer {
-        instructions: input.data.clone(),
-        index: 0,
-        input_queue,
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut vacuum_robot = SuperIntCodeComputer::new(input.data.clone());
+    vacuum_robot.input_queue = input_queue;
 
     // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
     vacuum_robot.instructions[0] = 2;

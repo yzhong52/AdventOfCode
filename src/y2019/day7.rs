@@ -1,7 +1,7 @@
 use super::super::helpers::parser::*;
 // use super::day5::*;
 use super::day9::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
 fn combinations(current: Vec<i128>) -> Vec<Vec<i128>> {
     if current.len() == 1 {
@@ -47,8 +47,10 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
         let mut index = 0;
 
         let mut computers: Vec<SuperIntCodeComputer> = phases.iter().map(|phase| {
-            let input_queue = vec![*phase].into_iter().collect();
-            SuperIntCodeComputer { instructions: input.data.clone(), index: 0, input_queue, relative_base: 0, external_numbers: HashMap::new() }
+            let input_queue: VecDeque<i128> = vec![*phase].into_iter().collect();
+            let mut computer = SuperIntCodeComputer::new(input.data.clone());
+            computer.input_queue = input_queue;
+            computer
         }).collect();
 
         loop {

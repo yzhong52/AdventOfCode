@@ -41,13 +41,7 @@ fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<Point, bool> {
     let mut map: HashMap<Point, bool> = HashMap::new();
     map.insert(Point::origin(), initial_color);
 
-    let mut robot = SuperIntCodeComputer {
-        instructions: input.clone(),
-        index: 0,
-        input_queue: VecDeque::new(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut robot = SuperIntCodeComputer::new(input.clone());
 
     let mut pos = Point::origin();
     let mut dir = Point { x: 0, y: 1 };

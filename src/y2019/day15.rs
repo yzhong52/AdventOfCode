@@ -52,13 +52,7 @@ static ACTIONS: [Action; 4] = [
 ];
 
 fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
-    let mut droid = SuperIntCodeComputer {
-        instructions: input.clone(),
-        index: 0,
-        input_queue: VecDeque::new(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut droid = SuperIntCodeComputer::new(input.clone());
 
     let mut next_action: &Action = &ACTIONS[0];
     let mut droid_pos: BigPoint = BigPoint::origin();
@@ -208,7 +202,7 @@ fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigP
 
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let explored = explore_map(&input.data, true);
+    let explored = explore_map(&input.data, false);
     let distance_to_destination = dijkstra(
         &explored.map,
         BigPoint::origin(),

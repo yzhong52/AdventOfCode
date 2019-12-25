@@ -20,13 +20,7 @@ const BALL_TILE: i128 = 4;
 fn play_game(input: &Vec<i128>) -> HashMap<BigPoint, i128> {
     let mut map: HashMap<BigPoint, i128> = HashMap::new();
 
-    let mut robot = SuperIntCodeComputer {
-        instructions: input.clone(),
-        index: 0,
-        input_queue: VecDeque::new(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let mut robot = SuperIntCodeComputer::new(input.clone());
 
     loop {
         let x = match robot.run() {
@@ -163,13 +157,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
 
     let screen: Vec<Vec<char>> = vec![vec!['?'; max_x as usize + 1]; max_y as usize + 1];
 
-    let computer = SuperIntCodeComputer {
-        instructions: input.data.clone(),
-        index: 0,
-        input_queue: VecDeque::new(),
-        relative_base: 0,
-        external_numbers: HashMap::new(),
-    };
+    let computer = SuperIntCodeComputer::new(input.data.clone());
 
     let mut arcade = ArcadeCabinet { computer, screen, score: 0 };
 
