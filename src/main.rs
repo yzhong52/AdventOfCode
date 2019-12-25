@@ -167,15 +167,13 @@ fn main() {
         };
     }
 
-    y2018::day6::part1(read_points(Question::y2018(6))).save_part1();
-    y2018::day6::part2(read_points(Question::y2018(6))).save_part2();
-
+    // TODO: Yuchen - OOM
+    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
     // TODO: Yuchen -
     // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
     // TODO: Yuchen -
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
-    // y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
-
+     // y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
 }
