@@ -1,13 +1,9 @@
 use super::super::helpers::parser::*;
 
 use std::collections::{VecDeque, HashMap};
-use tokio::sync::Semaphore;
 
 const POSITION_MODE: i128 = 0;
 const IMMEDIATE_MODE: i128 = 1;
-// Parameters in mode 2, relative mode, behave very similarly to parameters in position mode: the
-// parameter is interpreted as a position. Like position mode, parameters in relative mode can be
-// read from or written to.
 const RELATIVE_MODE: i128 = 2;
 
 const OPERATION_ADDITION_1: i128 = 1;
@@ -31,7 +27,6 @@ pub struct SuperIntCodeComputer {
     pub input_queue: VecDeque<i128>,
     pub relative_base: usize,
     pub external_numbers: HashMap<usize, i128>,
-    semaphore: Semaphore,
 }
 
 impl SuperIntCodeComputer {
@@ -42,7 +37,6 @@ impl SuperIntCodeComputer {
             input_queue: VecDeque::new(),
             relative_base: 0,
             external_numbers: HashMap::new(),
-            semaphore: Semaphore::new(0),
         }
     }
 

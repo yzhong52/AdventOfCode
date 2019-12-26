@@ -1,14 +1,10 @@
 use std::collections::{VecDeque, HashMap};
-use tokio::sync::Semaphore;
 use std::thread::sleep;
 use std::time::Duration;
 use std::sync::Mutex;
 
 const POSITION_MODE: i128 = 0;
 const IMMEDIATE_MODE: i128 = 1;
-// Parameters in mode 2, relative mode, behave very similarly to parameters in position mode: the
-// parameter is interpreted as a position. Like position mode, parameters in relative mode can be
-// read from or written to.
 const RELATIVE_MODE: i128 = 2;
 
 const OPERATION_ADDITION_1: i128 = 1;
@@ -32,7 +28,6 @@ pub struct AtomicIntCodeComputer {
     pub inputs: Mutex<VecDeque<i128>>,
     pub relative_base: Mutex<usize>,
     pub external_storage: Mutex<HashMap<usize, i128>>,
-    semaphore: Semaphore,
 }
 
 impl AtomicIntCodeComputer {
@@ -43,7 +38,6 @@ impl AtomicIntCodeComputer {
             inputs: Mutex::new(VecDeque::new()),
             relative_base: Mutex::new(0),
             external_storage: Mutex::new(HashMap::new()),
-            semaphore: Semaphore::new(0),
         }
     }
 
@@ -143,8 +137,9 @@ impl AtomicIntCodeComputer {
                         println!("Reading empty...");
                         self.save_number(mode1, position, *relative_base as usize, -1);
 
+                        // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
                         let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 100));
+                        sleep(Duration::from_millis(random_number % 100 + 300));
                     }
                 }
                 OPERATION_OUTPUT_4 => {
