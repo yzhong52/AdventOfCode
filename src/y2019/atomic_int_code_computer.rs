@@ -96,8 +96,11 @@ impl AtomicIntCodeComputer {
     }
 
     pub fn run(&self) -> AtomicIntCodeResult {
+        println!(".");
         let mut index = self.index.lock().unwrap();
+        println!(".");
         let mut relative_base = self.relative_base.lock().unwrap();
+        println!(".");
 
         while self.read(*index as usize) != 99 {
             let current_instruction = self.read(*index as usize);
@@ -135,13 +138,11 @@ impl AtomicIntCodeComputer {
                     if let Some(value) = inputs.pop_front() {
                         self.save_number(mode1, position, *relative_base as usize, value);
                     } else {
-                        // TODO: Yuchen - maybe need to configure this as well
-                        println!("Reading empty... {}", self.name);
                         self.save_number(mode1, position, *relative_base as usize, -1);
-
+                        println!("Waiting for input for {}", self.name);
                         // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
                         let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 3000 + 3000));
+                        sleep(Duration::from_millis(random_number % 10));
                     }
                 }
                 OPERATION_OUTPUT_4 => {
