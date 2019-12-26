@@ -1,10 +1,8 @@
 use crate::helpers::parser::Input;
 use crate::helpers::parser::Answer;
-use std::process::exit;
 use std::sync::Arc;
 use std::thread;
 use crate::y2019::atomic_int_code_computer::AtomicIntCodeComputer;
-use crate::y2019::atomic_int_code_computer::AtomicIntCodeResult;
 
 const CONTROLLER_COUNT: usize = 50;
 
@@ -17,7 +15,7 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
             format!("Controller {}", i),
         );
         // when each computer boots up, it will request its network address via a single input instruction
-        controller.input(i as i128);
+        controller.input_single(i as i128);
         controllers.push(controller);
     }
 
@@ -39,8 +37,7 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
                 println!("Send package from {}, to {}, x: {}, y: {}", controller.name, address, x, y);
 
                 let receiver = &references[address as usize];
-                receiver.input(x);
-                receiver.input(y);
+                receiver.input_multiple(vec![x, y]);
             }
         });
 

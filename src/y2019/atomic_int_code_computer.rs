@@ -43,9 +43,16 @@ impl AtomicIntCodeComputer {
         }
     }
 
-    pub fn input(&self, value: i128) {
+    pub fn input_single(&self, value: i128) {
         let mut inputs = self.inputs.lock().unwrap();
         inputs.push_back(value);
+    }
+
+    pub fn input_multiple(&self, values: Vec<i128>) {
+        let mut inputs = self.inputs.lock().unwrap();
+        for v in values {
+            inputs.push_back(v)
+        }
     }
 
     fn parse_number(&self, index: usize, mode: i128, relative_base: usize) -> i128 {
@@ -96,11 +103,8 @@ impl AtomicIntCodeComputer {
     }
 
     pub fn run(&self) -> AtomicIntCodeResult {
-        println!(".");
         let mut index = self.index.lock().unwrap();
-        println!(".");
         let mut relative_base = self.relative_base.lock().unwrap();
-        println!(".");
 
         while self.read(*index as usize) != 99 {
             let current_instruction = self.read(*index as usize);
@@ -136,13 +140,14 @@ impl AtomicIntCodeComputer {
 
                     let mut inputs = self.inputs.lock().unwrap();
                     if let Some(value) = inputs.pop_front() {
+                        println!("[{}] Received data: {}", self.name, value);
                         self.save_number(mode1, position, *relative_base as usize, value);
                     } else {
                         self.save_number(mode1, position, *relative_base as usize, -1);
-                        println!("Waiting for input for {}", self.name);
+                        // println!("[{}] Waiting for input", self.name);
                         // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
                         let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 10));
+                        sleep(Duration::from_millis(random_number % 2000 + 1500));
                     }
                 }
                 OPERATION_OUTPUT_4 => {
