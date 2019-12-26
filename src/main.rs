@@ -41,7 +41,7 @@ mod y2019 {
     pub mod day20;
     pub mod day21;
     pub mod day22;
-    pub mod AtomicIntCodeComputer;
+    pub mod atomic_int_code_computer;
     pub mod day23;
     pub mod day24;
 }

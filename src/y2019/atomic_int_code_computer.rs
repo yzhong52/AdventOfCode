@@ -23,6 +23,7 @@ pub enum AtomicIntCodeResult {
 }
 
 pub struct AtomicIntCodeComputer {
+    pub name: String,
     pub index: Mutex<usize>,
     pub instructions: Mutex<Vec<i128>>,
     pub inputs: Mutex<VecDeque<i128>>,
@@ -31,8 +32,9 @@ pub struct AtomicIntCodeComputer {
 }
 
 impl AtomicIntCodeComputer {
-    pub fn new(instructions: Vec<i128>) -> AtomicIntCodeComputer {
+    pub fn new(instructions: Vec<i128>, name: String) -> AtomicIntCodeComputer {
         AtomicIntCodeComputer {
+            name,
             instructions: Mutex::new(instructions),
             index: Mutex::new(0),
             inputs: Mutex::new(VecDeque::new()),
@@ -134,12 +136,12 @@ impl AtomicIntCodeComputer {
                         self.save_number(mode1, position, *relative_base as usize, value);
                     } else {
                         // TODO: Yuchen - maybe need to configure this as well
-                        println!("Reading empty...");
+                        println!("Reading empty... {}", self.name);
                         self.save_number(mode1, position, *relative_base as usize, -1);
 
                         // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
                         let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 100 + 300));
+                        sleep(Duration::from_millis(random_number % 3000 + 3000));
                     }
                 }
                 OPERATION_OUTPUT_4 => {
@@ -169,6 +171,15 @@ impl AtomicIntCodeComputer {
         }
 
         AtomicIntCodeResult::Halted
+    }
+
+    pub fn execute(&self, count: i32) -> Vec<i128> {
+        (0..count).map(|_| {
+            match self.run() {
+                AtomicIntCodeResult::Output(value) => value,
+                AtomicIntCodeResult::Halted => unimplemented!(),
+            }
+        }).collect()
     }
 }
 
