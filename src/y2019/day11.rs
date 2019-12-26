@@ -1,7 +1,7 @@
 use super::super::helpers::parser::*;
 use super::super::helpers::utils::*;
 use super::day9::*;
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 use crate::helpers::models::Point;
 
 const WHITE_COLOR: bool = true;
