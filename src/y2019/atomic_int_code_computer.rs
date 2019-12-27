@@ -56,11 +56,6 @@ impl AtomicIntCodeComputer {
         }
     }
 
-    pub fn is_input_empty(&self) -> bool {
-        let inputs = self.inputs.lock().unwrap();
-        inputs.is_empty()
-    }
-
     fn parse_number(&self, index: usize, mode: i128, relative_base: usize) -> i128 {
         match mode {
             POSITION_MODE => self.read(self.read(index) as usize),
@@ -146,10 +141,12 @@ impl AtomicIntCodeComputer {
 
                     let mut inputs = self.inputs.lock().unwrap();
                     if let Some(value) = inputs.pop_front() {
-                        println!("[{}] Received data: {}", self.name, value);
+                        // println!("[{}] Received data: {}", self.name, value);
                         self.save_number(mode1, position, *relative_base as usize, value);
                     } else {
                         self.save_number(mode1, position, *relative_base as usize, -1);
+                        // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
+                        sleep(Duration::from_millis(rand::random::<u64>() % 10 + 50));
                         return AtomicIntCodeResult::WaitingInput;
                     }
                 }
