@@ -19,6 +19,7 @@ const OPERATION_RELATIVE_BASE_OFFSET_9: i128 = 9;
 
 pub enum AtomicIntCodeResult {
     Output(i128),
+    WaitingInput,
     Halted,
 }
 
@@ -53,6 +54,11 @@ impl AtomicIntCodeComputer {
         for v in values {
             inputs.push_back(v)
         }
+    }
+
+    pub fn is_input_empty(&self) -> bool {
+        let inputs = self.inputs.lock().unwrap();
+        inputs.is_empty()
     }
 
     fn parse_number(&self, index: usize, mode: i128, relative_base: usize) -> i128 {
@@ -147,7 +153,8 @@ impl AtomicIntCodeComputer {
                         // println!("[{}] Waiting for input", self.name);
                         // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
                         let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 2000 + 1500));
+                        sleep(Duration::from_millis(random_number % 100 + 500));
+                        return AtomicIntCodeResult::WaitingInput;
                     }
                 }
                 OPERATION_OUTPUT_4 => {
@@ -179,13 +186,27 @@ impl AtomicIntCodeComputer {
         AtomicIntCodeResult::Halted
     }
 
-    pub fn execute(&self, count: i32) -> Vec<i128> {
-        (0..count).map(|_| {
-            match self.run() {
+    pub fn execute3(&self) -> Option<(i128, i128, i128)> {
+        let first = match self.run() {
+            AtomicIntCodeResult::Output(value) => Some(value),
+            AtomicIntCodeResult::WaitingInput => None,
+            AtomicIntCodeResult::Halted => unimplemented!(),
+        };
+
+        if let Some(first) = first {
+            let second = match self.run() {
                 AtomicIntCodeResult::Output(value) => value,
-                AtomicIntCodeResult::Halted => unimplemented!(),
-            }
-        }).collect()
+                AtomicIntCodeResult::WaitingInput | AtomicIntCodeResult::Halted => unimplemented!(),
+            };
+
+            let third = match self.run() {
+                AtomicIntCodeResult::Output(value) => value,
+                AtomicIntCodeResult::WaitingInput | AtomicIntCodeResult::Halted => unimplemented!(),
+            };
+            Some((first, second, third))
+        } else {
+            None
+        }
     }
 }
 
