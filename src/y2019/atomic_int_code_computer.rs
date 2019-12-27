@@ -150,10 +150,6 @@ impl AtomicIntCodeComputer {
                         self.save_number(mode1, position, *relative_base as usize, value);
                     } else {
                         self.save_number(mode1, position, *relative_base as usize, -1);
-                        // println!("[{}] Waiting for input", self.name);
-                        // Since we don't have semaphore in Rust, let's just sleep and switch thread for now.
-                        let random_number: u64 = rand::random();
-                        sleep(Duration::from_millis(random_number % 100 + 500));
                         return AtomicIntCodeResult::WaitingInput;
                     }
                 }

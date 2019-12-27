@@ -14,7 +14,7 @@ fn create_controllers(data: Vec<i128>) -> Vec<AtomicIntCodeComputer> {
     for i in 0..CONTROLLER_COUNT {
         let controller = AtomicIntCodeComputer::new(
             data.clone(),
-            format!("Controller {}", i),
+            format!("C{:02}", i),
         );
         // when each computer boots up, it will request its network address via a single input instruction
         controller.input_single(i as i128);
@@ -35,28 +35,21 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
 
         let handle = thread::spawn(move || {
             let controller = &controllers[i];
-            loop {
+            while result.lock().unwrap().is_none() {
                 let output = controller.execute3();
-                println!("Output {:?}", output);
 
                 if let Some((address, x, y)) = output {
                     if address == 255 {
                         let mut result = result.lock().unwrap();
                         *result = Some(y);
-                        break;
                     } else {
                         let receiver = &controllers[address as usize];
                         receiver.input_multiple(vec![x, y]);
                     }
-                } else {
-                    let result = result.lock().unwrap();
-                    if result.is_some() {
-                        break;
-                    }
                 }
             }
 
-            println!("Shut down {}", &controller.name);
+            println!("[{}] Shut down", &controller.name);
         });
         thread_handlers.push(handle);
     }
