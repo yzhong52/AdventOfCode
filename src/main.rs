@@ -177,4 +177,5 @@ fn main() {
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
     y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
+    y2019::day23::part2(read_numbers_by_comma(Question::y2019(23))).save_part2();
 }
