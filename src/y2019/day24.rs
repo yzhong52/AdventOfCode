@@ -52,12 +52,20 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
         }
 
         current = next_state;
-
-        sleep(Duration::from_secs(1));
     }
 
 
-    Answer { question: input.question, result: 0 }
+    let mut result = 0;
+    for i in 0..max_x {
+        for j in 0..max_y {
+            if current[i][j] == BUG {
+                result = (result << 2) + 1;
+            } else {
+                result <<= 2;
+            }
+        }
+    }
+    Answer { question: input.question, result }
 }
 
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
