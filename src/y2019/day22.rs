@@ -29,6 +29,8 @@ pub fn shuffle1(data: Vec<String>, original_position: usize, deck_length: usize)
             deck = right;
             deck.append(left.as_mut());
         }
+
+        println!("{:?}", deck);
     }
 
     deck.iter().position(|x| *x == original_position).unwrap()
@@ -46,17 +48,14 @@ fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, r
     let mut result: usize = original_position;
 
     for r in 0..repeat {
-//        if r % (repeat / 10000000) == 0 {
-        println!("Shuffle cards iteration {} ({}%)", r, (r * 100000 / repeat) as f32 / 1000.0);
-//        }
+        if r * 100 % repeat == 0 {
+            println!("Shuffle cards iteration {} ({}%)", r, (r * 100000 / repeat) as f32 / 1000.0);
+        }
         for row in &shuffles {
             match row {
                 Shuffle::DealWithIncrement(increment) => {
-                    let number_rounds = deck_len / *increment;
-                    let remain = result % number_rounds;
-                    let divider = result / number_rounds;
-
-                    result = remain * (number_rounds + 1) + divider;
+                    let next_position = (result * *increment) % deck_len;
+                    result = next_position;
                 }
                 Shuffle::DealNewDeck => {
                     result = deck_len - 1 - result;
@@ -100,13 +99,13 @@ fn parse(shuffles: &Vec<String>) -> Vec<Shuffle> {
 }
 
 pub fn part1(input: Input<Vec<String>>) -> Answer<usize> {
-    let result = shuffle1(input.data, 10, 10007);
+    let result = shuffle1(input.data, 0, 10);
     Answer { question: input.question, result }
 }
 
 pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     let parsed = parse(&input.data);
     // let result = shuffle(parsed, 2020, 119315717514047, 101741582076661);
-    let result = shuffle2(parsed, 10, 10007, 1);
+    let result = shuffle2(parsed, 0, 10, 1);
     Answer { question: input.question, result }
 }
