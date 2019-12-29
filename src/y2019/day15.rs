@@ -132,7 +132,7 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
 
         if debug {
             let buffer = get_screen_buffer(&map, UNKNOWN, 41, 41);
-            print(&buffer);
+            print_grid(&buffer);
             println!("Droid pos: {:?}", droid_pos);
             println!("Target pos: {:?}", droid_pos);
             println!("Map size: {} x {}", buffer.len(), buffer[0].len());

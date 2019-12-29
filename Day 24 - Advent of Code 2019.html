@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)https://adventofcode.com/2019/day/24 -->
+<html lang="en-us" class="gr__adventofcode_com"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Day 24 - Advent of Code 2019</title>
+<!--[if lt IE 9]><script src="/static/html5.js"></script><![endif]-->
+<link href="./Day 24 - Advent of Code 2019_files/css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="./Day 24 - Advent of Code 2019_files/style.css">
+<link rel="stylesheet alternate" type="text/css" href="./Day 24 - Advent of Code 2019_files/highcontrast.css" title="High Contrast">
+<link rel="shortcut icon" href="https://adventofcode.com/favicon.png">
+<style type="text/css" media="all" id="my">                                                                               
+                .ogdlpmhglpejoiomcodnpjnfgcpmgale_default, body, html {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD7ElEQVRYR8WWS0ycVRTHf4eBlgFsB6Qr18bExJhQMG1iIuCMWhWjBotBV0NpJUE7FrpQ4yMxJsa0DkWwnQrtRhQ3GjFBnqUEHyStQNKF4AKTVne0UXmUefhdc7+ZYWbgG+eFeDOTyffNPef/O+eee+4VNYoC/gAGEQawMSw15vOODFGj/AWUJFETYA5hBMVX4mJ6u6lEjfAZwvNZOP5bXBRkYZdgojPQCHyakSMBcZKXkU2yFKsJHIS4lbazXSAPbY+41tRrjBrFSAtAV8qJKtgd6pXLs81p2aSYlD5AMdBWCYURVsPolcm5nCGiAHor6q/10JFr8d0GrK5C/bNQ9xSsrvik0tWSSybCACPMItxv6UiLt9wLLz4DT9bB8nJk4bSp0p9PpMp1LFuIKMAphBNbnCgUd80IazdBzKmJo7AQfv8NPjjdK+NXslqOMMAYB1F8n+BdL8id06BW4l4rKLTDjRvwoRfW1yE/P/p/j0zMHM00ExthJewEA0X5tGyI2+1w/TqcOg2BQLxoTC8YhLKyHhmYzAjCAkCg7EewG7C4CN4O0M5ttq3BaZg9e+BkG+zbB/6Aro/zst/5UrqZSASIdDhV9+Al/lyuthT1+8HhgPY2KC8PZ2TzyBOfVDyc1u6IB1DiCjcmsy6qKy4hVJsPWqS0NCyqf3VGwrOivQyUgpJi+LwfBr+FO0ouyMTskVSZsCjtmInx6MFv5I3XnsCxFwJR0XiXCoqKoP8LGBzSopv1UhbmvwKYMf40dg5FrLB0pKZoPwwNQ0mSk3xlBWpr4HDDedlfm7QmUgKYEHOXfeTnN9PXB2PjyUWXV+ARJzQ2wvrt+OVJ2qzSAojUxA8IB7asqY700GPQ0ABra9YNq7gYZq4ekhdeHt5snzaACVFToW9ED6AjrXscnjsMa6uxSOO9a9GFeejoDBcovC+Tc6/nBGBCLM76uLnUbNmadW3ML0BnRDQvcmcJBgPy3bVCqx2RUQY2tujV8bOgwgeQjnR+Hjo/AsOAqGh0cijol6lr9mTbMSsAMxNTAz7eeqfZUjTSO0Llparg6ymLFhrDyRrAhHDXn+XXxdhRrLukbsntbfhL98rxkV9UQZ7Q5XHbQCzvGzkBmBBN9edYWjrKyfbw9gyF9OvbUuksfuXMxbsNZSwYInx83G15ic0ZINKsfCii94F1qXQWRZPs8V50hMS4pVDvdnuOvJ3zLkhWTOrKkBN23SdVtd7Nc1rP9OoDni5P05YsbEsGUh04LR2999jgZ2C9y9O0kR1ttyMAWqjV2/M0Il+aS4a81+1xv7mjANEstXZcmFCKvu5X3T3/C8B/VoSp6iDZ//8AG8BTMNJPrVYAAAAASUVORK5CYII=") 0 0 , auto !important;}              
+                input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD7ElEQVRYR8WWS0ycVRTHf4eBlgFsB6Qr18bExJhQMG1iIuCMWhWjBotBV0NpJUE7FrpQ4yMxJsa0DkWwnQrtRhQ3GjFBnqUEHyStQNKF4AKTVne0UXmUefhdc7+ZYWbgG+eFeDOTyffNPef/O+eee+4VNYoC/gAGEQawMSw15vOODFGj/AWUJFETYA5hBMVX4mJ6u6lEjfAZwvNZOP5bXBRkYZdgojPQCHyakSMBcZKXkU2yFKsJHIS4lbazXSAPbY+41tRrjBrFSAtAV8qJKtgd6pXLs81p2aSYlD5AMdBWCYURVsPolcm5nCGiAHor6q/10JFr8d0GrK5C/bNQ9xSsrvik0tWSSybCACPMItxv6UiLt9wLLz4DT9bB8nJk4bSp0p9PpMp1LFuIKMAphBNbnCgUd80IazdBzKmJo7AQfv8NPjjdK+NXslqOMMAYB1F8n+BdL8id06BW4l4rKLTDjRvwoRfW1yE/P/p/j0zMHM00ExthJewEA0X5tGyI2+1w/TqcOg2BQLxoTC8YhLKyHhmYzAjCAkCg7EewG7C4CN4O0M5ttq3BaZg9e+BkG+zbB/6Aro/zst/5UrqZSASIdDhV9+Al/lyuthT1+8HhgPY2KC8PZ2TzyBOfVDyc1u6IB1DiCjcmsy6qKy4hVJsPWqS0NCyqf3VGwrOivQyUgpJi+LwfBr+FO0ouyMTskVSZsCjtmInx6MFv5I3XnsCxFwJR0XiXCoqKoP8LGBzSopv1UhbmvwKYMf40dg5FrLB0pKZoPwwNQ0mSk3xlBWpr4HDDedlfm7QmUgKYEHOXfeTnN9PXB2PjyUWXV+ARJzQ2wvrt+OVJ2qzSAojUxA8IB7asqY700GPQ0ABra9YNq7gYZq4ekhdeHt5snzaACVFToW9ED6AjrXscnjsMa6uxSOO9a9GFeejoDBcovC+Tc6/nBGBCLM76uLnUbNmadW3ML0BnRDQvcmcJBgPy3bVCqx2RUQY2tujV8bOgwgeQjnR+Hjo/AsOAqGh0cijol6lr9mTbMSsAMxNTAz7eeqfZUjTSO0Llparg6ymLFhrDyRrAhHDXn+XXxdhRrLukbsntbfhL98rxkV9UQZ7Q5XHbQCzvGzkBmBBN9edYWjrKyfbw9gyF9OvbUuksfuXMxbsNZSwYInx83G15ic0ZINKsfCii94F1qXQWRZPs8V50hMS4pVDvdnuOvJ3zLkhWTOrKkBN23SdVtd7Nc1rP9OoDni5P05YsbEsGUh04LR2999jgZ2C9y9O0kR1ttyMAWqjV2/M0Il+aS4a81+1xv7mjANEstXZcmFCKvu5X3T3/C8B/VoSp6iDZ//8AG8BTMNJPrVYAAAAASUVORK5CYII=") 0 0, auto !important;}                                                                              
+                [type="search"]::-webkit-search-cancel-button, [type="search"]::-webkit-search-decoration { url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2, auto  !important;}                
+                input::-webkit-contacts-auto-fill-button {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD7ElEQVRYR8WWS0ycVRTHf4eBlgFsB6Qr18bExJhQMG1iIuCMWhWjBotBV0NpJUE7FrpQ4yMxJsa0DkWwnQrtRhQ3GjFBnqUEHyStQNKF4AKTVne0UXmUefhdc7+ZYWbgG+eFeDOTyffNPef/O+eee+4VNYoC/gAGEQawMSw15vOODFGj/AWUJFETYA5hBMVX4mJ6u6lEjfAZwvNZOP5bXBRkYZdgojPQCHyakSMBcZKXkU2yFKsJHIS4lbazXSAPbY+41tRrjBrFSAtAV8qJKtgd6pXLs81p2aSYlD5AMdBWCYURVsPolcm5nCGiAHor6q/10JFr8d0GrK5C/bNQ9xSsrvik0tWSSybCACPMItxv6UiLt9wLLz4DT9bB8nJk4bSp0p9PpMp1LFuIKMAphBNbnCgUd80IazdBzKmJo7AQfv8NPjjdK+NXslqOMMAYB1F8n+BdL8id06BW4l4rKLTDjRvwoRfW1yE/P/p/j0zMHM00ExthJewEA0X5tGyI2+1w/TqcOg2BQLxoTC8YhLKyHhmYzAjCAkCg7EewG7C4CN4O0M5ttq3BaZg9e+BkG+zbB/6Aro/zst/5UrqZSASIdDhV9+Al/lyuthT1+8HhgPY2KC8PZ2TzyBOfVDyc1u6IB1DiCjcmsy6qKy4hVJsPWqS0NCyqf3VGwrOivQyUgpJi+LwfBr+FO0ouyMTskVSZsCjtmInx6MFv5I3XnsCxFwJR0XiXCoqKoP8LGBzSopv1UhbmvwKYMf40dg5FrLB0pKZoPwwNQ0mSk3xlBWpr4HDDedlfm7QmUgKYEHOXfeTnN9PXB2PjyUWXV+ARJzQ2wvrt+OVJ2qzSAojUxA8IB7asqY700GPQ0ABra9YNq7gYZq4ekhdeHt5snzaACVFToW9ED6AjrXscnjsMa6uxSOO9a9GFeejoDBcovC+Tc6/nBGBCLM76uLnUbNmadW3ML0BnRDQvcmcJBgPy3bVCqx2RUQY2tujV8bOgwgeQjnR+Hjo/AsOAqGh0cijol6lr9mTbMSsAMxNTAz7eeqfZUjTSO0Llparg6ymLFhrDyRrAhHDXn+XXxdhRrLukbsntbfhL98rxkV9UQZ7Q5XHbQCzvGzkBmBBN9edYWjrKyfbw9gyF9OvbUuksfuXMxbsNZSwYInx83G15ic0ZINKsfCii94F1qXQWRZPs8V50hMS4pVDvdnuOvJ3zLkhWTOrKkBN23SdVtd7Nc1rP9OoDni5P05YsbEsGUh04LR2999jgZ2C9y9O0kR1ttyMAWqjV2/M0Il+aS4a81+1xv7mjANEstXZcmFCKvu5X3T3/C8B/VoSp6iDZ//8AG8BTMNJPrVYAAAAASUVORK5CYII=") 0 0, auto  !important;}                
+                .paper-button, .ytp-progress-bar-container, input[type=submit], :link, :visited {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2, auto !important;}                
+                a > * {url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2, auto !important;}                               
+                input:read-only {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD7ElEQVRYR8WWS0ycVRTHf4eBlgFsB6Qr18bExJhQMG1iIuCMWhWjBotBV0NpJUE7FrpQ4yMxJsa0DkWwnQrtRhQ3GjFBnqUEHyStQNKF4AKTVne0UXmUefhdc7+ZYWbgG+eFeDOTyffNPef/O+eee+4VNYoC/gAGEQawMSw15vOODFGj/AWUJFETYA5hBMVX4mJ6u6lEjfAZwvNZOP5bXBRkYZdgojPQCHyakSMBcZKXkU2yFKsJHIS4lbazXSAPbY+41tRrjBrFSAtAV8qJKtgd6pXLs81p2aSYlD5AMdBWCYURVsPolcm5nCGiAHor6q/10JFr8d0GrK5C/bNQ9xSsrvik0tWSSybCACPMItxv6UiLt9wLLz4DT9bB8nJk4bSp0p9PpMp1LFuIKMAphBNbnCgUd80IazdBzKmJo7AQfv8NPjjdK+NXslqOMMAYB1F8n+BdL8id06BW4l4rKLTDjRvwoRfW1yE/P/p/j0zMHM00ExthJewEA0X5tGyI2+1w/TqcOg2BQLxoTC8YhLKyHhmYzAjCAkCg7EewG7C4CN4O0M5ttq3BaZg9e+BkG+zbB/6Aro/zst/5UrqZSASIdDhV9+Al/lyuthT1+8HhgPY2KC8PZ2TzyBOfVDyc1u6IB1DiCjcmsy6qKy4hVJsPWqS0NCyqf3VGwrOivQyUgpJi+LwfBr+FO0ouyMTskVSZsCjtmInx6MFv5I3XnsCxFwJR0XiXCoqKoP8LGBzSopv1UhbmvwKYMf40dg5FrLB0pKZoPwwNQ0mSk3xlBWpr4HDDedlfm7QmUgKYEHOXfeTnN9PXB2PjyUWXV+ARJzQ2wvrt+OVJ2qzSAojUxA8IB7asqY700GPQ0ABra9YNq7gYZq4ekhdeHt5snzaACVFToW9ED6AjrXscnjsMa6uxSOO9a9GFeejoDBcovC+Tc6/nBGBCLM76uLnUbNmadW3ML0BnRDQvcmcJBgPy3bVCqx2RUQY2tujV8bOgwgeQjnR+Hjo/AsOAqGh0cijol6lr9mTbMSsAMxNTAz7eeqfZUjTSO0Llparg6ymLFhrDyRrAhHDXn+XXxdhRrLukbsntbfhL98rxkV9UQZ7Q5XHbQCzvGzkBmBBN9edYWjrKyfbw9gyF9OvbUuksfuXMxbsNZSwYInx83G15ic0ZINKsfCii94F1qXQWRZPs8V50hMS4pVDvdnuOvJ3zLkhWTOrKkBN23SdVtd7Nc1rP9OoDni5P05YsbEsGUh04LR2999jgZ2C9y9O0kR1ttyMAWqjV2/M0Il+aS4a81+1xv7mjANEstXZcmFCKvu5X3T3/C8B/VoSp6iDZ//8AG8BTMNJPrVYAAAAASUVORK5CYII=") 0 0 , auto !important; }               
+                img, button {url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==")  4 2, auto !important; }                              
+                ::-webkit-scrollbar-button {cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2,  auto !important;}                
+                .ogdlpmhglpejoiomcodnpjnfgcpmgale_pointer, ::-webkit-file-upload-button{cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2,  auto !important;}
+                button, .ytp-volume-panel{cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2,  auto !important;}
+                #myogdlpmhglpejoiomcodnpjnfgcpmgale .icon { cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEe0lEQVRYR62WfWjUdRzHX5/bdnug5YzyiWFPBpoa2nTdtUowiNp6IOhxoSm1El1JCTUTTIY1wT9iIdWcNqlcZTQhYjRYpGD73R4MlzkxMMWHdFJu1eZu83af+P1+u9vd7e53280vHBy/z8P7/Xn4fr4fIcWjC5kqR+lJ0TxsJqk6UA+1CI1isD9VH6bdGAK6lBnSzsVkTtVL0HJg4Eqm6yQfS8DDHmCq+HjCyTBEAIMMgeFUScQtQdh5kAXSSlesc/WwBuEj67vSLD4eSkL2BqBFDObG6iUi8LeZhRHlk2JwR6SheukHskPfEpVBvZQCX1h6V5knHZwYHwEPtyD8EaWsPC8+vraCHql/hPxZMfjGTgiCl++Akgj57/Gij9uEIaM4IKboP4Isx0W7iUTudOjrtk2CLEU4iJAzJkqHRk14DdXD2whVFlD2NPBfivYbcMErFcKn75saiY/ylPhoSKTgOAfCWVj2OOTfDnUfgHvE1X3FMG+J8GGlhrsh4IayN6FmW0ivXwxynfg5E/DQgXA3A8Drm4UMN+yrU/46CeVVwuAAHGlRzp6Hp1cK/gH49jPl8mkLczwzwpnAHDK5yYKHlzYJrjQ7mOEApKXDkjzo6B0N0JTXvBsqyRYxqHQsT9xJWMAU3FQDK6OMXTmweoNQMhMaL9ozdNVsqDtj/xcXVG8ZLYdQJC0Y4yKghZSQZoHeNsYgALhzofhJmHmrUDgF5lwHn5yGl2fD5+cg0wU/NytdLU54p1D2I+wTg7aQolUC9bIbWD3GuuBBeKBY6PtnVDQYhBX5WC+A+Ro0XICAgv8KHP9F6ToGl7shHfsX/5i4D4tBU1QPaCHLSeOHKFOzojkz4MW1YtXePM/Minab4YJLAfip2yaTlQPN3yvHD8XC9zDEAjnMhagMxGrpnbi5niaEZWGZSWTdVmFoyCYQot7WCyf67DKYt6R+t9JzKvad7WSIQjnM1Vgs51tQxHyCHLWMih6DuYuE5/KhqRsemQ5Bhb3nsd5Dk5EOw66to4NJ2Ss+Vjg1xvgG0WAalG8a1TUjHRqE0ny7CdNHRKqwc7vi8luYk5oD6uEIwl3WKH5juzDoh7YDSusBSM+AsreEF/Kh/k/IyoKBK3agmdmwY6OdBWWd+Ph4whlQLwuBTsvQlQ4DAciMcGNird8sDCu0/qj81gKZN8KqciEYhC93Kv32UpUsC84LSSLqZnyvVQkiUF2hUUuZOTdLy6ChNtSItWLwqtN9jJKph07EykDomEOgQgxqrKyGdoE1lcJXu5TeM04ZTpqF6Dlgp/5XlDrS2SCHxq7dYQKl66HeHJ7WeUcMtuki8siiFYneoFBaxYc3HtMJr+XqtdpSrTV05G2KV2e9l/dQNoZBDeuuWJt05EmFwEHg/rCTII9KK40J28XLYsC08YvBtMkTuIe1uNgRcpSsyyMBtYCM2Gk48QwsZhZZnLMcB7hZ2jmbtAsdFCZMIOIm/CsGeZMBN21TJzBEZrzHZaKEUiPg4Zj4mD9RsGtyDa8FaKSP/wGu3nEw1JRbGQAAAABJRU5ErkJggg==") 4 2, auto !important; }
+                                                
+                </style></head><!--
+
+
+
+
+Oh, hello!  Funny seeing you here.
+
+I appreciate your enthusiasm, but you aren't going to find much down here.
+There certainly aren't clues to any of the puzzles.  The best surprises don't
+even appear in the source until you unlock them for real.
+
+Please be careful with automated requests; I'm not a massive company, and I can
+only take so much traffic.  Please be considerate so that everyone gets to play.
+
+If you're curious about how Advent of Code works, it's running on some custom
+Perl code. Other than a few integrations (auth, analytics, ads, social media),
+I built the whole thing myself, including the design, animations, prose, and
+all of the puzzles.
+
+The puzzles are most of the work; preparing a new calendar and a new set of
+puzzles each year takes all of my free time for 4-5 months. A lot of effort
+went into building this thing - I hope you're enjoying playing it as much as I
+enjoyed making it for you!
+
+If you'd like to hang out, I'm @ericwastl on Twitter.
+
+- Eric Wastl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->
+<body data-gr-c-s-loaded="true">
+<header><div><h1 class="title-global"><a href="https://adventofcode.com/">Advent of Code</a></h1><nav><ul><li><a href="https://adventofcode.com/2019/about">[About]</a></li><li><a href="https://adventofcode.com/2019/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode-2019" target="_blank">[Shop]</a></li><li><a href="https://adventofcode.com/2019/settings">[Settings]</a></li><li><a href="https://adventofcode.com/2019/auth/logout">[Log Out]</a></li></ul></nav><div class="user">Yuchen <span class="star-count">43*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">int y=</span><a href="https://adventofcode.com/2019">2019</a><span class="title-event-wrap">;</span></h1><nav><ul><li><a href="https://adventofcode.com/2019">[Calendar]</a></li><li><a href="https://adventofcode.com/2019/support">[AoC++]</a></li><li><a href="https://adventofcode.com/2019/sponsors">[Sponsors]</a></li><li><a href="https://adventofcode.com/2019/leaderboard">[Leaderboard]</a></li><li><a href="https://adventofcode.com/2019/stats">[Stats]</a></li></ul></nav></div></header>
+
+<div id="sidebar">
+<div id="sponsor"><div class="quiet">Our <a href="https://adventofcode.com/2019/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://www.codethink.co.uk/" target="_blank" onclick="if(ga)ga(&#39;send&#39;,&#39;event&#39;,&#39;sponsor&#39;,&#39;sidebar&#39;,this.href);" rel="noopener">Codethink Ltd.</a> - Codethink is a software services company, expert in the use of Open Source technologies for systems software engineering.</div></div>
+</div><!--/sidebar-->
+
+<main>
+<script async="" src="./Day 24 - Advent of Code 2019_files/analytics.js"></script><script>window.addEventListener('click', function(e,s,r){if(e.target.nodeName==='CODE'&&e.detail===3){s=window.getSelection();s.removeAllRanges();r=document.createRange();r.selectNodeContents(e.target);s.addRange(r);}});</script>
+<article class="day-desc"><h2>--- Day 24: Planet of Discord ---</h2><p>You land on <a href="https://en.wikipedia.org/wiki/Eris_(dwarf_planet)">Eris</a>, your last stop before reaching Santa.  As soon as you do, your sensors start picking up strange life forms moving around: Eris is infested with <a href="https://www.nationalgeographic.org/thisday/sep9/worlds-first-computer-bug/">bugs</a>! With an <span title="For a sad version of this story, look up Voices of a Distant Star.">over 24-hour roundtrip</span> for messages between you and Earth, you'll have to deal with this problem on your own.</p>
+<p>Eris isn't a very large place; a scan of the entire area fits into a 5x5 grid (your puzzle input). The scan shows <em>bugs</em> (<code>#</code>) and <em>empty spaces</em> (<code>.</code>).</p>
+<p>Each <em>minute</em>, The bugs live and die based on the number of bugs in the <em>four adjacent tiles</em>:</p>
+<ul>
+<li>A bug <em>dies</em> (becoming an empty space) unless there is <em>exactly one</em> bug adjacent to it.</li>
+<li>An empty space <em>becomes infested</em> with a bug if <em>exactly one or two</em> bugs are adjacent to it.</li>
+</ul>
+<p>Otherwise, a bug or empty space remains the same.  (Tiles on the edges of the grid have fewer than four adjacent tiles; the missing tiles count as empty space.) This process happens in every location <em>simultaneously</em>; that is, within the same minute, the number of adjacent bugs is counted for every tile first, and then the tiles are updated.</p>
+<p>Here are the first few minutes of an example scenario:</p>
+<pre><code>Initial state:
+....#
+#..#.
+#..##
+..#..
+#....
+
+After 1 minute:
+#..#.
+####.
+###.#
+##.##
+.##..
+
+After 2 minutes:
+#####
+....#
+....#
+...#.
+#.###
+
+After 3 minutes:
+#....
+####.
+...##
+#.##.
+.##.#
+
+After 4 minutes:
+####.
+....#
+##..#
+.....
+##...
+</code></pre>
+<p>To understand the nature of the bugs, watch for the first time a layout of bugs and empty spaces <em>matches any previous layout</em>. In the example above, the first layout to appear twice is:</p>
+<pre><code>.....
+.....
+.....
+#....
+.#...
+</code></pre>
+<p>To calculate the <em>biodiversity rating</em> for this layout, consider each tile left-to-right in the top row, then left-to-right in the second row, and so on. Each of these tiles is worth biodiversity points equal to <em>increasing powers of two</em>: 1, 2, 4, 8, 16, 32, and so on.  Add up the biodiversity points for tiles with bugs; in this example, the 16th tile (<code>32768</code> points) and 22nd tile (<code>2097152</code> points) have bugs, a total biodiversity rating of <code><em>2129920</em></code>.</p>
+<p><em>What is the biodiversity rating for the first layout that appears twice?</em></p>
+</article>
+<p>To begin, <a href="https://adventofcode.com/2019/day/24/input" target="_blank">get your puzzle input</a>.</p>
+<form method="post" action="https://adventofcode.com/2019/day/24/answer"><input type="hidden" name="level" value="1"><p>Answer: <input type="text" name="answer" autocomplete="off"> <input type="submit" value="[Submit]"></p></form>
+<p>You can also <span class="share">[Share<span class="share-content">on
+  <a href="https://twitter.com/intent/tweet?text=%22Planet+of+Discord%22+%2D+Day+24+%2D+Advent+of+Code+2019&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2019%2Fday%2F24&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="javascript:void(0);" onclick="var mastodon_instance=prompt(&#39;Mastodon Instance / Server Name?&#39;); if(typeof mastodon_instance===&#39;string&#39; &amp;&amp; mastodon_instance.length){this.href=&#39;https://&#39;+mastodon_instance+&#39;/share?text=%22Planet+of+Discord%22+%2D+Day+24+%2D+Advent+of+Code+2019+%23AdventOfCode+https%3A%2F%2Fadventofcode%2Ecom%2F2019%2Fday%2F24&#39;}else{return false;}" target="_blank">Mastodon</a></span>]</span> this puzzle.</p>
+</main>
+
+<!-- ga -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-69522494-1', 'auto');
+ga('set', 'anonymizeIp', true);
+ga('send', 'pageview');
+</script>
+<!-- /ga -->
+
+</body></html>

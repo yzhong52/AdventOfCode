@@ -34,17 +34,6 @@ impl<T> _Point<T> where T: num::Integer, T: Copy {
     }
 }
 
-//impl<T> _Point<T> where T: num::Integer {
-//    pub fn to<P>(self) -> _Point<P> {
-//        let px = P::try_from(self.x).unwrap();
-//        let py = P::try_from(self.y).unwrap();
-//        _Point {
-//            x: px,
-//            y: py,
-//        }
-//    }
-//}
-
 impl<T> ops::AddAssign<_Point<T>> for _Point<T> where T: num::Integer, T: ops::AddAssign {
     fn add_assign(&mut self, rhs: _Point<T>) {
         self.x += rhs.x;

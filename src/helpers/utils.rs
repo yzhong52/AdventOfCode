@@ -42,7 +42,7 @@ pub(crate) fn get_screen_buffer(map: &HashMap<BigPoint, char>, fill: char, min_w
     buffer
 }
 
-pub(crate) fn print(buffer: &Vec<Vec<char>>) {
+pub(crate) fn print_grid(buffer: &Vec<Vec<char>>) {
     let mut result = String::new();
     result.push('\n');
     for row in buffer {
