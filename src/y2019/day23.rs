@@ -96,29 +96,27 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
                     let mut nat_package = nat_package.lock().unwrap();
                     let mut last_nat_package = last_nat_package.lock().unwrap();
 
-
                     let all_idled = idles.iter().all(|x| *x);
 
                     if all_idled && nat_package.is_some() {
-                        println!("Resume controllers with {:?}", nat_package);
+                        println!("Resume controller 0 with {:?} from C{:02}", nat_package, i);
 
                         match (*last_nat_package, *nat_package) {
                             (Some(last), Some(current)) if last.1 == current.1 => {
                                 break;
                             }
-                            _ => ()
-                        }
+                            _ => {
+                                let (x, y) = nat_package.unwrap();
+                                *last_nat_package = *nat_package;
+                                *nat_package = None;
 
-                        *last_nat_package = *nat_package;
-                        let receiver = &controllers[0];
-                        receiver.input_multiple(vec![nat_package.unwrap().0, nat_package.unwrap().1]);
-                        idles[0] = false;
-                        *nat_package = None;
+                                idles[0] = false;
+                                controllers[0].input_multiple(vec![x, y]);
+                            }
+                        }
                     }
                 }
             }
-
-            println!("[{}] Shut down", &controller.name);
         });
         thread_handlers.push(handle);
     }
