@@ -43,8 +43,6 @@ enum Shuffle {
 }
 
 fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
-    let shuffles: Vec<&Shuffle> = shuffles.iter().rev().collect();
-
     let mut result: usize = original_position;
 
     for r in 0..repeat {
@@ -99,13 +97,13 @@ fn parse(shuffles: &Vec<String>) -> Vec<Shuffle> {
 }
 
 pub fn part1(input: Input<Vec<String>>) -> Answer<usize> {
-    let result = shuffle1(input.data, 0, 10);
+    let result = shuffle1(input.data, 2019, 10007);
     Answer { question: input.question, result }
 }
 
 pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     let parsed = parse(&input.data);
-    // let result = shuffle(parsed, 2020, 119315717514047, 101741582076661);
-    let result = shuffle2(parsed, 0, 10, 1);
+    let result = shuffle2(parsed, 2020, 119315717514047, 101741582076661);
+//    let result = shuffle2(parsed, 2019, 10007, 1);
     Answer { question: input.question, result }
 }
