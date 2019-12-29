@@ -29,7 +29,7 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
                     .count();
 
                 if current[x as usize][y as usize] == BUG {
-                    if count_bugs_nearby == 1 {
+                    if count_bugs_nearby != 1 {
                         // A bug dies (becoming an empty space) unless there is exactly one bug
                         // adjacent to it.
                         next_state[x as usize][y as usize] = NO_BUG

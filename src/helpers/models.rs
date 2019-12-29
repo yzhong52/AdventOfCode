@@ -32,6 +32,19 @@ impl<T> _Point<T> where T: num::Integer, T: Copy {
         }
         result
     }
+
+    pub fn neighbours9(&self, max_x: T, max_y: T) -> Vec<_Point<T>> {
+        let mut result: Vec<_Point<T>> = Vec::new();
+        for x in [self.x - T::one(), self.x, self.x + T::one()].iter() {
+            for y in [self.y - T::one(), self.y, self.y + T::one()].iter() {
+                if *x >= T::zero() && *x < max_x && *y >= T::zero() && *y < max_y &&
+                    *x != self.x && *y != self.y {
+                    result.push(_Point { x: *x, y: *y });
+                }
+            }
+        }
+        result
+    }
 }
 
 impl<T> ops::AddAssign<_Point<T>> for _Point<T> where T: num::Integer, T: ops::AddAssign {
