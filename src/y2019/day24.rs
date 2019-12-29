@@ -2,8 +2,6 @@ use crate::helpers::parser::{Answer, Input};
 use crate::helpers::utils::print_grid;
 use std::collections::HashSet;
 use crate::helpers::models::_Point;
-use std::thread::sleep;
-use std::time::Duration;
 
 const BUG: char = '#';
 const NO_BUG: char = '.';

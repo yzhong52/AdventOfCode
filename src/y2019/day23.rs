@@ -23,7 +23,7 @@ fn create_controllers(data: Vec<i128>) -> Vec<AtomicIntCodeComputer> {
 }
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
-    let mut result = Arc::new(Mutex::new(Option::None));
+    let result = Arc::new(Mutex::new(Option::None));
     let controllers: Arc<Vec<AtomicIntCodeComputer>> = Arc::new(create_controllers(input.data));
 
     let mut thread_handlers = vec![];
@@ -70,9 +70,9 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let mut thread_handlers = vec![];
     for i in 0..CONTROLLER_COUNT {
         let controllers = Arc::clone(&controllers);
-        let mut nat_package = Arc::clone(&nat_package);
-        let mut last_nat_package = Arc::clone(&last_nat_package);
-        let mut idles = Arc::clone(&idles);
+        let nat_package = Arc::clone(&nat_package);
+        let last_nat_package = Arc::clone(&last_nat_package);
+        let idles = Arc::clone(&idles);
 
         let handle = thread::spawn(move || {
             let controller = &controllers[i];

@@ -27,7 +27,7 @@ pub fn part1(input: Input<String>) -> Answer<String> {
     return Answer { question: input.question, result };
 }
 
-const REPEATED_TIMES: usize = 10000;
+//const REPEATED_TIMES: usize = 10000;
 
 pub fn part2(input: Input<String>) -> Answer<String> {
 //    let initial_digits = parse(&input.data);

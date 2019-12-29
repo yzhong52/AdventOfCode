@@ -33,6 +33,7 @@ impl<T> _Point<T> where T: num::Integer, T: Copy {
         result
     }
 
+    #[allow(dead_code)]
     pub fn neighbours9(&self, max_x: T, max_y: T) -> Vec<_Point<T>> {
         let mut result: Vec<_Point<T>> = Vec::new();
         for x in [self.x - T::one(), self.x, self.x + T::one()].iter() {
