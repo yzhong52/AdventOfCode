@@ -1,5 +1,6 @@
 use crate::helpers::parser::Answer;
 use crate::helpers::parser::Input;
+use std::collections::HashMap;
 
 pub fn shuffle1(data: Vec<String>, original_position: usize, deck_length: usize) -> usize {
     let mut deck: Vec<usize> = (0..deck_length).collect();
@@ -36,6 +37,7 @@ pub fn shuffle1(data: Vec<String>, original_position: usize, deck_length: usize)
     deck.iter().position(|x| *x == original_position).unwrap()
 }
 
+#[derive(Copy, Clone)]
 enum Shuffle {
     Cut(i32),
     DealWithIncrement(usize),
@@ -45,9 +47,16 @@ enum Shuffle {
 fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
     let mut result: usize = original_position;
 
+    let mut previous_positions = HashMap::new();
     for r in 0..repeat {
-        if r * 100 % repeat == 0 {
-            println!("Shuffle cards iteration {} ({}%)", r, (r * 100000 / repeat) as f32 / 1000.0);
+        if previous_positions.contains_key(&result) {
+            println!("Seen! {}", previous_positions.get(&result).unwrap());
+            break;
+        } else {
+            previous_positions.insert(result, r);
+        }
+        if r % 100000 == 0 {
+            println!("Shuffle cards iteration {}/{} ({}%)", r, repeat, (r as f32 * 10000.0 / repeat as f32) / 100.0);
         }
         for row in &shuffles {
             match row {
@@ -63,7 +72,7 @@ fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, r
                     if *number >= 0 {
                         positive_number = *number as usize % deck_len;
                     } else {
-                        positive_number = deck_len - (-number) as usize % deck_len
+                        positive_number = deck_len - (-number) as usize % deck_len;
                     };
 
                     if result >= positive_number {
@@ -103,7 +112,8 @@ pub fn part1(input: Input<Vec<String>>) -> Answer<usize> {
 
 pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     let parsed = parse(&input.data);
+    let part1 = shuffle2(parsed.clone(), 2019, 10007, 1);
+    println!("{}", part1);
     let result = shuffle2(parsed, 2020, 119315717514047, 101741582076661);
-//    let result = shuffle2(parsed, 2019, 10007, 1);
     Answer { question: input.question, result }
 }
