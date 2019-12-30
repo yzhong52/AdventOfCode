@@ -2,36 +2,31 @@ use crate::helpers::parser::Answer;
 use crate::helpers::parser::Input;
 use std::collections::HashMap;
 
-pub fn shuffle1(data: Vec<String>, original_position: usize, deck_length: usize) -> usize {
+// This solution would take 1.9 TB of memory for part 2
+fn shuffle1(shuffles: Vec<Shuffle>, original_position: usize, deck_length: usize) -> usize {
     let mut deck: Vec<usize> = (0..deck_length).collect();
-    for row in data {
-        if row.starts_with("deal with increment ") {
-            let parts: Vec<&str> = row.split(" ").collect();
-            let increment: usize = parts.last().unwrap().parse().unwrap();
-            let mut new_deck: Vec<usize> = vec![0; deck.len()];
-            let mut j = 0;
-            for i in 0..deck.len() {
-                new_deck[j] = deck[i];
-                j = (j + increment) % deck.len();
-            }
-            deck = new_deck;
-        } else if row.starts_with("deal into new stack") {
-            deck.reverse()
-        } else if row.starts_with("cut") {
-            let parts: Vec<&str> = row.split(" ").collect();
-            let mut number: i32 = parts.last().unwrap().parse().unwrap();
-            if number > 0 {
-                number = number % deck.len() as i32;
-            } else if number < 0 {
-                number = deck.len() as i32 - (-number) % deck.len() as i32;
-            }
-            let mut left = deck[0..number as usize].to_vec();
-            let right = deck[number as usize..deck.len()].to_vec();
-            deck = right;
-            deck.append(left.as_mut());
-        }
 
-        println!("{:?}", deck);
+    for row in &shuffles {
+        match row {
+            Shuffle::DealWithIncrement(increment) => {
+                let mut new_deck: Vec<usize> = vec![0; deck.len()];
+                let mut j = 0;
+                for i in 0..deck.len() {
+                    new_deck[j] = deck[i];
+                    j = (j + *increment) % deck.len();
+                }
+                deck = new_deck;
+            }
+            Shuffle::DealNewDeck => {
+                deck.reverse()
+            }
+            Shuffle::Cut(number) => {
+                let mut left = deck[0..*number].to_vec();
+                let right = deck[*number..deck.len()].to_vec();
+                deck = right;
+                deck.append(left.as_mut());
+            }
+        }
     }
 
     deck.iter().position(|x| *x == original_position).unwrap()
@@ -39,55 +34,13 @@ pub fn shuffle1(data: Vec<String>, original_position: usize, deck_length: usize)
 
 #[derive(Copy, Clone)]
 enum Shuffle {
-    Cut(i32),
+    Cut(usize),
     DealWithIncrement(usize),
     DealNewDeck,
 }
 
-fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
-    let mut result: usize = original_position;
 
-    let mut previous_positions = HashMap::new();
-    for r in 0..repeat {
-        if previous_positions.contains_key(&result) {
-            println!("Seen! {}", previous_positions.get(&result).unwrap());
-            break;
-        } else {
-            previous_positions.insert(result, r);
-        }
-        if r % 100000 == 0 {
-            println!("Shuffle cards iteration {}/{} ({}%)", r, repeat, (r as f32 * 10000.0 / repeat as f32) / 100.0);
-        }
-        for row in &shuffles {
-            match row {
-                Shuffle::DealWithIncrement(increment) => {
-                    let next_position = (result * *increment) % deck_len;
-                    result = next_position;
-                }
-                Shuffle::DealNewDeck => {
-                    result = deck_len - 1 - result;
-                }
-                Shuffle::Cut(number) => {
-                    let positive_number: usize;
-                    if *number >= 0 {
-                        positive_number = *number as usize % deck_len;
-                    } else {
-                        positive_number = deck_len - (-number) as usize % deck_len;
-                    };
-
-                    if result >= positive_number {
-                        result -= positive_number;
-                    } else {
-                        result = deck_len - (positive_number - result);
-                    }
-                }
-            }
-        }
-    }
-    result
-}
-
-fn parse(shuffles: &Vec<String>) -> Vec<Shuffle> {
+fn parse(shuffles: &Vec<String>, deck_len: usize) -> Vec<Shuffle> {
     let mut result = vec![];
     for row in shuffles {
         if row.starts_with("deal with increment ") {
@@ -99,21 +52,55 @@ fn parse(shuffles: &Vec<String>) -> Vec<Shuffle> {
         } else if row.starts_with("cut") {
             let parts: Vec<&str> = row.split(" ").collect();
             let number: i32 = parts.last().unwrap().parse().unwrap();
-            result.push(Shuffle::Cut(number))
+            if number >= 0 {
+                result.push(Shuffle::Cut(number as usize % deck_len))
+            } else {
+                result.push(Shuffle::Cut(deck_len - (-number) as usize % deck_len))
+            };
         }
     }
     result
 }
 
+// This solution would take about 13 years for part 2
+fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
+    let mut result: usize = original_position;
+    for r in 0..repeat {
+        for row in &shuffles {
+            match row {
+                Shuffle::DealWithIncrement(increment) => {
+                    result = (result * *increment) % deck_len;
+                }
+                Shuffle::DealNewDeck => {
+                    result = deck_len - 1 - result;
+                }
+                Shuffle::Cut(number) => {
+                    if result >= *number {
+                        result = result - *number;
+                    } else {
+                        result = deck_len - (*number - result);
+                    }
+                }
+            }
+        }
+    }
+    result
+}
+
+
 pub fn part1(input: Input<Vec<String>>) -> Answer<usize> {
-    let result = shuffle1(input.data, 2019, 10007);
+    let deck_len = 10007;
+    let parsed = parse(&input.data, deck_len);
+    let result = shuffle1(parsed, 2019, 10007);
     Answer { question: input.question, result }
 }
 
 pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
-    let parsed = parse(&input.data);
-    let part1 = shuffle2(parsed.clone(), 2019, 10007, 1);
-    println!("{}", part1);
-    let result = shuffle2(parsed, 2020, 119315717514047, 101741582076661);
+    // 119,315,717,514,047 * 16 bytes -> 1 PB
+    let deck_len = 119315717514047;
+    let parsed = parse(&input.data, deck_len);
+    // let result = shuffle2(parsed.clone(), 2019, deck_len, 1);
+//    println!("{}", part1);
+    let result = shuffle2(parsed, 2020, deck_len, 101741582076661);
     Answer { question: input.question, result }
 }
