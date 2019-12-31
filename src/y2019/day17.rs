@@ -166,7 +166,7 @@ fn path_search(
     return vec![];
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
+pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data);
     let mut to_visit: HashSet<BigPoint> = HashSet::new();
     for r in 1..&scaffold.len() - 1 {
@@ -210,7 +210,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     let function_a = "R,8,L,12,R,8";
     let function_b = "R,12,L,8,R,10";
     let function_c = "R,8,L,8,L,8,R,8,R,10";
-    let video_feed = "n";
+    let video_feed = "y"; // possible inputs are: y and n
 
     let mut input_queue = VecDeque::new();
     for row in &[main_routine, function_a, function_b, function_c, video_feed] {
@@ -227,24 +227,27 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
     vacuum_robot.instructions[0] = 2;
 
     let mut last_char = '\n';
+    let mut result = 0;
+    let mut buffer: String = String::new();
     loop {
         match vacuum_robot.run() {
             SuperIntCodeResult::Output(value) => {
                 if last_char == '\n' && value as u8 as char == '\n' {
-                    println!();
-                    sleep(Duration::from_millis(128))
+                    println!("{}", buffer);
+                    sleep(Duration::from_millis(38))
                 }
 
                 last_char = value as u8 as char;
                 if value < 128 {
-                    print!("{} ", value as u8 as char);
+                    buffer.push(value as u8 as char);
+                    buffer.push(' ');
                 } else {
-                    println!("!!!!{} ", value);
+                    result = value;
                 }
             }
             SuperIntCodeResult::Halted => break,
         };
     }
 
-    Answer { question: input.question, result: 0 }
+    Answer { question: input.question, result }
 }

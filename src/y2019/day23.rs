@@ -99,7 +99,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
                     let all_idled = idles.iter().all(|x| *x);
 
                     if all_idled && nat_package.is_some() {
-                        println!("Resume controller 0 with {:?} from C{:02}", nat_package, i);
+                        println!("Resume controller 0 with {:?} from C{:02}", nat_package.unwrap(), i);
 
                         match (*last_nat_package, *nat_package) {
                             (Some(last), Some(current)) if last.1 == current.1 => {

@@ -1,7 +1,7 @@
 use super::super::helpers::parser::*;
 use crate::helpers::models::_Point;
-use std::collections::HashMap;
-use std::borrow::BorrowMut;
+use std::collections::VecDeque;
+use std::collections::HashSet;
 use std::ops::Range;
 
 const ENTRANCE: char = '@';
@@ -27,11 +27,6 @@ fn is_door(c: char) -> bool {
     c.is_ascii_uppercase()
 }
 
-fn key_for(door: char) -> i32 {
-    assert!(is_door(door));
-    1 << (door as i32 - 'A' as i32 + 'a' as i32)
-}
-
 fn to_key(c: char) -> i32 {
     1 << (c as i32 - 'a' as i32)
 }
@@ -52,106 +47,19 @@ fn all_keys(data: &Vec<Vec<char>>) -> i32 {
     result
 }
 
-#[derive(Eq, PartialEq, Hash, Debug)]
-struct Visited {
+#[derive(Eq, PartialEq, Hash, Debug, Clone)]
+struct VisitState {
     position: _Point<usize>,
     keys: i32,
 }
 
-fn all_keys_found(keys: &i32, all_keys: &i32) -> bool {
-    keys == all_keys
-}
-
-fn dfs(
-    data: &Vec<Vec<char>>,
-    keys: i32,
-    all_keys: &i32,
-    current_position: _Point<usize>,
-    visited: &mut HashMap<Visited, i32>,
-    depth: i32,
-    result: &mut i32,
-) {
-    let visited_key = Visited { position: current_position.clone(), keys: keys };
-
-    if all_keys_found(&keys, all_keys) {
-        if depth < *result {
-            println!("Found a better path with {} steps.", depth);
-            *result = depth;
-        }
-        return;
-    } else if depth >= *result {
-        return;
-    } else if visited.contains_key(&visited_key) && *visited.get(&visited_key).unwrap() <= depth {
-        return;
-    }
-    visited.insert(visited_key, depth);
-
-    let max_x = data.len();
-    let max_y = data[0].len();
-
-    let neighbours4 = current_position.neighbours4(max_x, max_y);
-
-    for new_position in neighbours4 {
-        match data[new_position.x][new_position.y] {
-            EMPTY | ENTRANCE => {
-                dfs(
-                    data,
-                    keys.clone(),
-                    all_keys,
-                    new_position,
-                    visited,
-                    depth + 1,
-                    result,
-                );
-            }
-            value if is_key(value) => {
-                // Pick up the key
-                let new_keys = keys | to_key(value);
-                dfs(
-                    data,
-                    new_keys,
-                    all_keys,
-                    new_position,
-                    visited,
-                    depth + 1,
-                    result,
-                );
-            }
-            value if is_door(value) => {
-                if open_door(keys, value) {
-                    dfs(
-                        data,
-                        keys.clone(),
-                        all_keys,
-                        new_position,
-                        visited,
-                        depth + 1,
-                        result,
-                    );
-                }
-            }
-            WALL => (), // Oops, hit the wall
-            value => {
-                unimplemented!("Unknown land: {}", value)
-            }
-        }
-    }
-}
-
-pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
+pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
     let entrance = find_entrance(&input.data);
-    let mut visited: HashMap<Visited, i32> = HashMap::new();
     let all_keys = all_keys(&input.data);
-    let keys = 0;
-    let mut result: i32 = std::i32::MAX;
-    dfs(
+    let result = bfs(
         &input.data,
-        keys,
         &all_keys,
         entrance,
-        visited.borrow_mut(),
-        0,
-        &mut result,
     );
     Answer { question: input.question, result }
 }
@@ -162,7 +70,7 @@ struct Quadrant {
     entrance: _Point<usize>,
 }
 
-pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
+pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
     let entrance = find_entrance(&input.data);
 
     let max_x = &input.data.len();
@@ -213,21 +121,61 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
             }
         }
 
-        let mut visited: HashMap<Visited, i32> = HashMap::new();
-        let keys = 0;
-        let mut result: i32 = std::i32::MAX;
-        dfs(
+        let result = bfs(
             &data,
-            keys,
             &all_keys,
             quadrant.entrance.clone(),
-            visited.borrow_mut(),
-            0,
-            &mut result,
         );
 
         final_result += result;
     }
 
     Answer { question: input.question, result: final_result }
+}
+
+fn bfs(data: &Vec<Vec<char>>, all_keys: &i32, entrance: _Point<usize>) -> usize {
+    let max_x = data.len();
+    let max_y = data[0].len();
+
+    let start = VisitState { position: entrance.clone(), keys: 0 };
+
+    let mut visiting_queue: VecDeque<(VisitState, usize)> = VecDeque::new();
+    visiting_queue.push_back((start.clone(), 0));
+
+    let mut visited = HashSet::new();
+    visited.insert(start);
+
+    while !visiting_queue.is_empty() {
+        let (visiting_state, distance) = visiting_queue.pop_front().unwrap();
+
+        if visiting_state.keys == *all_keys {
+            return distance;
+        }
+
+        let new_positions = visiting_state.position.neighbours4(max_x, max_y);
+        for next_position in new_positions {
+            match data[next_position.x][next_position.y] {
+                // Oops, hit a wall, do nothing
+                WALL => (),
+                // Cannot open the door
+                value if is_door(value) && !open_door(visiting_state.keys, value) => (),
+                // Move forward
+                value => {
+                    let next_keys: i32;
+                    if is_key(value) {
+                        next_keys = visiting_state.keys | to_key(value)
+                    } else {
+                        next_keys = visiting_state.keys
+                    }
+                    let new_visited = VisitState { position: next_position, keys: next_keys };
+                    if !visited.contains(&new_visited) {
+                        visiting_queue.push_back((new_visited.clone(), distance + 1));
+                        visited.insert(new_visited);
+                    }
+                }
+            }
+        }
+    }
+
+    unimplemented!("Unable to open all doors!")
 }

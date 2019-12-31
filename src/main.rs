@@ -181,8 +181,6 @@ fn main() {
         };
     }
 
-    y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
-
     // TODO: Yuchen - OOM
     // y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
