@@ -165,7 +165,7 @@ fn run_completed() {
 
     // Day 24: Planet of Discord
     y2019::day24::part1(read_grid(Question::y2019(24))).save_part1();
-
+    y2019::day24::part2(read_grid(Question::y2019(24))).save_part2();
 }
 
 fn main() {
@@ -185,7 +185,5 @@ fn main() {
     // TODO: Yuchen -
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
-    // Day 24: Planet of Discord
-    y2019::day24::part1(read_grid(Question::y2019(24))).save_part1();
-    y2019::day24::part2(read_grid(Question::y2019(24))).save_part2();
+
 }

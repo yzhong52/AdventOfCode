@@ -113,18 +113,16 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
 
     let mut current = vec![initial];
 
-    for _ in 0..10 {
+    for m in 0..200 {
         // Pad two more layers on both side
-        let mut previous_state: Vec<Vec<Vec<char>>> = vec![vec![vec![]]];
+        let mut previous_state: Vec<Vec<Vec<char>>> = vec![];
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.append(current.as_mut());
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
-        print_state(&previous_state);
 
-        let mut next_state = vec![vec![vec![UNKNOWN; max_y]; max_x]; current.len() + 4];
-        print_state(&next_state);
+        let mut next_state = vec![vec![vec![UNKNOWN; max_y]; max_x]; previous_state.len()];
 
         for layer in 1..next_state.len() - 1 {
             for x in 0..max_x {
@@ -194,12 +192,18 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
         }
 
         let from = next_state.iter().position(has_bug).unwrap();
-        let to = next_state.iter().rev().position(has_bug).unwrap();
-        println!("{} - {}", from, to);
-        current = next_state[from .. to].to_vec();
+        let to = next_state.len() - 1 - next_state.iter().rev().position(has_bug).unwrap();
+        
+        current = next_state[from ..= to].to_vec();
     }
 
-    let mut result = 0;
+    print_state(&current);
 
-    Answer { question: input.question, result: 0 }
+    let result = current.iter()
+        .flatten()
+        .flatten()
+        .filter(|p| **p == BUG)
+        .count();
+
+    Answer { question: input.question, result }
 }
