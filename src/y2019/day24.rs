@@ -65,5 +65,63 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
 }
 
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
+    let mut initial: Vec<Vec<char>> = input.data;
+
+    let max_x = initial.len();
+    let max_y = initial[0].len();
+
+    let current: Vec<Vec<Vec<char>>> = vec![initial];
+    for _ in 0..200 {
+        for c in current {
+            print_grid(&c);
+        }
+
+        // pad two more layers on both side
+        let mut next_state = vec![vec![vec!['?'; max_y]; max_x]; current.len() + 4];
+
+        for x in 0..max_x as i32 {
+            for y in 0..max_y as i32 {
+                let point = _Point { x, y };
+                let count_bugs_nearby = point.neighbours4(max_x as i32, max_y as i32)
+                    .iter()
+                    .filter(|p| current[p.x as usize][p.y as usize] == BUG)
+                    .count();
+
+                if current[x as usize][y as usize] == BUG {
+                    if count_bugs_nearby != 1 {
+                        // A bug dies (becoming an empty space) unless there is exactly one bug
+                        // adjacent to it.
+                        next_state[x as usize][y as usize] = NO_BUG
+                    } else {
+                        next_state[x as usize][y as usize] = BUG
+                    }
+                } else if current[x as usize][y as usize] == NO_BUG {
+                    if count_bugs_nearby == 1 || count_bugs_nearby == 2 {
+                        // An empty space becomes infested with a bug if exactly one or two bugs are
+                        // adjacent to it
+                        next_state[x as usize][y as usize] = BUG
+                    } else {
+                        next_state[x as usize][y as usize] = NO_BUG
+                    }
+                }
+            }
+        }
+
+        current = next_state;
+    }
+
+    print_grid(&current);
+
+    let mut result = 0;
+    let mut biodiversity_rating = 1;
+    for i in 0..max_x {
+        for j in 0..max_y {
+            if current[i][j] == BUG {
+                result += biodiversity_rating;
+            }
+            biodiversity_rating <<= 1;
+        }
+    }
+
     Answer { question: input.question, result: 0 }
 }

@@ -1,6 +1,5 @@
 use crate::helpers::parser::Answer;
 use crate::helpers::parser::Input;
-use std::collections::HashMap;
 use std::thread::sleep;
 use std::time::Duration;
 
