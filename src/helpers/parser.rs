@@ -29,7 +29,7 @@ pub struct Input<T> {
 }
 
 fn read_raw_by(question: Question, pat: char) -> Vec<String> {
-    let filename: String = format!("input/{}:day:{}:input.txt", question.year, question.day);
+    let filename: String = format!("src/y{}/day{}.input.txt", question.year, question.day);
     println!("Reading file from {}", filename);
     let contents: String = fs::read_to_string(filename).expect("file not found");
     let result: Vec<&str> = contents.split(pat).collect();
