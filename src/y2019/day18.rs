@@ -1,6 +1,6 @@
 use super::super::helpers::parser::*;
 use crate::helpers::models::_Point;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::borrow::BorrowMut;
 use std::ops::Range;
 
@@ -19,12 +19,33 @@ fn find_entrance(data: &Vec<Vec<char>>) -> _Point<usize> {
     _Point::origin()
 }
 
-fn all_keys(data: &Vec<Vec<char>>) -> HashSet<char> {
-    let mut result = HashSet::new();
-    for i in 0..data.len() {
-        for j in 0..data[0].len() {
-            if data[i][j] >= 'a' && data[i][j] <= 'z' {
-                result.insert(data[i][j]);
+fn is_key(c: char) -> bool {
+    c.is_ascii_lowercase()
+}
+
+fn is_door(c: char) -> bool {
+    c.is_ascii_uppercase()
+}
+
+fn key_for(door: char) -> i32 {
+    assert!(is_door(door));
+    1 << (door as i32 - 'A' as i32 + 'a' as i32)
+}
+
+fn to_key(c: char) -> i32 {
+    1 << (c as i32 - 'a' as i32)
+}
+
+fn open_door(keys: i32, door: char) -> bool {
+    (keys & 1 << (door as i32 - 'A' as i32)) > 0
+}
+
+fn all_keys(data: &Vec<Vec<char>>) -> i32 {
+    let mut result = 0;
+    for row in data {
+        for cell in row {
+            if is_key(*cell) {
+                result |= to_key(*cell);
             }
         }
     }
@@ -34,30 +55,23 @@ fn all_keys(data: &Vec<Vec<char>>) -> HashSet<char> {
 #[derive(Eq, PartialEq, Hash, Debug)]
 struct Visited {
     position: _Point<usize>,
-    keys: Vec<i32>,
+    keys: i32,
 }
 
-fn all_keys_found(
-    keys: &Vec<i32>,
-    all_keys: &HashSet<char>) -> bool {
-    for key in all_keys {
-        if keys[*key as u8 as usize - 'a' as u8 as usize] == 0 {
-            return false;
-        }
-    }
-    return true;
+fn all_keys_found(keys: &i32, all_keys: &i32) -> bool {
+    keys == all_keys
 }
 
 fn dfs(
     data: &Vec<Vec<char>>,
-    keys: Vec<i32>,
-    all_keys: &HashSet<char>,
+    keys: i32,
+    all_keys: &i32,
     current_position: _Point<usize>,
     visited: &mut HashMap<Visited, i32>,
     depth: i32,
     result: &mut i32,
 ) {
-    let visited_key = Visited { position: current_position.clone(), keys: keys.clone() };
+    let visited_key = Visited { position: current_position.clone(), keys: keys };
 
     if all_keys_found(&keys, all_keys) {
         if depth < *result {
@@ -90,10 +104,9 @@ fn dfs(
                     result,
                 );
             }
-            value if 'a' <= value && value <= 'z' => {
+            value if is_key(value) => {
                 // Pick up the key
-                let mut new_keys = keys.clone();
-                new_keys[value as usize - 'a' as usize] = 1;
+                let new_keys = keys | to_key(value);
                 dfs(
                     data,
                     new_keys,
@@ -104,8 +117,8 @@ fn dfs(
                     result,
                 );
             }
-            value if 'A' <= value && value <= 'Z' => {
-                if keys[value as usize - 'A' as usize] > 0 {
+            value if is_door(value) => {
+                if open_door(keys, value) {
                     dfs(
                         data,
                         keys.clone(),
@@ -129,7 +142,7 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let entrance = find_entrance(&input.data);
     let mut visited: HashMap<Visited, i32> = HashMap::new();
     let all_keys = all_keys(&input.data);
-    let keys: Vec<i32> = vec![0; 26];
+    let keys = 0;
     let mut result: i32 = std::i32::MAX;
     dfs(
         &input.data,
@@ -192,19 +205,16 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
         let all_keys = all_keys(&data);
 
         // For all doors that are in the current quadrant, if there isn't a key, let's just remove it.
-        for i in 0..data.len() {
-            for j in 0..data[0].len() {
-                if data[i][j] >= 'A' && data[i][j] <= 'Z' {
-                    let key = (data[i][j] as u8 - 'A' as u8 + 'a' as u8) as char;
-                    if !all_keys.contains(&key) {
-                        data[i][j] = EMPTY;
-                    }
+        for row in &mut data {
+            for cell in row {
+                if is_door(*cell) && !open_door(all_keys, *cell) {
+                    *cell = EMPTY;
                 }
             }
         }
 
         let mut visited: HashMap<Visited, i32> = HashMap::new();
-        let keys: Vec<i32> = vec![0; 26];
+        let keys = 0;
         let mut result: i32 = std::i32::MAX;
         dfs(
             &data,
