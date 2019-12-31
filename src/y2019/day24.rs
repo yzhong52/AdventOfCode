@@ -7,6 +7,28 @@ const BUG: char = '#';
 const NO_BUG: char = '.';
 const UNKNOWN: char = '?';
 
+fn evolution(count_bugs_nearby: usize, bug: char) -> char {
+    if bug == BUG {
+        if count_bugs_nearby != 1 {
+            // A bug dies (becoming an empty space) unless there is exactly one bug
+            // adjacent to it.
+            NO_BUG
+        } else {
+            BUG
+        }
+    } else if bug == NO_BUG {
+        if count_bugs_nearby == 1 || count_bugs_nearby == 2 {
+            // An empty space becomes infested with a bug if exactly one or two bugs are
+            // adjacent to it
+            BUG
+        } else {
+            NO_BUG
+        }
+    } else {
+        UNKNOWN
+    }
+}
+
 pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
     let mut current: Vec<Vec<char>> = input.data;
 
@@ -65,32 +87,116 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
     Answer { question: input.question, result }
 }
 
+fn has_bug(data: &Vec<Vec<char>>) -> bool {
+    for row in data {
+        for cell in row {
+            if *cell == BUG {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+
+fn print_state(state: &Vec<Vec<Vec<char>>>) {
+    for layer in state {
+        print_grid(layer)
+    }
+}
+
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
     let mut initial: Vec<Vec<char>> = input.data;
 
-    let max_x = initial.len();
-    let max_y = initial[0].len();
+    let max_x = 5;
+    let max_y = 5;
 
     let mut current = vec![initial];
 
-    for _ in 0..200 {
+    for _ in 0..10 {
         // Pad two more layers on both side
-        let mut previous_state = vec![vec![vec![]]];
+        let mut previous_state: Vec<Vec<Vec<char>>> = vec![vec![vec![]]];
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.append(current.as_mut());
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);
+        print_state(&previous_state);
 
         let mut next_state = vec![vec![vec![UNKNOWN; max_y]; max_x]; current.len() + 4];
+        print_state(&next_state);
 
         for layer in 1..next_state.len() - 1 {
-            for x in 0..max_x as i32 {
-                for y in 0..max_y as i32 {
-                    break
+            for x in 0..max_x {
+                for y in 0..max_y {
+                    if (x, y) == (2, 2) {
+                        // skip the middle grid
+                        continue;
+                    }
+
+                    let mut neighbours = vec![];
+                    // Top
+                    if x == 0 {
+                        neighbours.push((layer + 1, 1, 2))
+                    } else if (x, y) == (3, 2) {
+                        for y in 0..max_y {
+                            neighbours.push((layer - 1, 4, y))
+                        }
+                    } else {
+                        // same layer
+                        neighbours.push((layer, x - 1, y))
+                    }
+                    // Bottom
+                    if x == 4 {
+                        neighbours.push((layer + 1, 3, 2))
+                    } else if (x, y) == (1, 2) {
+                        for y in 0..max_y {
+                            neighbours.push((layer - 1, 0, y))
+                        }
+                    } else {
+                        // same layer
+                        neighbours.push((layer, x + 1, y))
+                    }
+                    // Left
+                    if y == 0 {
+                        // outer layer
+                        neighbours.push((layer + 1, 2, 1));
+                    } else if (x, y) == (2, 3) {
+                        // inner layer
+                        for x in 0..max_x {
+                            neighbours.push((layer - 1, x, 4));
+                        }
+                    } else {
+                        // same layer
+                        neighbours.push((layer, x, y - 1));
+                    }
+                    // Right
+                    if y == 4 {
+                        // outer layer
+                        neighbours.push((layer + 1, 2, 3));
+                    } else if (x, y) == (2, 1) {
+                        // inner layer
+                        for x in 0..max_x {
+                            neighbours.push((layer - 1, x, 0));
+                        }
+                    } else {
+                        neighbours.push((layer, x, y + 1));
+                    }
+
+                    let count_bugs_nearby = neighbours
+                        .iter()
+                        .filter(|n| previous_state[n.0][n.1][n.2] == BUG)
+                        .count();
+
+                    next_state[layer][x][y] = evolution(count_bugs_nearby, previous_state[layer][x][y]);
                 }
             }
         }
+
+        let from = next_state.iter().position(has_bug).unwrap();
+        let to = next_state.iter().rev().position(has_bug).unwrap();
+        println!("{} - {}", from, to);
+        current = next_state[from .. to].to_vec();
     }
 
     let mut result = 0;

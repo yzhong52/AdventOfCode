@@ -100,7 +100,6 @@ fn path_search(
 
     // if no action can be taken, then we reach the end
     if to_visit.is_empty() {
-        println!("!! {:?}", actions);
         return actions;
     }
 

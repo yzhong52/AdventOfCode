@@ -2,6 +2,7 @@ use super::super::helpers::parser::*;
 use crate::helpers::models::_Point;
 use std::collections::{HashMap, HashSet};
 use std::borrow::BorrowMut;
+use std::ops::Range;
 
 const ENTRANCE: char = '@';
 const WALL: char = '#';
@@ -60,7 +61,7 @@ fn dfs(
 
     if all_keys_found(&keys, all_keys) {
         if depth < *result {
-            println!("Update result: {}", depth);
+            println!("Found a better path with {} steps.", depth);
             *result = depth;
         }
         return;
@@ -142,47 +143,51 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     Answer { question: input.question, result }
 }
 
+struct Quadrant {
+    x_range: Range<usize>,
+    y_range: Range<usize>,
+    entrance: _Point<usize>,
+}
+
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let entrance = find_entrance(&input.data);
 
     let max_x = &input.data.len();
     let max_y = &input.data[0].len();
-    let quadrant = [
-        (
-            0..entrance.x,
-            0..entrance.y,
-            _Point { x: entrance.x - 1, y: entrance.y - 1 }
-        ),
-        (
-            0..entrance.x,
-            entrance.y + 1..*max_y,
-            _Point { x: entrance.x - 1, y: 0 }
-        ),
-        (
-            entrance.x + 1..*max_x,
-            0..entrance.y,
-            _Point { x: 0, y: entrance.y - 1 }
-        ),
-        (
-            entrance.x + 1..*max_x,
-            entrance.y + 1..*max_y,
-            _Point { x: 0, y: 0 }
-        ),
+    let quadrants = [
+        Quadrant {
+            x_range: 0..entrance.x,
+            y_range: 0..entrance.y,
+            entrance: _Point { x: entrance.x - 1, y: entrance.y - 1 },
+        },
+        Quadrant {
+            x_range: 0..entrance.x,
+            y_range: entrance.y + 1..*max_y,
+            entrance: _Point { x: entrance.x - 1, y: 0 },
+        },
+        Quadrant {
+            x_range: entrance.x + 1..*max_x,
+            y_range: 0..entrance.y,
+            entrance: _Point { x: 0, y: entrance.y - 1 },
+        },
+        Quadrant {
+            x_range: entrance.x + 1..*max_x,
+            y_range: entrance.y + 1..*max_y,
+            entrance: _Point { x: 0, y: 0 },
+        }
     ];
 
     let mut final_result = 0;
-    for (x_range, y_range, entrance) in quadrant.iter() {
+    for quadrant in quadrants.iter() {
         let mut data = vec![];
-
-        for i in x_range.clone() {
+        for i in quadrant.x_range.clone() {
             let mut row = vec![];
-            for j in y_range.clone() {
+            for j in quadrant.y_range.clone() {
                 row.push(input.data[i][j]);
             }
             data.push(row);
         }
-
-        data[entrance.x][entrance.y] = ENTRANCE;
+        data[quadrant.entrance.x][quadrant.entrance.y] = ENTRANCE;
 
         let all_keys = all_keys(&data);
 

@@ -24,13 +24,14 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
+    // Taken from part 1
     let mut x = 11;
     let mut y = 14;
 
-    loop {
-        let mut x_size = 0;
-        let mut y_size = 0;
+    let mut x_size = 0;
+    let mut y_size = 0;
 
+    loop {
         while test_location(x + x_size, y, &input.data) == 1 {
             x_size += 1;
         }
@@ -43,10 +44,14 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
             break;
         }
 
+        println!("Maximum grid for location ({}, {}) is ({}, {})", x, y, x_size, y_size);
+
         if x_size > y_size {
             x += 1;
+            x_size -= 1;
         } else {
             y += 1;
+            y_size -= 1;
         }
     }
     Answer { question: input.question, result: 10000 * x + y }

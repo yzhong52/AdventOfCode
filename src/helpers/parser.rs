@@ -30,7 +30,7 @@ pub struct Input<T> {
 
 fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     let filename: String = format!("src/y{}/day{}.input.txt", question.year, question.day);
-    println!("Reading file from {}", filename);
+    println!("Read from file: {}", filename);
     let contents: String = fs::read_to_string(filename).expect("file not found");
     let result: Vec<&str> = contents.split(pat).collect();
 
@@ -117,13 +117,13 @@ impl<T> Answer<T> where T: std::fmt::Display {
     }
 
     fn save_as(&self, suffix: &str) {
-        let filename: String = format!("output/{}:day:{}:{}.txt", self.question.year, self.question.day, suffix);
+        let filename: String = format!("src/y{}/day{}.output.{}.txt", self.question.year, self.question.day, suffix);
         println!("Result for question {year} day {day} {part} is: {result}",
                  year = self.question.year,
                  day = self.question.day,
                  part = suffix,
                  result = self.result);
-        println!("Saving file to {}\n", filename);
+        println!("Save to file: {}\n", filename);
         fs::write(filename, format!("{}\n", self.result)).expect("Unable to write file");
     }
 }
