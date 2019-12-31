@@ -1,5 +1,4 @@
 use super::super::helpers::parser::*;
-use super::day9::*;
 use std::collections::VecDeque;
 use std::collections::HashSet;
 use crate::helpers::models::BigPoint;
@@ -7,6 +6,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use std::char;
 use std::fmt::{Debug, Formatter, Error};
+use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 
 const INTERSECTION: char = 'O';
 const FRAME: char = '#';

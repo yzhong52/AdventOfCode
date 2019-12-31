@@ -1,6 +1,7 @@
 use super::super::helpers::parser::*;
-use super::day9::*;
+use super::super_int_code_computer::*;
 use std::collections::VecDeque;
+use crate::y2019::day5::IntCodeComputer;
 
 fn combinations(current: Vec<i128>) -> Vec<Vec<i128>> {
     if current.len() == 1 {
@@ -29,7 +30,7 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
     for phases in possible_phases {
         let mut phase_setting = 0;
         for phase in phases {
-            phase_setting = run_till_halt(&input.data, vec![phase, phase_setting]);
+            phase_setting = SuperIntCodeComputer::run_till_halt(&input.data, vec![phase, phase_setting]);
         }
         result = i128::max(result, phase_setting);
     }

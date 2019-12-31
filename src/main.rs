@@ -19,6 +19,9 @@ mod y2018 {
 }
 
 mod y2019 {
+    pub mod super_int_code_computer;
+    pub mod atomic_int_code_computer;
+
     pub mod day1;
     pub mod day2;
     pub mod day3;
@@ -41,9 +44,9 @@ mod y2019 {
     pub mod day20;
     pub mod day21;
     pub mod day22;
-    pub mod atomic_int_code_computer;
     pub mod day23;
     pub mod day24;
+    pub mod day25;
 }
 
 use helpers::parser::*;

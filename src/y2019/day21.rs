@@ -1,5 +1,5 @@
 use crate::helpers::parser::{Input, Answer};
-use crate::y2019::day9::{SuperIntCodeComputer, SuperIntCodeResult};
+use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 
 struct Springdroid {
     computer: SuperIntCodeComputer,

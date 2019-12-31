@@ -90,27 +90,27 @@ impl IntCodeComputer {
 
         IntCodeResult::Halted
     }
-}
 
-pub fn run_till_halt(values: &Vec<i32>, inputs: Vec<i32>) -> i32 {
-    let mut computer = IntCodeComputer {
-        numbers: values.clone(),
-        index: 0,
-        input_queue: inputs.into_iter().collect(),
-        relative_base: 0
-    };
-    let mut final_output = 0;
-    loop {
-        match computer.run() {
-            IntCodeResult::Output(value) => final_output = value,
-            IntCodeResult::Halted => break
+    pub fn run_till_halt(values: &Vec<i32>, inputs: Vec<i32>) -> i32 {
+        let mut computer = IntCodeComputer {
+            numbers: values.clone(),
+            index: 0,
+            input_queue: inputs.into_iter().collect(),
+            relative_base: 0
+        };
+        let mut final_output = 0;
+        loop {
+            match computer.run() {
+                IntCodeResult::Output(value) => final_output = value,
+                IntCodeResult::Halted => break
+            }
         }
+        final_output
     }
-    final_output
 }
 
 fn run_day5(values: &Vec<i32>, input_value: i32) -> i32 {
-    run_till_halt(values, vec![input_value])
+    IntCodeComputer::run_till_halt(values, vec![input_value])
 }
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {

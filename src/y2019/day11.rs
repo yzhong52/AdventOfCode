@@ -1,8 +1,8 @@
 use super::super::helpers::parser::*;
 use super::super::helpers::utils::*;
-use super::day9::*;
 use std::collections::HashMap;
 use crate::helpers::models::Point;
+use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 
 const WHITE_COLOR: bool = true;
 const BLACK_COLOR: bool = false;

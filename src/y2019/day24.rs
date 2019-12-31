@@ -193,7 +193,7 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
 
         let from = next_state.iter().position(has_bug).unwrap();
         let to = next_state.len() - 1 - next_state.iter().rev().position(has_bug).unwrap();
-        
+
         current = next_state[from ..= to].to_vec();
     }
 

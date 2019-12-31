@@ -1,9 +1,9 @@
 use super::super::helpers::parser::*;
-use super::day9::*;
 use std::collections::HashMap;
 use crate::helpers::models::BigPoint;
 use std::thread::sleep;
 use std::time::Duration;
+use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 
 // 0 is an empty tile. No game object appears in this tile.
 const EMPTY_TILE: i128 = 0;
