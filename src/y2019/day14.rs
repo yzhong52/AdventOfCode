@@ -107,7 +107,7 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<i64> {
         }
 
         loop_index += 1;
-        println!("Loop {}: total_fuel: {} ore used: {}", loop_index, total_fuel_quantity, current_used_ore);
+        println!("Loop {}:\n - total fuel generated:\n - {} ore used: {}", loop_index, total_fuel_quantity, current_used_ore);
     }
 
     return Answer { question: input.question, result: total_fuel_quantity };

@@ -66,7 +66,7 @@ fn parse(shuffles: &Vec<String>, deck_len: usize) -> Vec<Shuffle> {
 fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
     let mut result: usize = original_position;
     println!("{}", result);
-    for r in 0..repeat {
+    for _ in 0..repeat {
         for row in &shuffles {
             match row {
                 Shuffle::DealWithIncrement(increment) => {

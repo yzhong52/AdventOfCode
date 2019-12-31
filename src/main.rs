@@ -50,6 +50,7 @@ mod y2019 {
 }
 
 use helpers::parser::*;
+use std::time::Instant;
 
 fn run_completed() {
     // ### 2018 ###
@@ -172,12 +173,15 @@ fn run_completed() {
 }
 
 fn main() {
+    let start = Instant::now();
     for arg in env::args() {
         match arg {
             s if s == "run_all".to_string() => run_completed(),
             _ => ()
         };
     }
+
+    y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
 
     // TODO: Yuchen - OOM
     // y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
@@ -188,5 +192,5 @@ fn main() {
     // TODO: Yuchen -
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
-
+    println!("Finish running: {:?}", start.elapsed());
 }

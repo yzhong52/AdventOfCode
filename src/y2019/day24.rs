@@ -106,14 +106,12 @@ fn print_state(state: &Vec<Vec<Vec<char>>>) {
 }
 
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
-    let mut initial: Vec<Vec<char>> = input.data;
-
     let max_x = 5;
     let max_y = 5;
 
-    let mut current = vec![initial];
+    let mut current = vec![input.data];
 
-    for m in 0..200 {
+    for _ in 0..200 {
         // Pad two more layers on both side
         let mut previous_state: Vec<Vec<Vec<char>>> = vec![];
         previous_state.push(vec![vec![NO_BUG; max_y]; max_x]);

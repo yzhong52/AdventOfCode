@@ -210,7 +210,7 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
             &data,
             keys,
             &all_keys,
-            entrance.clone(),
+            quadrant.entrance.clone(),
             visited.borrow_mut(),
             0,
             &mut result,
