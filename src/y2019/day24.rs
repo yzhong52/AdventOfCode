@@ -52,15 +52,16 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
         current = next_state;
     }
 
+    print_grid(&current);
 
     let mut result = 0;
+    let mut biodiversity_rating = 1;
     for i in 0..max_x {
         for j in 0..max_y {
             if current[i][j] == BUG {
-                result = (result << 2) + 1;
-            } else {
-                result <<= 2;
+                result += biodiversity_rating;
             }
+            biodiversity_rating <<= 1;
         }
     }
     Answer { question: input.question, result }

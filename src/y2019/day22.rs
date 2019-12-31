@@ -1,11 +1,12 @@
 use crate::helpers::parser::Answer;
 use crate::helpers::parser::Input;
 use std::collections::HashMap;
+use std::thread::sleep;
+use std::time::Duration;
 
 // This solution would take 1.9 TB of memory for part 2
 fn shuffle1(shuffles: Vec<Shuffle>, original_position: usize, deck_length: usize) -> usize {
     let mut deck: Vec<usize> = (0..deck_length).collect();
-
     for row in &shuffles {
         match row {
             Shuffle::DealWithIncrement(increment) => {
@@ -65,6 +66,7 @@ fn parse(shuffles: &Vec<String>, deck_len: usize) -> Vec<Shuffle> {
 // This solution would take about 13 years for part 2
 fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
     let mut result: usize = original_position;
+    println!("{}", result);
     for r in 0..repeat {
         for row in &shuffles {
             match row {
@@ -83,6 +85,8 @@ fn shuffle2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, r
                 }
             }
         }
+        println!("{}", result);
+        sleep(Duration::from_millis(300));
     }
     result
 }
@@ -99,8 +103,6 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     // 119,315,717,514,047 * 16 bytes -> 1 PB
     let deck_len = 119315717514047;
     let parsed = parse(&input.data, deck_len);
-    // let result = shuffle2(parsed.clone(), 2019, deck_len, 1);
-//    println!("{}", part1);
     let result = shuffle2(parsed, 2020, deck_len, 101741582076661);
     Answer { question: input.question, result }
 }
