@@ -43,10 +43,7 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
                         next_state[x as usize][y as usize] = NO_BUG
                     }
                 }
-
-                print!(" {} ", count_bugs_nearby);
             }
-            println!();
         }
 
         current = next_state;
