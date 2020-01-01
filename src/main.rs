@@ -140,6 +140,7 @@ fn main() {
         };
     }
 
+    y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
     y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
 
     // TODO: Yuchen - OOM
