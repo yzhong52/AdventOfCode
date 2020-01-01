@@ -140,8 +140,8 @@ fn main() {
         };
     }
 
-    // TODO: Yuchen - part 2
-    // y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
+    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
+
     // TODO: Yuchen - OOM
     // y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();

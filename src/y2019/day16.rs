@@ -30,8 +30,8 @@ pub fn part1(input: Input<String>) -> Answer<String> {
 //const REPEATED_TIMES: usize = 10000;
 
 pub fn part2(input: Input<String>) -> Answer<String> {
-//    let initial_digits = parse(&input.data);
-//
+    let initial_digits = parse(&input.data);
+
 //    // Repeat this `REPEATED_TIMES` times
 //    let mut digits = vec![vec![]; REPEATED_TIMES];
 //    for i in 0 .. REPEATED_TIMES {
