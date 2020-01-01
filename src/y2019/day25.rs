@@ -108,7 +108,6 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<String> {
             }
             AtomicIntCodeResult::Halted => {
                 print!("{}", output_buffer);
-                output_buffer.clear();
                 break;
             }
         }
@@ -116,9 +115,9 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<String> {
 
     let result = extract_between_plus(
         output_buffer.as_str(),
-        "You should be able to get in by typing ",
+        " You should be able to get in by typing ",
         " on the keypad at the main airlock.");
-    Answer { question: input.question, result: result }
+    Answer { question: input.question, result }
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
