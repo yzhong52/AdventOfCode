@@ -11,6 +11,18 @@ impl<T> _Point<T> where T: num::Integer, T: Copy {
         _Point { x: T::zero(), y: T::zero() }
     }
 
+    pub fn turn_right(&self) -> _Point<T> {
+        _Point { x: self.y, y: T::zero() - self.x }
+    }
+
+    pub fn turn_left(&self) -> _Point<T> {
+        _Point { x: T::zero()-self.y, y: self.x }
+    }
+
+    pub fn dot_product(self, rhs: _Point<T>) -> T {
+        self.x * rhs.x + self.y * rhs.y
+    }
+
     pub fn is_valid(&self, max_x: T, max_y: T) -> bool {
         return T::zero() <= self.x && self.x < max_x
             && T::zero() <= self.y && self.y < max_y;
@@ -74,21 +86,6 @@ impl<T> ops::Sub<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Sub {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
         }
-    }
-}
-
-// TODO: Yuchen - move them into templates
-impl _Point<i128> {
-    pub fn turn_right(&self) -> _Point<i128> {
-        _Point { x: self.y, y: -self.x }
-    }
-
-    pub fn turn_left(&self) -> _Point<i128> {
-        _Point { x: -self.y, y: self.x }
-    }
-
-    pub fn dot_product(self, rhs: _Point<i128>) -> i128 {
-        self.x * rhs.x + self.y * rhs.y
     }
 }
 
