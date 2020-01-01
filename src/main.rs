@@ -191,4 +191,6 @@ fn main() {
     // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
     println!("Finish running: {:?}", start.elapsed());
+
+    y2019::day25::part1(read_numbers_by_comma(Question::y2019(25))).save_part1();
 }
