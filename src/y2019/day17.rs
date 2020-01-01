@@ -86,8 +86,9 @@ impl Debug for Action {
 }
 
 
-// TODO: Yuchen - let's assume we visit each place maximum once for now.
-// Ok, this has 200k different combination :'(
+// Assume we visit each place maximum once.
+// There are still 200k different combination :'(
+// And let's assume the first one is the answer.
 fn path_search(
     visited: &mut Vec<Vec<i32>>,
     to_visit: &mut HashSet<BigPoint>,

@@ -7,6 +7,7 @@ mod helpers {
 }
 
 mod y2019 {
+    pub mod basic_in_code_computer;
     pub mod super_int_code_computer;
     pub mod atomic_int_code_computer;
 
@@ -133,23 +134,23 @@ fn run_completed() {
 
 fn main() {
     let start = Instant::now();
-    for arg in env::args() {
+    for arg in env::args().skip(1) {
         match arg {
             s if s == "run_all".to_string() => run_completed(),
             _ => ()
         };
     }
 
-    // TODO: Yuchen - part 2
+    // TODO: Yuchen - time complexity
+    // y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
     // y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
-    // TODO: Yuchen - OOM
-    // y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
-    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
-    // TODO: Yuchen -
+    // TODO: Yuchen - Wrong answer
     // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-    // TODO: Yuchen -
-    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
+
+    // TODO: Yuchen - space complexity
+    y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
+    y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
     println!("Finish running: {:?}", start.elapsed());
 }

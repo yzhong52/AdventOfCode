@@ -160,10 +160,7 @@ impl SuperIntCodeComputer {
         let mut final_output = 0;
         loop {
             match computer.run() {
-                SuperIntCodeResult::Output(value) => {
-                    println!("Output value {}", value);
-                    final_output = value
-                }
+                SuperIntCodeResult::Output(value) => final_output = value,
                 SuperIntCodeResult::Halted => break
             }
         }

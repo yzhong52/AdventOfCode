@@ -1,14 +1,11 @@
 use crate::helpers::parser::{Answer, Input, extract_between_plus};
-use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 use crate::y2019::atomic_int_code_computer::{AtomicIntCodeComputer, AtomicIntCodeResult};
-use std::io;
 use std::collections::VecDeque;
-use std::io::BufRead;
-use std::thread::sleep;
-use std::time::Duration;
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<String> {
-    let computer = AtomicIntCodeComputer::new(input.data, "droid".to_string());
+    let computer = AtomicIntCodeComputer::new(
+        input.data,
+        "droid".to_string());
 
     let mut items_state: u32 = 0;
     let mut previous_items_state: u32 = 255;
@@ -119,8 +116,3 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<String> {
         " on the keypad at the main airlock.");
     Answer { question: input.question, result }
 }
-
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    Answer { question: input.question, result: 0 }
-}
-
