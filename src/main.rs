@@ -6,6 +6,18 @@ mod helpers {
     pub mod utils;
 }
 
+mod y2018 {
+    pub mod day1;
+    pub mod day2;
+    pub mod day3;
+    pub mod day4;
+    pub mod day5;
+    pub mod day6;
+    pub mod day7;
+    pub mod day8;
+    pub mod day9;
+}
+
 mod y2019 {
     pub mod super_int_code_computer;
     pub mod atomic_int_code_computer;
@@ -41,6 +53,37 @@ use helpers::parser::*;
 use std::time::Instant;
 
 fn run_completed() {
+    // ### 2018 ###
+
+    y2018::day1::part1(read_numbers_by_line(Question::y2018(1))).save_part1();
+    y2018::day1::part2(read_numbers_by_line(Question::y2018(1))).save_part2();
+
+    y2018::day2::part1(read_strings(Question::y2018(2))).save_part1();
+    y2018::day2::part2(read_strings(Question::y2018(2))).save_part2();
+
+    y2018::day3::part1(read_strings(Question::y2018(3))).save_part1();
+    y2018::day3::part2(read_strings(Question::y2018(3))).save_part2();
+
+    y2018::day4::part1(read_strings(Question::y2018(4))).save_part1();
+    y2018::day4::part2(read_strings(Question::y2018(4))).save_part2();
+
+    y2018::day5::part1(read_single_string(Question::y2018(5))).save_part1();
+    y2018::day5::part2(read_single_string(Question::y2018(5))).save_part2();
+
+    y2018::day6::part1(read_points(Question::y2018(6))).save_part1();
+    y2018::day6::part2(read_points(Question::y2018(6))).save_part2();
+
+    y2018::day7::part1(read_strings(Question::y2018(7))).save_part1();
+    y2018::day7::part2(read_strings(Question::y2018(7))).save_part2();
+
+    y2018::day8::part1(read_numbers_space(Question::y2018(8))).save_part1();
+    y2018::day8::part2(read_numbers_space(Question::y2018(8))).save_part2();
+
+    y2018::day9::part1(Input { question: Question::y2018(9), data: (428, 70825) }).save_part1(); // TODO: Yuchen -
+    y2018::day9::part2(Input { question: Question::y2018(9), data: (428, 7082500) }).save_part2(); // TODO: Yuchen -
+
+    // ### 2019 ###
+
     y2019::day1::part1(read_numbers_by_line(Question::y2019(1))).save_part1();
     y2019::day1::part2(read_numbers_by_line(Question::y2019(1))).save_part2();
 
@@ -95,7 +138,8 @@ fn run_completed() {
 
     // Day 16: Flawed Frequency Transmission
     y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
-
+    // TODO: Yuchen - part 2
+    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
 
     // Day 17: Set and Forget
     y2019::day17::part1(read_numbers_by_comma(Question::y2019(17))).save_part1();
@@ -139,17 +183,4 @@ fn main() {
             _ => ()
         };
     }
-
-    // TODO: Yuchen - part 2
-    // y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
-    // TODO: Yuchen - OOM
-    // y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
-    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
-
-    // TODO: Yuchen -
-    // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-    // TODO: Yuchen -
-    // y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
-
-    println!("Finish running: {:?}", start.elapsed());
 }
