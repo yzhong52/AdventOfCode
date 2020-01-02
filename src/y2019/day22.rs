@@ -2,6 +2,7 @@ use crate::helpers::parser::Answer;
 use crate::helpers::parser::Input;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
+use modinverse::modinverse;
 
 #[derive(Copy, Clone)]
 enum Shuffle {
@@ -111,9 +112,14 @@ fn shuffle_part2_in_29_years(shuffles: Vec<Shuffle>, original_position: usize, d
     result
 }
 
-// Inspired by: https://www.reddit.com/r/adventofcode/comments/eh1d6p/2019_day_22_part_2_tutorial/
-
+// Inspired by:
+// * https://www.reddit.com/r/adventofcode/comments/eh1d6p/2019_day_22_part_2_tutorial/
+// * https://codeforces.com/blog/entry/72593
 fn shuffle_part2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usize, repeat: usize) -> usize {
+
+    let mut reversed = shuffles.clone();
+    reversed.reverse();
+
     // After shuffling, the result = multiplier * result + constant
     // Refer to `shuffle_part1` also for the computation of `multiplier` and `constant`
     let mut multiplier: i128 = 1;
@@ -135,9 +141,49 @@ fn shuffle_part2(shuffles: Vec<Shuffle>, original_position: usize, deck_len: usi
         multiplier = multiplier % deck_len as i128;
         constant = constant % deck_len as i128;
     }
+    println!("Forward shuffle - multiplier: {}, constant: {}", multiplier, constant);
+
+    multiplier = multiplier % deck_len as i128;
+    constant = constant % deck_len as i128;
+
+    let result = (original_position as i128 * multiplier + constant) % deck_len as i128;
+
+    let tmp = (original_position as i128 * multiplier + constant) % deck_len as i128;
+    println!("Forward shuffle result: {} x {} + {} = {}",
+             original_position, multiplier, constant, tmp
+    );
+
+    let inverse_multiplier = 1;
+    let inverse_constant = 0;
+
+    for row in reversed {
+        match row {
+            Shuffle::DealWithIncrement(increment) => {
+                let mut i = 0;
+                while (result + deck_len as i128 * i) % *increment != 0 {
+                    i += 1;
+                }
+                result = (result + deck_len * i) / *increment
+            }
+            Shuffle::DealNewDeck => {
+                result = deck_len - 1 - result;
+            }
+            Shuffle::Cut(number) => {
+                result = (result + *number) % deck_len;
+            }
+        }
+    }
+
+    println!("Backward shuffle result: {} x {} + {} = {}",
+             tmp, inverse_multiplier, inverse_constant,
+             (tmp as i128 * inverse_multiplier + inverse_constant) % deck_len as i128
+    );
+
+
+    // Inverse
+    // constant = deck_len as i128 - constant;
     println!("Finally: multiplier: {}, constant: {}", multiplier, constant);
 
-    println!("Finally: multiplier: {}, constant: {}", multiplier, constant);
     let result = (original_position as i128 * multiplier + constant) % deck_len as i128;
     result as usize
 }
@@ -154,10 +200,10 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
     let parsed = parse(&input.data, deck_len);
 
     // let result = shuffle2(parsed, 2020, deck_len, 101741582076661);
-    let result = shuffle_part1(parsed.clone(), 2019, deck_len);
-    println!("29 years: {}", result);
-    let result = shuffle_part2(parsed, 2019, deck_len, 1);
-    println!("fast: {}", result);
+    let result = shuffle_part1(parsed.clone(), 2020, deck_len);
+    println!("29 years solution: {}", result);
+    let result = shuffle_part2(parsed, 2020, deck_len, 1);
+    println!("Fast solution: {}", result);
 
     Answer { question: input.question, result }
 }
