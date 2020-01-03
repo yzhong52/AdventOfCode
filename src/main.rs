@@ -96,7 +96,7 @@ fn run_completed() {
 
     // Day 16: Flawed Frequency Transmission
     y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
-
+    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
 
     // Day 17: Set and Forget
     y2019::day17::part1(read_numbers_by_comma(Question::y2019(17))).save_part1();
@@ -116,6 +116,7 @@ fn run_completed() {
 
     // Day 21: Springdroid Adventure
     y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
+    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
 
     // Day 22: Slam Shuffle
     y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
@@ -141,13 +142,5 @@ fn main() {
             _ => ()
         };
     }
-
-    // TODO: Yuchen - time complexity
-    // y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
-    // y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
-
-    // TODO: Yuchen - Wrong answer
-    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-
     println!("Finish running: {:?}", start.elapsed());
 }

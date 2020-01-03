@@ -1,5 +1,4 @@
 use super::super::helpers::parser::*;
-use std::process::exit;
 
 fn parse(s: &String) -> Vec<i8> {
     s.chars().into_iter().map(|x| x as i8 - '0' as i8).collect()
@@ -28,81 +27,56 @@ pub fn part1(input: Input<String>) -> Answer<String> {
     return Answer { question: input.question, result };
 }
 
-const REPEATED_TIMES: usize = 100;
-
-fn fft(x: Vec<i8>) -> Vec<i8> {
-    for i in 0 .. x.len() {
-        for j in 0 .. x.len() {
+fn visualization(size: usize) {
+    for i in 0..size {
+        for j in 0..size {
             let offset = (j + 1) / (i + 1);
             let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
             print!("{:2} ", patten)
         }
         println!()
     }
-    println!();
-
-    for i in 0 .. x.len()/2 {
-        for j in x.len()/2 .. x.len() {
-            let offset = (j + 1) / (i + 1);
-            let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
-            print!("{:2}    ", patten)
-        }
-        println!()
-    }
-    println!();
-
-    for i in (0 .. x.len()).step_by(2) {
-        for j in (0 .. x.len()).step_by(2) {
-            let offset = (j + 1) / (i + 1);
-            let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
-            print!("{:2}    ", patten)
-        }
-        println!()
-    }
-    println!();
-
-    vec![]
 }
 
+// Inspired by:
+// * https://www.reddit.com/r/adventofcode/comments/eh8s3d/aoc_2019_wording_issues_and_improvements/
+//
+// Oh, oh, I missed this line, the "initial input signal" instead of the final signal:
+//
+// "The first seven digits of your initial input signal also represent the message offset. "
 pub fn part2(input: Input<String>) -> Answer<String> {
+    visualization(32);
 
-    fft(vec![0; 8]);
-    fft(vec![0; 16]);
-    fft(vec![0; 32]);
-    exit(0);
+    const REPEATED_TIMES: usize = 10000;
+
+    let message_offset = 5977709;
 
     let initial_digits = parse(&input.data);
 
     let total_length = REPEATED_TIMES * initial_digits.len();
-    let mut digits: Vec<i8> = vec![0; total_length];
-    for i in 0..REPEATED_TIMES {
-        for j in 0..initial_digits.len() {
-            digits[i * initial_digits.len() + j] = initial_digits[j];
-        }
+
+    let remaining_length = total_length - message_offset;
+    println!("remaining_length length: {}", remaining_length);
+
+    let mut truncated_digits = vec![0; remaining_length];
+    for i in 0..remaining_length {
+        truncated_digits[i] = initial_digits[(i + message_offset) % initial_digits.len()];
     }
 
-    println!("{:?} - {}", digits[0..100].to_vec(), digits.len());
+    for phase in 0..100 {
+        let mut next_phase_result = truncated_digits.clone();
 
-    for phase in 0..1 {
-        let mut next_digits = vec![0; total_length];
-        for row in 0..total_length {
-            let mut total: i32 = 0;
-            for column in 0..total_length {
-                let offset = (column + 1) / (row + 1);
-                let patten = BASE_PATTERN[offset % BASE_PATTERN.len()];
-                total += patten as i32 * digits[column] as i32;
-            }
-
-            let last_digit: i8 = (&total.abs() % 10) as i8;
-            next_digits.push(last_digit);
-
-            if row % 2 == 0 {
-                println!("{} - {}", row, total);
-            }
+        next_phase_result[remaining_length - 1] = truncated_digits[remaining_length - 1];
+        for i in 1..remaining_length {
+            next_phase_result[remaining_length - i - 1] += next_phase_result[remaining_length - i];
+            next_phase_result[remaining_length - i - 1] %= 10;
         }
-        digits = next_digits;
+
+        truncated_digits = next_phase_result;
+
+        println!("Phase {}: {:?}", phase, truncated_digits[0..8].to_vec());
     }
 
-    let result: String = digits[0..8].iter().map(ToString::to_string).collect();
-    return Answer { question: input.question, result: "0".to_string() };
+    let result: String = truncated_digits[0..8].iter().map(ToString::to_string).collect();
+    return Answer { question: input.question, result };
 }

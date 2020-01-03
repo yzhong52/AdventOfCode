@@ -116,13 +116,8 @@ impl SuperIntCodeComputer {
                     let position = self.read(self.index);
                     self.index += 1;
 
-                    if let Some(value) = self.input_queue.pop_front() {
-                        self.save_number(mode1, position, value);
-                    } else {
-                        // TODO: Yuchen - maybe need to configure this as well
-                        // println!("Reading empty...");
-                        self.save_number(mode1, position, -1);
-                    }
+                    let value = self.input_queue.pop_front().unwrap();
+                    self.save_number(mode1, position, value);
                 }
                 OPERATION_OUTPUT_4 => {
                     let output_number = self.parse_number(mode1, self.relative_base);
@@ -166,5 +161,4 @@ impl SuperIntCodeComputer {
         }
         final_output
     }
-
 }

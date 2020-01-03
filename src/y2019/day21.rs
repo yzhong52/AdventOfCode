@@ -57,7 +57,8 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
 }
 
 
-// Inspired by https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbinci1/?context=3
+// Inspired by:
+// * https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbinci1/?context=3
 //
 //  - "Part 1: jump if there's a hole in front of me and the landing spot is ground"
 //  - "Part 2: "jump if part 1 AND I can either jump or walk forward from the landing spot successfully"
