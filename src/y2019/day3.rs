@@ -33,7 +33,7 @@ pub fn part1(input: &Input<Vec<String>>) -> Answer<i32> {
     let line1_points: Vec<Point> = get_points(&input.data[0]);
     let line2_points = get_points(&input.data[1]);
 
-    let mut set: HashSet<Point> = HashSet::from_iter(line1_points);
+    let set: HashSet<Point> = HashSet::from_iter(line1_points);
 
     let mut result = std::i32::MAX;
 
