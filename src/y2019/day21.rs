@@ -56,55 +56,66 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
     Answer { question: input.question, result: output }
 }
 
+
+// Inspired by https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbinci1/?context=3
+//
+//  - "Part 1: jump if there's a hole in front of me and the landing spot is ground"
+//  - "Part 2: "jump if part 1 AND I can either jump or walk forward from the landing spot successfully"
 pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let mut droid = Springdroid::new(input.data.clone());
-    // J = !A
+    // Jump = !A
     // ......@..........
     // .....@.@.........
     // ....@...@........
     // #####.###########
     //      ABCDEFGH
     //
-    // J = !B & !E = !(B | E)
+    // Jump = !B & !E = !(B | E)
     // .....@...@.......
     // ....@.@.@.@......
     // ...@...@...@.....
     // #####.?#.########
     //     ABCDEFGH
     //
-    // J = !C & !E = !(C | E)
+    // Jump = !C & !E = !(C | E)
     // ....@...@.........
     // ...@.@.@.@........
     // ..@...@...@.......
     // #####.#..########
     //    ABCDEFGH
     //
-    // J = !C & !I & !F = !(C | I | F)
+    // Jump = !C & !I & !F = !(C | I | F)
     // ....@...@...@....
     // ...@.@.@.@.@.@...
     // ..@...@...@...@..
     // #####.##.##..####
     //    ABCDEFGHI
     //
-    // J = !C & D & E & F
+    // Jump = !C & D & E & F
     // ....@....@.......
     // ...@.@..@.@......
-    // ..@...@@...@.....
+    // .@@...@@...@.....
     // #####.###..#.####
     //    ABCDEFGHI
+    //
+    // Don't Jump = D & !E & !H
+    // ......@...@......
+    // .....@.@.@.@.....
+    // ...@@...@...@....
+    // #####.#.##.######
+    //    ABCDEFGH
 
     let script = r#"
-        OR F T
-        OR C T
+        OR A T
         AND B T
-        OR E T
-        AND A T
-        NOT T J
-
-        NOT I T
-        AND H T
+        AND C T
+        NOT T T
         AND D T
         OR T J
+
+        AND E T
+        OR H T
+        AND T J
 
         RUN
         "#;

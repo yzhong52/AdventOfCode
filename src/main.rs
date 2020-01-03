@@ -119,6 +119,7 @@ fn run_completed() {
 
     // Day 22: Slam Shuffle
     y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
+    y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
 
     // Day 23: Category Six
     y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
@@ -146,11 +147,7 @@ fn main() {
     // y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
 
     // TODO: Yuchen - Wrong answer
-    // y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-
-    // TODO: Yuchen - space complexity
-    y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
-    y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
+    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
 
     println!("Finish running: {:?}", start.elapsed());
 }
