@@ -58,8 +58,8 @@ fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<Point, bool> {
         match robot.run() {
             SuperIntCodeResult::Output(val) => {
                 match val {
-                    TURN_LEFT => dir = Point { x: -dir.y, y: dir.x }, // Turn left 90 degrees
-                    TURN_RIGHT => dir = Point { x: dir.y, y: -dir.x }, // Turn right 90 degrees
+                    TURN_LEFT => dir = dir.turn_left(),
+                    TURN_RIGHT => dir = dir.turn_right(),
                     _ => unimplemented!()
                 }
             }

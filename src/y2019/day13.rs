@@ -61,7 +61,7 @@ impl ArcadeCabinet {
         self.computer.instructions[0] = 2;
     }
 
-    fn play(&mut self, debug: bool) -> i128 {
+    fn play(&mut self, render: bool) -> i128 {
         let mut paddle_pos: BigPoint = BigPoint::origin();
         let mut loop_count = 0;
         let mut ball_pos = BigPoint::origin();
@@ -120,7 +120,7 @@ impl ArcadeCabinet {
 
             loop_count += 1;
 
-            if debug {
+            if render {
                 let mut screen_buffer: String = String::new();
                 for row in &self.screen {
                     screen_buffer.push(' ');
@@ -139,7 +139,7 @@ impl ArcadeCabinet {
                 println!(" -->");
 
                 match third {
-                    HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(10)),
+                    HORIZONTAL_PADDLE_TILE | BALL_TILE => sleep(Duration::from_millis(30)),
                     _ => ()
                 };
             }
@@ -163,7 +163,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
 
     arcade.insert_coin();
 
-    let final_score = arcade.play(false);
+    let final_score = arcade.play(true);
 
     Answer { question: input.question, result: final_score }
 }

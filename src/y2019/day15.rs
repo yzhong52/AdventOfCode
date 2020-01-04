@@ -11,11 +11,11 @@ use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeRe
 // Responses
 type ResponseCode = i128;
 
-//0: The repair droid hit a wall. Its position has not changed.
+// 0: The repair droid hit a wall. Its position has not changed.
 const RESPONSE_WALL_HIT: ResponseCode = 0;
-//1: The repair droid has moved one step in the requested direction.
+// 1: The repair droid has moved one step in the requested direction.
 const RESPONSE_MOVED: ResponseCode = 1;
-//2: The repair droid has moved one step in the requested direction; its new position is the location of the oxygen system.
+// 2: The repair droid has moved one step in the requested direction; its new position is the location of the oxygen system.
 const RESPONSE_DESTINATION: ResponseCode = 2;
 
 // Moves
@@ -53,7 +53,7 @@ static ACTIONS: [Action; 4] = [
     Action { input: EAST, direction: BigPoint { x: 1, y: 0 }, symbol: '>' },
 ];
 
-fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
+fn explore_map(input: &Vec<i128>, render: bool) -> ExploredMap {
     let mut droid = SuperIntCodeComputer::new(input.clone());
 
     let mut next_action: &Action = &ACTIONS[0];
@@ -67,6 +67,8 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
     for action in ACTIONS.iter() {
         unknown_land.insert(BigPoint::origin() + action.direction.clone());
     }
+
+    let mut frame = 0;
     while unknown_land.len() > 0 {
         let current_move = next_action;
 
@@ -130,7 +132,7 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
             _ => unimplemented!()
         };
 
-        if debug {
+        if render {
             let buffer = get_screen_buffer(&map, UNKNOWN, 41, 41);
             print_grid(&buffer);
             println!("Droid pos: {:?}", droid_pos);
@@ -139,6 +141,11 @@ fn explore_map(input: &Vec<i128>, debug: bool) -> ExploredMap {
             println!("Unknown tiles: {}", unknown_land.len());
 
             sleep(Duration::from_millis(24));
+
+            if frame == 0 {
+                frame += 1;
+                sleep(Duration::from_secs(5));
+            }
         }
     }
 
@@ -214,7 +221,7 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
 }
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
-    let explored = explore_map(&input.data, false);
+    let explored = explore_map(&input.data, true);
     let distance_to_destination = dijkstra(
         &explored.map,
         explored.destination,

@@ -204,10 +204,10 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
         &scaffold,
     );
 
-    println!("{:?}", actions);
+    println!("Total action sequence: {:?}", actions);
 
+    // Solved with sublime text search and replace function :P
     let main_routine = "A,B,B,A,C,A,A,C,B,C";
-
     let function_a = "R,8,L,12,R,8";
     let function_b = "R,12,L,8,R,10";
     let function_c = "R,8,L,8,L,8,R,8,R,10";
@@ -230,23 +230,33 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
     let mut last_char = '\n';
     let mut result = 0;
     let mut buffer: String = String::new();
+    let mut frame = 0;
+
     loop {
         match vacuum_robot.run() {
             SuperIntCodeResult::Output(value) => {
                 if last_char == '\n' && value as u8 as char == '\n' {
                     println!("{}", buffer);
-                    sleep(Duration::from_millis(38))
+                    sleep(Duration::from_millis(38));
+
+                    if frame <= 2 {
+                        sleep(Duration::from_secs(5));
+                        frame += 1;
+                    }
                 }
 
                 last_char = value as u8 as char;
                 if value < 128 {
-                    buffer.push(value as u8 as char);
                     buffer.push(' ');
+                    buffer.push(value as u8 as char);
                 } else {
                     result = value;
                 }
             }
-            SuperIntCodeResult::Halted => break,
+            SuperIntCodeResult::Halted => {
+                sleep(Duration::from_secs(5));
+                break;
+            }
         };
     }
 

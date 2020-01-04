@@ -73,7 +73,7 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let mut map: HashMap<(bool, i32), BinaryHeap<Point>> = HashMap::new();
     for (i, row) in input.data.iter().enumerate() {
         for (j, c) in row.iter().enumerate() {
-            if c == &'#' {
+            if *c == '#' {
                 // Swapping the x and y here so that it is easier to think about the quadrant
                 let diff_x = j as i32 - y as i32;
                 let diff_y = x as i32 - i as i32;
@@ -108,6 +108,8 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let mut index = 0;
     let mut vaporized_count = 0;
     let mut last_point = Point { x: 0, y: 0 };
+
+    // Looking for the 200th asteroid to be vaporized
     while vaporized_count < 200 && index < 10000 {
         let key = keys[index % keys.len()];
 

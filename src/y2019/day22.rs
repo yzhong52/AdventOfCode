@@ -164,7 +164,7 @@ fn shuffle_part2(shuffles: Vec<Shuffle>, original_position: usize, deck_size: us
         constant = constant % deck_size as i128;
     }
 
-    // "When did you become and expert in modular algorithm? "
+    // "When did you become and expert in modular arithmetic? "
     // https://www.reddit.com/r/adventofcode/comments/eeb40v/day_22_part_2/
     let inverse_multiplier = modinverse(multiplier, deck_size as i128).unwrap();
     let inverse_constant = (-inverse_multiplier * constant) % deck_size as i128;

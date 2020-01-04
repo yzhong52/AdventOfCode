@@ -45,7 +45,7 @@ fn visualization(size: usize) {
 //
 // "The first seven digits of your initial input signal also represent the message offset. "
 pub fn part2(input: Input<String>) -> Answer<String> {
-    visualization(32);
+    visualization(16);
 
     const REPEATED_TIMES: usize = 10000;
 

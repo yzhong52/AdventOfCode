@@ -42,27 +42,35 @@ use helpers::parser::*;
 use std::time::Instant;
 
 fn run_completed() {
+    // Day 1: The Tyranny of the Rocket Equation
     y2019::day1::part1(read_numbers_by_line(Question::y2019(1))).save_part1();
     y2019::day1::part2(read_numbers_by_line(Question::y2019(1))).save_part2();
 
+    // Day 2: 1202 Program Alarm
     y2019::day2::part1(read_numbers_by_comma(Question::y2019(2))).save_part1();
     y2019::day2::part2(read_numbers_by_comma(Question::y2019(2))).save_part2();
 
+    // Day 3: Crossed Wires
     y2019::day3::part1(&read_strings(Question::y2019(3))).save_part1();
     y2019::day3::part2(&read_strings(Question::y2019(3))).save_part2();
 
+    // Day 4: Secure Container
     y2019::day4::part1(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
 
+    // Day 5: Sunny with a Chance of Asteroids
     y2019::day5::part1(read_numbers_by_comma(Question::y2019(5))).save_part1();
     y2019::day5::part2(read_numbers_by_comma(Question::y2019(5))).save_part2();
 
+    // Day 6: Universal Orbit Map
     y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
     y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
 
+    // Day 7: Amplification Circuit
     y2019::day7::part1(read_numbers_by_comma(Question::y2019(7))).save_part1();
     y2019::day7::part2(read_numbers_by_comma(Question::y2019(7))).save_part2();
 
+    // Day 8: Space Image Format
     y2019::day8::part1(read_single_string(Question::y2019(8))).save_part1();
     y2019::day8::part2(read_single_string(Question::y2019(8))).save_part2();
 
@@ -82,7 +90,7 @@ fn run_completed() {
     y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
     y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
 
-    // Day 13: Space Police
+    // Day 13: Care Package
     y2019::day13::part1(read_numbers_by_comma(Question::y2019(13))).save_part1();
     y2019::day13::part2(read_numbers_by_comma(Question::y2019(13))).save_part2();
 
