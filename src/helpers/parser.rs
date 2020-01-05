@@ -50,6 +50,18 @@ pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
     return Input { question, data };
 }
 
+pub fn parse_numbers_by<T>(question: Question, pat: char) -> Vec<T>
+    where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
+    let data: Vec<T> = read_raw_by(question, pat).iter()
+        .filter(|x| *x != "\n")
+        .map(|x| {
+            // Filter out dummy special chars
+            let s: String = x.chars().filter(|c| *c != '\n' && *c != ' ').collect();
+            s.parse::<T>().unwrap()
+        }).collect();
+    data
+}
+
 pub fn read_numbers_by_comma<T>(question: Question) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, ',');
@@ -58,6 +70,11 @@ pub fn read_numbers_by_comma<T>(question: Question) -> Input<Vec<T>>
 pub fn read_numbers_by_line<T>(question: Question) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, '\n');
+}
+
+pub fn parse_numbers_by_line<T>(question: Question) -> Vec<T>
+    where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
+    return parse_numbers_by(question, '\n');
 }
 
 pub fn read_strings(question: Question) -> Input<Vec<String>> {

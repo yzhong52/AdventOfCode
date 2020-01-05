@@ -3,6 +3,7 @@ use std::env;
 mod helpers {
     pub mod models;
     pub mod parser;
+    pub mod puzzle;
     pub mod utils;
 }
 
@@ -42,6 +43,8 @@ mod y2019 {
 
 use helpers::parser::*;
 use std::time::Instant;
+use crate::y2019::day1::Day1;
+use crate::helpers::puzzle::Puzzle;
 
 fn run_completed() {
     // Day 1: The Tyranny of the Rocket Equation
@@ -152,5 +155,11 @@ fn main() {
             _ => ()
         };
     }
+
+    let question = Question::y2019(Day1::day());
+    let input = Day1::parser()(question);
+    Answer { question, result: Day1::part1(&input) }.save_part1();
+    Answer { question, result: Day1::part2(&input) }.save_part2();
+
     println!("Finish running: {:?}", start.elapsed());
 }
