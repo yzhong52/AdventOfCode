@@ -6,7 +6,8 @@ use std::collections::HashSet;
 use crate::helpers::models::BigPoint;
 use std::thread::sleep;
 use std::time::Duration;
-use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
 
 // Responses
 type ResponseCode = i128;

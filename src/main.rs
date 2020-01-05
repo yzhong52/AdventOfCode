@@ -6,11 +6,13 @@ mod helpers {
     pub mod utils;
 }
 
-mod y2019 {
-    pub mod basic_in_code_computer;
+mod int_code_computers {
+    pub mod basic_int_code_computer;
     pub mod super_int_code_computer;
     pub mod atomic_int_code_computer;
+}
 
+mod y2019 {
     pub mod day1;
     pub mod day2;
     pub mod day3;

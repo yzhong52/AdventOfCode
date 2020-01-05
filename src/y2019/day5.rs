@@ -1,4 +1,4 @@
-use crate::y2019::basic_in_code_computer::IntCodeComputer;
+use crate::int_code_computers::basic_int_code_computer::IntCodeComputer;
 use crate::helpers::parser::{Input, Answer};
 
 pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {

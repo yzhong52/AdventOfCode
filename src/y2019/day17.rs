@@ -6,7 +6,8 @@ use std::thread::sleep;
 use std::time::Duration;
 use std::char;
 use std::fmt::{Debug, Formatter, Error};
-use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
 
 const INTERSECTION: char = 'O';
 const FRAME: char = '#';

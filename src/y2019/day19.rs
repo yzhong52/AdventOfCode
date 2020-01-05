@@ -1,5 +1,6 @@
 use super::super::helpers::parser::*;
-use crate::y2019::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
 
 fn test_location(x: i128, y: i128, data: &Vec<i128>) -> i128 {
     let mut drone = SuperIntCodeComputer::new(data.clone());

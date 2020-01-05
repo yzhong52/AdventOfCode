@@ -1,4 +1,4 @@
-use crate::y2019::super_int_code_computer::SuperIntCodeComputer;
+use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
 use crate::helpers::parser::{Input, Answer};
 
 fn run_day9(values: &Vec<i128>, input_value: i128) -> i128 {

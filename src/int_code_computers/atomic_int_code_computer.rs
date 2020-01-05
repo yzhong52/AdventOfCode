@@ -23,6 +23,8 @@ pub enum AtomicIntCodeResult {
     Halted,
 }
 
+// Third int code computer, by adding mutex to super_int_code_computer; also added a new output
+// type `WaitingInput`.
 pub struct AtomicIntCodeComputer {
     pub name: String,
     pub index: Mutex<usize>,

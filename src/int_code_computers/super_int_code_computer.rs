@@ -19,6 +19,7 @@ pub enum SuperIntCodeResult {
     Halted,
 }
 
+// Second int code computer, by changing basic_int_code_computer's `i32` to `i128`.
 pub struct SuperIntCodeComputer {
     pub index: usize,
     pub instructions: Vec<i128>,

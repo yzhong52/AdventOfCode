@@ -1,6 +1,6 @@
 use super::super::helpers::parser::*;
 use std::collections::VecDeque;
-use crate::y2019::basic_in_code_computer::{IntCodeComputer, IntCodeResult};
+use crate::int_code_computers::basic_int_code_computer::{IntCodeComputer, IntCodeResult};
 
 fn combinations(current: Vec<i32>) -> Vec<Vec<i32>> {
     if current.len() == 1 {

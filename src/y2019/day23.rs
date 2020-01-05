@@ -2,7 +2,7 @@ use crate::helpers::parser::Input;
 use crate::helpers::parser::Answer;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use crate::y2019::atomic_int_code_computer::AtomicIntCodeComputer;
+use crate::int_code_computers::atomic_int_code_computer::AtomicIntCodeComputer;
 
 const CONTROLLER_COUNT: usize = 50;
 

@@ -1,5 +1,6 @@
 use crate::helpers::parser::{Answer, Input, extract_between_plus};
-use crate::y2019::atomic_int_code_computer::{AtomicIntCodeComputer, AtomicIntCodeResult};
+use crate::int_code_computers::atomic_int_code_computer::AtomicIntCodeComputer;
+use crate::int_code_computers::atomic_int_code_computer::AtomicIntCodeResult;
 use std::collections::VecDeque;
 
 pub fn part1(input: Input<Vec<i128>>) -> Answer<String> {

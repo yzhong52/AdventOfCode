@@ -28,6 +28,7 @@ pub enum IntCodeResult {
     Halted,
 }
 
+// First int code computer, based on i32
 #[derive(Clone)]
 pub struct IntCodeComputer {
     pub index: usize,
