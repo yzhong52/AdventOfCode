@@ -1,8 +1,28 @@
-use crate::helpers::parser::Question;
+use std::fs;
 
-pub trait Puzzle<Input, Output> {
-    fn day() -> i8;
-    fn parser() -> fn(Question) -> Input;
-    fn part1(input: &Input) -> Output;
-    fn part2(input: &Input) -> Output;
+pub trait Puzzle<Input, Output> where Output: std::fmt::Display {
+    fn day(&self) -> i8;
+    fn parser(&self) -> fn(filename: String) -> Input;
+    fn part1(&self, input: &Input) -> Output;
+    fn part2(&self, input: &Input) -> Output;
+
+    fn save(&self, suffix: &str, result: Output) {
+        let filename: String = format!("src/y2019/day{}.output.{}.txt", self.day(), suffix);
+        println!("Result for question 2019 day {day} {part} is: {result}",
+                 day = self.day(),
+                 part = suffix,
+                 result = result);
+        println!("Save to file: {}\n", filename);
+        fs::write(filename, format!("{}\n", result)).expect("Unable to write file");
+    }
+
+    fn run(&self) {
+        let input = self.parser()(format!("src/y2019/day{}.input.txt", self.day()));
+
+        let result1 = self.part1(&input);
+        self.save("part1", result1);
+
+        let result2 = self.part2(&input);
+        self.save("part2", result2);
+    }
 }

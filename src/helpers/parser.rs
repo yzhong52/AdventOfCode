@@ -34,6 +34,15 @@ fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     return result.iter().map(|x| x.to_string()).filter(|x| !x.is_empty()).collect();
 }
 
+fn read_file_by(filename: String, pat: char) -> Vec<String> {
+    let contents: String = fs::read_to_string(filename).expect("file not found");
+    let lines: Vec<&str> = contents.split(pat).collect();
+    return lines.iter()
+        .map(|x| x.to_string()) // convert `&str` to `String`
+        .filter(|x| !x.is_empty()) // filter out EOF
+        .collect();
+}
+
 fn read_raw_by_line(question: Question) -> Vec<String> {
     read_raw_by(question, '\n')
 }
@@ -50,9 +59,9 @@ pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
     return Input { question, data };
 }
 
-pub fn parse_numbers_by<T>(question: Question, pat: char) -> Vec<T>
+pub fn parse_numbers_by<T>(filename: String, pat: char) -> Vec<T>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
-    let data: Vec<T> = read_raw_by(question, pat).iter()
+    let data: Vec<T> = read_file_by(filename, pat).iter()
         .filter(|x| *x != "\n")
         .map(|x| {
             // Filter out dummy special chars
@@ -67,14 +76,19 @@ pub fn read_numbers_by_comma<T>(question: Question) -> Input<Vec<T>>
     return read_numbers_by(question, ',');
 }
 
+pub fn parse_numbers_by_comma<T>(filename: String) -> Vec<T>
+    where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
+    return parse_numbers_by(filename, ',');
+}
+
 pub fn read_numbers_by_line<T>(question: Question) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, '\n');
 }
 
-pub fn parse_numbers_by_line<T>(question: Question) -> Vec<T>
+pub fn parse_numbers_by_line<T>(filename: String) -> Vec<T>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
-    return parse_numbers_by(question, '\n');
+    return parse_numbers_by(filename, '\n');
 }
 
 pub fn read_strings(question: Question) -> Input<Vec<String>> {

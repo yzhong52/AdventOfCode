@@ -1,4 +1,5 @@
 use super::super::helpers::parser::*;
+use crate::helpers::puzzle::Puzzle;
 
 fn compute(input: &Vec<i32>, noun: i32, verb: i32) -> i32 {
     let mut numbers = input.clone();
@@ -22,17 +23,29 @@ fn compute(input: &Vec<i32>, noun: i32, verb: i32) -> i32 {
     numbers[0]
 }
 
-pub fn part1(input: Input<Vec<i32>>) -> Answer<i32> {
-    Answer { question: input.question, result: compute(&input.data, 12, 2) }
-}
+pub struct Day2 {}
 
-pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
-    for noun in 0..100 {
-        for verb in 0..100 {
-            if compute(&input.data, noun, verb) == 19690720 {
-                return Answer { question: input.question, result: 100 * noun + verb };
+impl Puzzle<Vec<i32>, i32> for Day2 {
+    fn day(&self) -> i8 {
+        2
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i32> {
+        parse_numbers_by_comma
+    }
+
+    fn part1(&self, input: &Vec<i32>) -> i32 {
+        compute(&input, 12, 2)
+    }
+
+    fn part2(&self, input: &Vec<i32>) -> i32 {
+        for noun in 0..100 {
+            for verb in 0..100 {
+                if compute(&input, noun, verb) == 19690720 {
+                    return 100 * noun + verb;
+                }
             }
         }
+        unimplemented!()
     }
-    Answer { question: input.question, result: 9999 }
 }

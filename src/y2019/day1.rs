@@ -27,19 +27,19 @@ pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
 pub struct Day1 {}
 
 impl Puzzle<Vec<i32>, i32> for Day1 {
-    fn day() -> i8 {
+    fn day(&self) -> i8 {
         1
     }
 
-    fn parser() -> fn(Question) -> Vec<i32> {
+    fn parser(&self) -> fn(String) -> Vec<i32> {
         parse_numbers_by_line
     }
 
-    fn part1(input: &Vec<i32>) -> i32 {
+    fn part1(&self, input: &Vec<i32>) -> i32 {
         input.iter().map(get_fuel).sum()
     }
 
-    fn part2(input: &Vec<i32>) -> i32 {
+    fn part2(&self, input: &Vec<i32>) -> i32 {
         input.iter().map(get_fuel_recursive).sum()
     }
 }

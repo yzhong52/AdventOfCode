@@ -45,16 +45,9 @@ use helpers::parser::*;
 use std::time::Instant;
 use crate::y2019::day1::Day1;
 use crate::helpers::puzzle::Puzzle;
+use crate::y2019::day2::Day2;
 
 fn run_completed() {
-    // Day 1: The Tyranny of the Rocket Equation
-    y2019::day1::part1(read_numbers_by_line(Question::y2019(1))).save_part1();
-    y2019::day1::part2(read_numbers_by_line(Question::y2019(1))).save_part2();
-
-    // Day 2: 1202 Program Alarm
-    y2019::day2::part1(read_numbers_by_comma(Question::y2019(2))).save_part1();
-    y2019::day2::part2(read_numbers_by_comma(Question::y2019(2))).save_part2();
-
     // Day 3: Crossed Wires
     y2019::day3::part1(&read_strings(Question::y2019(3))).save_part1();
     y2019::day3::part2(&read_strings(Question::y2019(3))).save_part2();
@@ -156,10 +149,14 @@ fn main() {
         };
     }
 
-    let question = Question::y2019(Day1::day());
-    let input = Day1::parser()(question);
-    Answer { question, result: Day1::part1(&input) }.save_part1();
-    Answer { question, result: Day1::part2(&input) }.save_part2();
+    let puzzles: [Box<dyn Puzzle<_, _>>; 2] = [
+        Box::new(Day1 {}),
+        Box::new(Day2 {}),
+    ];
+
+    for puzzle in puzzles.iter() {
+        puzzle.run();
+    }
 
     println!("Finish running: {:?}", start.elapsed());
 }
