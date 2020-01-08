@@ -59,6 +59,12 @@ use crate::y2019::day24::Day24;
 use crate::y2019::day20::Day20;
 use crate::y2019::day18::Day18;
 use crate::y2019::day13::Day13;
+use crate::y2019::day15::Day15;
+use crate::y2019::day17::Day17;
+use crate::y2019::day21::Day21;
+use crate::y2019::day19::Day19;
+use crate::y2019::day16::Day16;
+use crate::y2019::day23::Day23;
 
 fn run_completed() {
 
@@ -66,40 +72,13 @@ fn run_completed() {
     y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
     y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
 
-
     // Day 14: Space Stoichiometry
     y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
     y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
 
-    // Day 15: Oxygen System
-    y2019::day15::part1(read_numbers_by_comma(Question::y2019(15))).save_part1();
-    y2019::day15::part2(read_numbers_by_comma(Question::y2019(15))).save_part2();
-
-    // Day 16: Flawed Frequency Transmission
-    y2019::day16::part1(read_single_string(Question::y2019(16))).save_part1();
-    y2019::day16::part2(read_single_string(Question::y2019(16))).save_part2();
-
-    // Day 17: Set and Forget
-    y2019::day17::part1(read_numbers_by_comma(Question::y2019(17))).save_part1();
-    y2019::day17::part2(read_numbers_by_comma(Question::y2019(17))).save_part2();
-
-
-    // Day 19: Tractor Beam
-    y2019::day19::part1(read_numbers_by_comma(Question::y2019(19))).save_part1();
-    y2019::day19::part2(read_numbers_by_comma(Question::y2019(19))).save_part2();
-
-
-    // Day 21: Springdroid Adventure
-    y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
-    y2019::day21::part2(read_numbers_by_comma(Question::y2019(21))).save_part2();
-
     // Day 22: Slam Shuffle
     y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
     y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
-
-    // Day 23: Category Six
-    y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
-    y2019::day23::part2(read_numbers_by_comma(Question::y2019(23))).save_part2();
 
     // Day 25
     y2019::day25::part1(read_numbers_by_comma(Question::y2019(25))).save_part1();
@@ -136,11 +115,23 @@ fn main() {
     // Day 11: Space Police
     runnables.push(Box::new(|| { Day11 {}.run() }));
     // Day 13: Care Package
-    runnables.push(Box::new(|| { Day13 {}.run() }));
+    // runnables.push(Box::new(|| { Day13 {}.run() }));
+    // Day 15: Oxygen System
+    runnables.push(Box::new(|| { Day15 {}.run() }));
+    // Day 16: Flawed Frequency Transmission
+    runnables.push(Box::new(|| { Day16 {}.run() }));
+    // Day 17: Set and Forget
+    runnables.push(Box::new(|| { Day17 {}.run() }));
     // Day 18: Many-Worlds Interpretation
     runnables.push(Box::new(|| { Day18 {}.run() }));
+    // Day 19: Tractor Beam
+    runnables.push(Box::new(|| { Day19 {}.run() }));
     // Day 20: Donut Maze
     runnables.push(Box::new(|| { Day20 {}.run() }));
+    // Day 21: Springdroid Adventure
+    runnables.push(Box::new(|| { Day21 {}.run() }));
+    // Day 23: Category Six
+    runnables.push(Box::new(|| { Day23 {}.run() }));
     // Day 24: Planet of Discord
     runnables.push(Box::new(|| { Day24 {}.run() }));
 

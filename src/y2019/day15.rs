@@ -8,6 +8,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
+use crate::helpers::puzzle::Puzzle;
 
 // Responses
 type ResponseCode = i128;
@@ -210,23 +211,34 @@ fn dijkstra(map: &HashMap<BigPoint, char>, source: BigPoint, target: Option<BigP
     distance_to_destination
 }
 
+pub struct Day15 {}
 
-pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let explored = explore_map(&input.data, false);
-    let distance_to_destination = dijkstra(
-        &explored.map,
-        BigPoint::origin(),
-        Some(explored.destination),
-    );
-    Answer { question: input.question, result: distance_to_destination }
-}
+impl Puzzle<Vec<i128>, usize> for Day15 {
+    fn day(&self) -> i8 {
+        15
+    }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<usize> {
-    let explored = explore_map(&input.data, true);
-    let distance_to_destination = dijkstra(
-        &explored.map,
-        explored.destination,
-        None,
-    );
-    Answer { question: input.question, result: distance_to_destination }
+    fn parser(&self) -> fn(String) -> Vec<i128> {
+        parse_numbers_by_comma
+    }
+
+    fn part1(&self, input: &Vec<i128>) -> usize {
+        let explored = explore_map(input, false);
+        let distance_to_destination = dijkstra(
+            &explored.map,
+            BigPoint::origin(),
+            Some(explored.destination),
+        );
+        distance_to_destination
+    }
+
+    fn part2(&self, input: &Vec<i128>) -> usize {
+        let explored = explore_map(input, true);
+        let distance_to_destination = dijkstra(
+            &explored.map,
+            explored.destination,
+            None,
+        );
+        distance_to_destination
+    }
 }
