@@ -47,24 +47,12 @@ use std::time::Instant;
 use crate::y2019::day1::Day1;
 use crate::y2019::day2::Day2;
 use crate::y2019::day3::Day3;
-use std::borrow::Borrow;
+use crate::y2019::day4::Day4;
+use crate::y2019::day5::Day5;
+use crate::y2019::day6::Day6;
+use crate::y2019::day7::Day7;
 
 fn run_completed() {
-    // Day 4: Secure Container
-    y2019::day4::part1(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
-    y2019::day4::part2(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
-
-    // Day 5: Sunny with a Chance of Asteroids
-    y2019::day5::part1(read_numbers_by_comma(Question::y2019(5))).save_part1();
-    y2019::day5::part2(read_numbers_by_comma(Question::y2019(5))).save_part2();
-
-    // Day 6: Universal Orbit Map
-    y2019::day6::part1(read_strings(Question::y2019(6))).save_part1();
-    y2019::day6::part2(read_strings(Question::y2019(6))).save_part2();
-
-    // Day 7: Amplification Circuit
-    y2019::day7::part1(read_numbers_by_comma(Question::y2019(7))).save_part1();
-    y2019::day7::part2(read_numbers_by_comma(Question::y2019(7))).save_part2();
 
     // Day 8: Space Image Format
     y2019::day8::part1(read_single_string(Question::y2019(8))).save_part1();
@@ -148,12 +136,20 @@ fn main() {
     }
 
     // [dyn Fn()](https://stackoverflow.com/questions/39083375/expected-closure-found-a-different-closure)
-    let mut puzzles: Vec<Box<dyn Fn()>> = Vec::new();
-    puzzles.push(Box::new(|| { Day1 {}.run() }));
-    puzzles.push(Box::new(|| { Day2 {}.run() }));
-    puzzles.push(Box::new(|| { Day3 {}.run() }));
+    let mut runnables: Vec<Box<dyn Fn()>> = Vec::new();
+    runnables.push(Box::new(|| { Day1 {}.run() }));
+    runnables.push(Box::new(|| { Day2 {}.run() }));
+    runnables.push(Box::new(|| { Day3 {}.run() }));
+    // Day 4: Secure Container
+    runnables.push(Box::new(|| { Day4 {}.run() }));
+    // Day 5: Sunny with a Chance of Asteroids
+    runnables.push(Box::new(|| { Day5 {}.run() }));
+    // Day 6: Universal Orbit Map
+    runnables.push(Box::new(|| { Day6 {}.run() }));
+    // Day 7: Amplification Circuit
+    runnables.push(Box::new(|| { Day7 {}.run() }));
 
-    for puzzle in puzzles {
+    for puzzle in runnables {
         puzzle.as_ref()();
     }
 
