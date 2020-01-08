@@ -222,7 +222,7 @@ impl Puzzle<Vec<i128>, i128> for Day17 {
         let function_a = "R,8,L,12,R,8";
         let function_b = "R,12,L,8,R,10";
         let function_c = "R,8,L,8,L,8,R,8,R,10";
-        let video_feed = "y"; // possible inputs are: y and n
+        let video_feed = "n"; // possible inputs are: y and n
 
         let mut input_queue = VecDeque::new();
         for row in &[main_routine, function_a, function_b, function_c, video_feed] {

@@ -176,7 +176,7 @@ impl Puzzle<Vec<i128>, i128> for Day13 {
 
         arcade.insert_coin();
 
-        let final_score = arcade.play(true);
+        let final_score = arcade.play(false);
 
         final_score
     }

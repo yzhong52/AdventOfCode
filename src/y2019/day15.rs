@@ -233,7 +233,7 @@ impl Puzzle<Vec<i128>, usize> for Day15 {
     }
 
     fn part2(&self, input: &Vec<i128>) -> usize {
-        let explored = explore_map(input, true);
+        let explored = explore_map(input, false);
         let distance_to_destination = dijkstra(
             &explored.map,
             explored.destination,

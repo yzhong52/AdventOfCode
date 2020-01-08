@@ -55,35 +55,30 @@ use crate::y2019::day8::Day8;
 use crate::y2019::day9::Day9;
 use crate::y2019::day10::Day10;
 use crate::y2019::day11::Day11;
-use crate::y2019::day24::Day24;
-use crate::y2019::day20::Day20;
-use crate::y2019::day18::Day18;
-use crate::y2019::day13::Day13;
-use crate::y2019::day15::Day15;
-use crate::y2019::day17::Day17;
-use crate::y2019::day21::Day21;
-use crate::y2019::day19::Day19;
-use crate::y2019::day16::Day16;
-use crate::y2019::day23::Day23;
 use crate::y2019::day12::Day12;
+use crate::y2019::day13::Day13;
 use crate::y2019::day14::Day14;
+use crate::y2019::day15::Day15;
+use crate::y2019::day16::Day16;
+use crate::y2019::day17::Day17;
+use crate::y2019::day18::Day18;
+use crate::y2019::day19::Day19;
+use crate::y2019::day20::Day20;
+use crate::y2019::day21::Day21;
 use crate::y2019::day22::Day22;
-
-fn run_completed() {}
+use crate::y2019::day23::Day23;
+use crate::y2019::day24::Day24;
+use crate::y2019::day25::Day25;
 
 fn main() {
-    let start = Instant::now();
-    for arg in env::args().skip(1) {
-        match arg {
-            s if s == "run_all".to_string() => run_completed(),
-            _ => ()
-        };
-    }
 
     // [dyn Fn()](https://stackoverflow.com/questions/39083375/expected-closure-found-a-different-closure)
     let mut runnables: Vec<Box<dyn Fn()>> = Vec::new();
+    // Day 1
     runnables.push(Box::new(|| { Day1 {}.run() }));
+    // Day 2
     runnables.push(Box::new(|| { Day2 {}.run() }));
+    // Day 3
     runnables.push(Box::new(|| { Day3 {}.run() }));
     // Day 4: Secure Container
     runnables.push(Box::new(|| { Day4 {}.run() }));
@@ -128,12 +123,20 @@ fn main() {
     // Day 24: Planet of Discord
     runnables.push(Box::new(|| { Day24 {}.run() }));
     // Day 25
-    runnables.push(Box::new(|| { Day24 {}.run() }));
+    runnables.push(Box::new(|| { Day25 {}.run() }));
 
-
-    for puzzle in runnables {
-        puzzle.as_ref()();
+    let start = Instant::now();
+    for arg in env::args().skip(1) {
+        match arg {
+            s if s == "run_all".to_string() => {
+                for puzzle in &runnables {
+                    puzzle.as_ref()();
+                }
+            }
+            _ => ()
+        };
     }
+
 
     println!("Finish running: {:?}", start.elapsed());
 }

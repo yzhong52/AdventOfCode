@@ -53,7 +53,7 @@ fn update_positions(points: &mut Vec<Point3D>, velocities: &Vec<Point3D>) {
 
 pub struct Day12 {}
 
-impl Puzzle<Vec<String>, i32> for Day12 {
+impl Puzzle<Vec<String>, usize> for Day12 {
     fn day(&self) -> i8 {
         12
     }
@@ -62,7 +62,7 @@ impl Puzzle<Vec<String>, i32> for Day12 {
         parse_numbers_by_line
     }
 
-    fn part1(&self, input: &Vec<String>) -> i32 {
+    fn part1(&self, input: &Vec<String>) -> usize {
         let mut points: Vec<Point3D> = parse_points(input);
         let mut velocities: Vec<Point3D> = vec![Point3D::origin(); points.len()];
 
@@ -78,10 +78,10 @@ impl Puzzle<Vec<String>, i32> for Day12 {
                 total_energy += kinetic_energy * potential_energy
             }
         }
-        total_energy
+        total_energy as usize
     }
 
-    fn part2(&self, input: &Vec<String>) -> i32 {
+    fn part2(&self, input: &Vec<String>) -> usize {
         let initial_points: Vec<Point3D> = parse_points(input);
 
         fn to_x(p: &Point3D) -> i32 { p.x }
@@ -113,12 +113,12 @@ impl Puzzle<Vec<String>, i32> for Day12 {
             gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[2]]) /
             gcd2(dimensional_repeat_counts.clone());
 
-        let final_result = dimensional_repeat_counts[0] *
+        let final_result: usize = dimensional_repeat_counts[0] *
             dimensional_repeat_counts[1] *
             dimensional_repeat_counts[2] /
             gcd;
 
-        final_result as i32
+        final_result
     }
 }
 
