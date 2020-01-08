@@ -75,7 +75,7 @@ impl<T> ops::Sub<_Point<T>> for _Point<T> where T: num::Integer, T: ops::Sub {
     }
 }
 
-pub type Point = _Point<i32>;
+pub type SmallPoint = _Point<i32>;
 pub type BigPoint = _Point<i128>;
 
 pub struct Rect<P> {

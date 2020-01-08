@@ -8,6 +8,7 @@ use std::char;
 use std::fmt::{Debug, Formatter, Error};
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
+use crate::helpers::puzzle::Puzzle;
 
 const INTERSECTION: char = 'O';
 const FRAME: char = '#';
@@ -38,24 +39,6 @@ fn detect_scaffold(input: &Vec<i128>) -> Vec<Vec<char>> {
     }
 
     scaffold
-}
-
-
-pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let scaffold: Vec<Vec<char>> = detect_scaffold(&input.data);
-
-    let mut result = 0;
-    for r in 1..&scaffold.len() - 1 {
-        for c in 1..&scaffold[r].len() - 1 {
-            if &scaffold[r][c] == &FRAME
-                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
-                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
-                result += r * c;
-            }
-        }
-    }
-
-    Answer { question: input.question, result }
 }
 
 fn start_pos(scaffold: &Vec<Vec<char>>) -> BigPoint {
@@ -168,98 +151,125 @@ fn path_search(
     return vec![];
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    let mut scaffold: Vec<Vec<char>> = detect_scaffold(&input.data);
-    let mut to_visit: HashSet<BigPoint> = HashSet::new();
-    for r in 1..&scaffold.len() - 1 {
-        for c in 1..&scaffold[r].len() - 1 {
-            if &scaffold[r][c] == &FRAME
-                && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
-                && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
-                scaffold[r][c] = INTERSECTION;
+pub struct Day17 {}
+
+impl Puzzle<Vec<i128>, i128> for Day17 {
+    fn day(&self) -> i8 {
+        17
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i128> {
+        read_numbers_by_comma
+    }
+
+    fn part1(&self, input: &Vec<i128>) -> i128 {
+        let scaffold: Vec<Vec<char>> = detect_scaffold(input);
+
+        let mut result = 0;
+        for r in 1..&scaffold.len() - 1 {
+            for c in 1..&scaffold[r].len() - 1 {
+                if &scaffold[r][c] == &FRAME
+                    && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
+                    && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
+                    result += r * c;
+                }
             }
         }
+        result as i128
     }
 
-    for r in 0..scaffold.len() {
-        for c in 0..scaffold[r].len() {
-            if &scaffold[r][c] == &FRAME {
-                to_visit.insert(BigPoint { x: r as i128, y: c as i128 });
+    fn part2(&self, input: &Vec<i128>) -> i128 {
+        let mut scaffold: Vec<Vec<char>> = detect_scaffold(input);
+        let mut to_visit: HashSet<BigPoint> = HashSet::new();
+        for r in 1..&scaffold.len() - 1 {
+            for c in 1..&scaffold[r].len() - 1 {
+                if &scaffold[r][c] == &FRAME
+                    && &scaffold[r + 1][c] == &FRAME && &scaffold[r][c + 1] == &FRAME
+                    && &scaffold[r - 1][c] == &FRAME && &scaffold[r][c - 1] == &FRAME {
+                    scaffold[r][c] = INTERSECTION;
+                }
             }
         }
-    }
 
-    // find the starting position of the robot
-    let start = start_pos(&scaffold);
-    println!("Starting position is: {:?}", start);
-
-    let mut visited: Vec<Vec<i32>> = vec![vec![0; scaffold[0].len()]; scaffold.len()];
-    let empty_actions: Vec<Action> = vec![];
-    let direction = BigPoint { x: -1, y: 0 };
-    let actions = path_search(
-        visited.as_mut(),
-        &mut to_visit,
-        empty_actions,
-        start,
-        direction,
-        &scaffold,
-    );
-
-    println!("Total action sequence: {:?}", actions);
-
-    // Solved with sublime text search and replace function :P
-    let main_routine = "A,B,B,A,C,A,A,C,B,C";
-    let function_a = "R,8,L,12,R,8";
-    let function_b = "R,12,L,8,R,10";
-    let function_c = "R,8,L,8,L,8,R,8,R,10";
-    let video_feed = "y"; // possible inputs are: y and n
-
-    let mut input_queue = VecDeque::new();
-    for row in &[main_routine, function_a, function_b, function_c, video_feed] {
-        for c in row.chars() {
-            input_queue.push_back(c as i128)
+        for r in 0..scaffold.len() {
+            for c in 0..scaffold[r].len() {
+                if &scaffold[r][c] == &FRAME {
+                    to_visit.insert(BigPoint { x: r as i128, y: c as i128 });
+                }
+            }
         }
-        input_queue.push_back('\n' as i128)
-    }
 
-    let mut vacuum_robot = SuperIntCodeComputer::new(input.data.clone());
-    vacuum_robot.input_queue = input_queue;
+        // find the starting position of the robot
+        let start = start_pos(&scaffold);
+        println!("Starting position is: {:?}", start);
 
-    // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
-    vacuum_robot.instructions[0] = 2;
+        let mut visited: Vec<Vec<i32>> = vec![vec![0; scaffold[0].len()]; scaffold.len()];
+        let empty_actions: Vec<Action> = vec![];
+        let direction = BigPoint { x: -1, y: 0 };
+        let actions = path_search(
+            visited.as_mut(),
+            &mut to_visit,
+            empty_actions,
+            start,
+            direction,
+            &scaffold,
+        );
 
-    let mut last_char = '\n';
-    let mut result = 0;
-    let mut buffer: String = String::new();
-    let mut frame = 0;
+        println!("Total action sequence: {:?}", actions);
 
-    loop {
-        match vacuum_robot.run() {
-            SuperIntCodeResult::Output(value) => {
-                if last_char == '\n' && value as u8 as char == '\n' {
-                    println!("{}", buffer);
-                    sleep(Duration::from_millis(38));
+        // Solved with sublime text search and replace function :P
+        let main_routine = "A,B,B,A,C,A,A,C,B,C";
+        let function_a = "R,8,L,12,R,8";
+        let function_b = "R,12,L,8,R,10";
+        let function_c = "R,8,L,8,L,8,R,8,R,10";
+        let video_feed = "n"; // possible inputs are: y and n
 
-                    if frame <= 2 {
-                        sleep(Duration::from_secs(5));
-                        frame += 1;
+        let mut input_queue = VecDeque::new();
+        for row in &[main_routine, function_a, function_b, function_c, video_feed] {
+            for c in row.chars() {
+                input_queue.push_back(c as i128)
+            }
+            input_queue.push_back('\n' as i128)
+        }
+
+        let mut vacuum_robot = SuperIntCodeComputer::new(input.clone());
+        vacuum_robot.input_queue = input_queue;
+
+        // Force the vacuum robot to wake up by changing the value in your ASCII program at address 0 from 1 to 2.
+        vacuum_robot.instructions[0] = 2;
+
+        let mut last_char = '\n';
+        let mut result = 0;
+        let mut buffer: String = String::new();
+        let mut frame = 0;
+
+        loop {
+            match vacuum_robot.run() {
+                SuperIntCodeResult::Output(value) => {
+                    if last_char == '\n' && value as u8 as char == '\n' {
+                        println!("{}", buffer);
+                        sleep(Duration::from_millis(38));
+
+                        if frame <= 2 {
+                            sleep(Duration::from_secs(5));
+                            frame += 1;
+                        }
+                    }
+
+                    last_char = value as u8 as char;
+                    if value < 128 {
+                        buffer.push(' ');
+                        buffer.push(value as u8 as char);
+                    } else {
+                        result = value;
                     }
                 }
-
-                last_char = value as u8 as char;
-                if value < 128 {
-                    buffer.push(' ');
-                    buffer.push(value as u8 as char);
-                } else {
-                    result = value;
+                SuperIntCodeResult::Halted => {
+                    sleep(Duration::from_secs(5));
+                    break;
                 }
-            }
-            SuperIntCodeResult::Halted => {
-                sleep(Duration::from_secs(5));
-                break;
-            }
-        };
+            };
+        }
+        result
     }
-
-    Answer { question: input.question, result }
 }

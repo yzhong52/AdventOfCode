@@ -3,6 +3,7 @@ use crate::helpers::models::_Point;
 use std::collections::VecDeque;
 use std::collections::HashSet;
 use std::ops::Range;
+use crate::helpers::puzzle::Puzzle;
 
 const ENTRANCE: char = '@';
 const WALL: char = '#';
@@ -53,84 +54,10 @@ struct VisitState {
     keys: i32,
 }
 
-pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
-    let entrance = find_entrance(&input.data);
-    let all_keys = all_keys(&input.data);
-    let result = bfs(
-        &input.data,
-        &all_keys,
-        entrance,
-    );
-    Answer { question: input.question, result }
-}
-
 struct Quadrant {
     x_range: Range<usize>,
     y_range: Range<usize>,
     entrance: _Point<usize>,
-}
-
-pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
-    let entrance = find_entrance(&input.data);
-
-    let max_x = &input.data.len();
-    let max_y = &input.data[0].len();
-    let quadrants = [
-        Quadrant {
-            x_range: 0..entrance.x,
-            y_range: 0..entrance.y,
-            entrance: _Point { x: entrance.x - 1, y: entrance.y - 1 },
-        },
-        Quadrant {
-            x_range: 0..entrance.x,
-            y_range: entrance.y + 1..*max_y,
-            entrance: _Point { x: entrance.x - 1, y: 0 },
-        },
-        Quadrant {
-            x_range: entrance.x + 1..*max_x,
-            y_range: 0..entrance.y,
-            entrance: _Point { x: 0, y: entrance.y - 1 },
-        },
-        Quadrant {
-            x_range: entrance.x + 1..*max_x,
-            y_range: entrance.y + 1..*max_y,
-            entrance: _Point { x: 0, y: 0 },
-        }
-    ];
-
-    let mut final_result = 0;
-    for quadrant in quadrants.iter() {
-        let mut data = vec![];
-        for i in quadrant.x_range.clone() {
-            let mut row = vec![];
-            for j in quadrant.y_range.clone() {
-                row.push(input.data[i][j]);
-            }
-            data.push(row);
-        }
-        data[quadrant.entrance.x][quadrant.entrance.y] = ENTRANCE;
-
-        let all_keys = all_keys(&data);
-
-        // For all doors that are in the current quadrant, if there isn't a key, let's just remove it.
-        for row in &mut data {
-            for cell in row {
-                if is_door(*cell) && !open_door(all_keys, *cell) {
-                    *cell = EMPTY;
-                }
-            }
-        }
-
-        let result = bfs(
-            &data,
-            &all_keys,
-            quadrant.entrance.clone(),
-        );
-
-        final_result += result;
-    }
-
-    Answer { question: input.question, result: final_result }
 }
 
 fn bfs(data: &Vec<Vec<char>>, all_keys: &i32, entrance: _Point<usize>) -> usize {
@@ -178,4 +105,90 @@ fn bfs(data: &Vec<Vec<char>>, all_keys: &i32, entrance: _Point<usize>) -> usize 
     }
 
     unimplemented!("Unable to open all doors!")
+}
+
+pub struct Day18 {}
+
+impl Puzzle<Vec<Vec<char>>, usize> for Day18 {
+    fn day(&self) -> i8 {
+        18
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<Vec<char>> {
+        read_grid
+    }
+
+    fn part1(&self, input: &Vec<Vec<char>>) -> usize {
+        let entrance = find_entrance(input);
+        let all_keys = all_keys(input);
+        let result = bfs(
+            input,
+            &all_keys,
+            entrance,
+        );
+        result
+    }
+
+    fn part2(&self, input: &Vec<Vec<char>>) -> usize {
+        let entrance = find_entrance(input);
+
+        let max_x = input.len();
+        let max_y = input[0].len();
+        let quadrants = [
+            Quadrant {
+                x_range: 0..entrance.x,
+                y_range: 0..entrance.y,
+                entrance: _Point { x: entrance.x - 1, y: entrance.y - 1 },
+            },
+            Quadrant {
+                x_range: 0..entrance.x,
+                y_range: entrance.y + 1..max_y,
+                entrance: _Point { x: entrance.x - 1, y: 0 },
+            },
+            Quadrant {
+                x_range: entrance.x + 1..max_x,
+                y_range: 0..entrance.y,
+                entrance: _Point { x: 0, y: entrance.y - 1 },
+            },
+            Quadrant {
+                x_range: entrance.x + 1..max_x,
+                y_range: entrance.y + 1..max_y,
+                entrance: _Point { x: 0, y: 0 },
+            }
+        ];
+
+        let mut final_result = 0;
+        for quadrant in quadrants.iter() {
+            let mut data = vec![];
+            for i in quadrant.x_range.clone() {
+                let mut row = vec![];
+                for j in quadrant.y_range.clone() {
+                    row.push(input[i][j]);
+                }
+                data.push(row);
+            }
+            data[quadrant.entrance.x][quadrant.entrance.y] = ENTRANCE;
+
+            let all_keys = all_keys(&data);
+
+            // For all doors that are in the current quadrant, if there isn't a key, let's just remove it.
+            for row in &mut data {
+                for cell in row {
+                    if is_door(*cell) && !open_door(all_keys, *cell) {
+                        *cell = EMPTY;
+                    }
+                }
+            }
+
+            let result = bfs(
+                &data,
+                &all_keys,
+                quadrant.entrance.clone(),
+            );
+
+            final_result += result;
+        }
+
+        final_result
+    }
 }

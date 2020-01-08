@@ -1,6 +1,7 @@
-use crate::helpers::parser::{Input, Answer};
+use crate::helpers::parser::read_numbers_by_comma;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
+use crate::helpers::puzzle::Puzzle;
 
 struct Springdroid {
     computer: SuperIntCodeComputer,
@@ -42,9 +43,20 @@ impl Springdroid {
 }
 
 
-pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
-    let mut droid = Springdroid::new(input.data.clone());
-    let script = r#"
+pub struct Day21 {}
+
+impl Puzzle<Vec<i128>, i128> for Day21 {
+    fn day(&self) -> i8 {
+        21
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i128> {
+        read_numbers_by_comma
+    }
+
+    fn part1(&self, input: &Vec<i128>) -> i128 {
+        let mut droid = Springdroid::new(input.clone());
+        let script = r#"
         NOT C T
         AND D T
         OR T J
@@ -52,62 +64,61 @@ pub fn part1(input: Input<Vec<i128>>) -> Answer<i128> {
         OR T J
         WALK
         "#;
-    let output = droid.run(script);
+        let output = droid.run(script);
+        output
+    }
 
-    Answer { question: input.question, result: output }
-}
 
+    // Inspired by:
+    // * https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbinci1/?context=3
+    //
+    //  - "Part 1: jump if there's a hole in front of me and the landing spot is ground"
+    //  - "Part 2: "jump if part 1 AND I can either jump or walk forward from the landing spot successfully"
+    fn part2(&self, input: &Vec<i128>) -> i128 {
+        let mut droid = Springdroid::new(input.clone());
+        // Jump = !A
+        // ......@..........
+        // .....@.@.........
+        // ....@...@........
+        // #####.###########
+        //      ABCDEFGH
+        //
+        // Jump = !B & !E = !(B | E)
+        // .....@...@.......
+        // ....@.@.@.@......
+        // ...@...@...@.....
+        // #####.?#.########
+        //     ABCDEFGH
+        //
+        // Jump = !C & !E = !(C | E)
+        // ....@...@.........
+        // ...@.@.@.@........
+        // ..@...@...@.......
+        // #####.#..########
+        //    ABCDEFGH
+        //
+        // Jump = !C & !I & !F = !(C | I | F)
+        // ....@...@...@....
+        // ...@.@.@.@.@.@...
+        // ..@...@...@...@..
+        // #####.##.##..####
+        //    ABCDEFGHI
+        //
+        // Jump = !C & D & E & F
+        // ....@....@.......
+        // ...@.@..@.@......
+        // .@@...@@...@.....
+        // #####.###..#.####
+        //    ABCDEFGHI
+        //
+        // Don't Jump = D & !E & !H
+        // ......@...@......
+        // .....@.@.@.@.....
+        // ...@@...@...@....
+        // #####.#.##.######
+        //    ABCDEFGH
 
-// Inspired by:
-// * https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbinci1/?context=3
-//
-//  - "Part 1: jump if there's a hole in front of me and the landing spot is ground"
-//  - "Part 2: "jump if part 1 AND I can either jump or walk forward from the landing spot successfully"
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
-    let mut droid = Springdroid::new(input.data.clone());
-    // Jump = !A
-    // ......@..........
-    // .....@.@.........
-    // ....@...@........
-    // #####.###########
-    //      ABCDEFGH
-    //
-    // Jump = !B & !E = !(B | E)
-    // .....@...@.......
-    // ....@.@.@.@......
-    // ...@...@...@.....
-    // #####.?#.########
-    //     ABCDEFGH
-    //
-    // Jump = !C & !E = !(C | E)
-    // ....@...@.........
-    // ...@.@.@.@........
-    // ..@...@...@.......
-    // #####.#..########
-    //    ABCDEFGH
-    //
-    // Jump = !C & !I & !F = !(C | I | F)
-    // ....@...@...@....
-    // ...@.@.@.@.@.@...
-    // ..@...@...@...@..
-    // #####.##.##..####
-    //    ABCDEFGHI
-    //
-    // Jump = !C & D & E & F
-    // ....@....@.......
-    // ...@.@..@.@......
-    // .@@...@@...@.....
-    // #####.###..#.####
-    //    ABCDEFGHI
-    //
-    // Don't Jump = D & !E & !H
-    // ......@...@......
-    // .....@.@.@.@.....
-    // ...@@...@...@....
-    // #####.#.##.######
-    //    ABCDEFGH
-
-    let script = r#"
+        let script = r#"
         OR A T
         AND B T
         AND C T
@@ -121,7 +132,7 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
 
         RUN
         "#;
-    let output = droid.run(script);
-
-    Answer { question: input.question, result: output }
+        let output = droid.run(script);
+        output
+    }
 }
