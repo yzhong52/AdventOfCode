@@ -1,5 +1,6 @@
 use super::super::helpers::parser::*;
 use super::super::helpers::models::*;
+use crate::helpers::puzzle::Puzzle;
 
 pub fn parse_points(data: &Vec<String>) -> Vec<Point3D> {
     let mut points: Vec<Point3D> = vec![];
@@ -50,64 +51,75 @@ fn update_positions(points: &mut Vec<Point3D>, velocities: &Vec<Point3D>) {
     }
 }
 
-pub fn part1(input: Input<Vec<String>>) -> Answer<i32> {
-    let mut points: Vec<Point3D> = parse_points(&input.data);
-    let mut velocities: Vec<Point3D> = vec![Point3D::origin(); points.len()];
+pub struct Day12 {}
 
-    let mut total_energy: i32 = 0;
-    for _ in 0..1000 {
-        update_velocities(&points, velocities.as_mut());
-        update_positions(points.as_mut(), &velocities);
-
-        total_energy = 0;
-        for i in 0..points.len() {
-            let kinetic_energy = velocities[i].x.abs() + velocities[i].y.abs() + velocities[i].z.abs();
-            let potential_energy = points[i].x.abs() + points[i].y.abs() + points[i].z.abs();
-            total_energy += kinetic_energy * potential_energy
-        }
+impl Puzzle<Vec<String>, i32> for Day12 {
+    fn day(&self) -> i8 {
+        12
     }
-    return Answer { question: input.question, result: total_energy };
-}
 
+    fn parser(&self) -> fn(String) -> Vec<String> {
+        parse_numbers_by_line
+    }
 
-pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
-    let initial_points: Vec<Point3D> = parse_points(&input.data);
-
-    fn to_x(p: &Point3D) -> i32 { p.x }
-    fn to_y(p: &Point3D) -> i32 { p.y }
-    fn to_z(p: &Point3D) -> i32 { p.z }
-
-    let projections: [fn(&Point3D) -> i32; 3] = [to_x, to_y, to_z];
-
-    let dimensional_repeat_counts: Vec<usize> = projections.iter().map(|projection_function| {
-        // TODO: Shouldn't this start with 0?
-        let mut index: usize = 1;
-        let mut points: Vec<Point3D> = initial_points.clone();
+    fn part1(&self, input: &Vec<String>) -> i32 {
+        let mut points: Vec<Point3D> = parse_points(input);
         let mut velocities: Vec<Point3D> = vec![Point3D::origin(); points.len()];
 
-        loop {
+        let mut total_energy: i32 = 0;
+        for _ in 0..1000 {
             update_velocities(&points, velocities.as_mut());
             update_positions(points.as_mut(), &velocities);
-            index += 1;
 
-            if initial_points.iter().map(projection_function).collect::<Vec<i32>>() == points.iter().map(projection_function).collect::<Vec<i32>>() {
-                break;
+            total_energy = 0;
+            for i in 0..points.len() {
+                let kinetic_energy = velocities[i].x.abs() + velocities[i].y.abs() + velocities[i].z.abs();
+                let potential_energy = points[i].x.abs() + points[i].y.abs() + points[i].z.abs();
+                total_energy += kinetic_energy * potential_energy
             }
         }
-        index
-    }).collect();
+        total_energy
+    }
 
-    let gcd = gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[1]]) *
-        gcd2(vec![dimensional_repeat_counts[1], dimensional_repeat_counts[2]]) *
-        gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[2]]) /
-        gcd2(dimensional_repeat_counts.clone());
+    fn part2(&self, input: &Vec<String>) -> i32 {
+        let initial_points: Vec<Point3D> = parse_points(input);
 
-    let final_result = dimensional_repeat_counts[0] *
-        dimensional_repeat_counts[1] *
-        dimensional_repeat_counts[2] /
-        gcd;
+        fn to_x(p: &Point3D) -> i32 { p.x }
+        fn to_y(p: &Point3D) -> i32 { p.y }
+        fn to_z(p: &Point3D) -> i32 { p.z }
 
-    return Answer { question: input.question, result: final_result };
+        let projections: [fn(&Point3D) -> i32; 3] = [to_x, to_y, to_z];
+
+        let dimensional_repeat_counts: Vec<usize> = projections.iter().map(|projection_function| {
+            // TODO: Shouldn't this start with 0?
+            let mut index: usize = 1;
+            let mut points: Vec<Point3D> = initial_points.clone();
+            let mut velocities: Vec<Point3D> = vec![Point3D::origin(); points.len()];
+
+            loop {
+                update_velocities(&points, velocities.as_mut());
+                update_positions(points.as_mut(), &velocities);
+                index += 1;
+
+                if initial_points.iter().map(projection_function).collect::<Vec<i32>>() == points.iter().map(projection_function).collect::<Vec<i32>>() {
+                    break;
+                }
+            }
+            index
+        }).collect();
+
+        let gcd = gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[1]]) *
+            gcd2(vec![dimensional_repeat_counts[1], dimensional_repeat_counts[2]]) *
+            gcd2(vec![dimensional_repeat_counts[0], dimensional_repeat_counts[2]]) /
+            gcd2(dimensional_repeat_counts.clone());
+
+        let final_result = dimensional_repeat_counts[0] *
+            dimensional_repeat_counts[1] *
+            dimensional_repeat_counts[2] /
+            gcd;
+
+        final_result as i32
+    }
 }
 
 fn gcd2(mut nums: Vec<usize>) -> usize {

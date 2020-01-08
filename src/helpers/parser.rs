@@ -105,6 +105,10 @@ pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw_by_line(question) };
 }
 
+pub fn parse_strings(filename: String) -> Vec<String> {
+    parse_raw_by_line(filename)
+}
+
 #[deprecated]
 pub fn read_single_string(question: Question) -> Input<String> {
     return Input { question, data: read_raw_by_line(question).first().unwrap().to_string() };

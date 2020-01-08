@@ -65,24 +65,11 @@ use crate::y2019::day21::Day21;
 use crate::y2019::day19::Day19;
 use crate::y2019::day16::Day16;
 use crate::y2019::day23::Day23;
+use crate::y2019::day12::Day12;
+use crate::y2019::day14::Day14;
+use crate::y2019::day22::Day22;
 
-fn run_completed() {
-
-    // Day 12: The N-Body Problem
-    y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
-    y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
-
-    // Day 14: Space Stoichiometry
-    y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
-    y2019::day14::part2(read_strings(Question::y2019(14))).save_part2();
-
-    // Day 22: Slam Shuffle
-    y2019::day22::part1(read_strings(Question::y2019(22))).save_part1();
-    y2019::day22::part2(read_strings(Question::y2019(22))).save_part2();
-
-    // Day 25
-    y2019::day25::part1(read_numbers_by_comma(Question::y2019(25))).save_part1();
-}
+fn run_completed() {}
 
 fn main() {
     let start = Instant::now();
@@ -114,8 +101,12 @@ fn main() {
     runnables.push(Box::new(|| { Day10 {}.run() }));
     // Day 11: Space Police
     runnables.push(Box::new(|| { Day11 {}.run() }));
+    // Day 12: The N-Body Problem
+    runnables.push(Box::new(|| { Day12 {}.run() }));
     // Day 13: Care Package
-    // runnables.push(Box::new(|| { Day13 {}.run() }));
+    runnables.push(Box::new(|| { Day13 {}.run() }));
+    // Day 14: Space Stoichiometry
+    runnables.push(Box::new(|| { Day14 {}.run() }));
     // Day 15: Oxygen System
     runnables.push(Box::new(|| { Day15 {}.run() }));
     // Day 16: Flawed Frequency Transmission
@@ -130,10 +121,15 @@ fn main() {
     runnables.push(Box::new(|| { Day20 {}.run() }));
     // Day 21: Springdroid Adventure
     runnables.push(Box::new(|| { Day21 {}.run() }));
+    // Day 22: Slam Shuffle
+    runnables.push(Box::new(|| { Day22 {}.run() }));
     // Day 23: Category Six
     runnables.push(Box::new(|| { Day23 {}.run() }));
     // Day 24: Planet of Discord
     runnables.push(Box::new(|| { Day24 {}.run() }));
+    // Day 25
+    runnables.push(Box::new(|| { Day24 {}.run() }));
+
 
     for puzzle in runnables {
         puzzle.as_ref()();

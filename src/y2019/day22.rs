@@ -1,6 +1,7 @@
-use crate::helpers::parser::Answer;
+use crate::helpers::parser::{Answer, read_strings, parse_strings};
 use crate::helpers::parser::Input;
 use modinverse::modinverse;
+use crate::helpers::puzzle::Puzzle;
 
 #[derive(Copy, Clone)]
 enum Shuffle {
@@ -179,21 +180,33 @@ fn shuffle_part2(shuffles: Vec<Shuffle>, original_position: usize, deck_size: us
     (original_position as i128 * repeated_inverse_multiplier + repeated_inverse_constant) % deck_size
 }
 
-pub fn part1(input: Input<Vec<String>>) -> Answer<usize> {
-    let deck_deck_size = 10007;
-    let parsed = parse(&input.data, deck_deck_size);
-    let result = shuffle_part1(parsed, 2019, deck_deck_size);
-    Answer { question: input.question, result }
-}
+pub struct Day22 {}
 
-pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
-    let deck_size = 119315717514047;
-    let parsed = parse(&input.data, deck_size);
-    let result = shuffle_part2(
-        parsed,
-        2020,
-        deck_size,
-        101741582076661,
-    );
-    Answer { question: input.question, result: result as usize }
+impl Puzzle<Vec<String>, usize> for Day22 {
+    fn day(&self) -> i8 {
+        22
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<String> {
+        parse_strings
+    }
+
+    fn part1(&self, input: &Vec<String>) -> usize {
+        let deck_deck_size = 10007;
+        let parsed = parse(input, deck_deck_size);
+        shuffle_part1(parsed, 2019, deck_deck_size)
+    }
+
+    fn part2(&self, input: &Vec<String>) -> usize {
+        let deck_size = 119315717514047;
+        let parsed = parse(input, deck_size);
+        let result = shuffle_part2(
+            parsed,
+            2020,
+            deck_size,
+            101741582076661,
+        );
+
+        result as usize
+    }
 }
