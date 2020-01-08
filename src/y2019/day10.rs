@@ -1,6 +1,6 @@
 use super::super::helpers::parser::*;
 use std::collections::{HashSet, BinaryHeap, HashMap};
-use crate::helpers::models::Point;
+use crate::helpers::models::SmallPoint;
 
 fn count_visible(data: &Vec<Vec<char>>, x: usize, y: usize) -> usize {
     let mut set: HashSet<(i32, bool)> = HashSet::new();
@@ -53,7 +53,7 @@ pub fn part1(input: Input<Vec<Vec<char>>>) -> Answer<usize> {
 }
 
 // Sort by distance to the origin
-impl std::cmp::Ord for Point {
+impl std::cmp::Ord for SmallPoint {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let this = self.x * self.x + self.y * self.y;
         let that = other.x * other.x + other.y * other.y;
@@ -61,7 +61,7 @@ impl std::cmp::Ord for Point {
     }
 }
 
-impl std::cmp::PartialOrd for Point {
+impl std::cmp::PartialOrd for SmallPoint {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(&other))
     }
@@ -70,7 +70,7 @@ impl std::cmp::PartialOrd for Point {
 pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
     let (_, (x,  y)) = get_target(&input.data);
 
-    let mut map: HashMap<(bool, i32), BinaryHeap<Point>> = HashMap::new();
+    let mut map: HashMap<(bool, i32), BinaryHeap<SmallPoint>> = HashMap::new();
     for (i, row) in input.data.iter().enumerate() {
         for (j, c) in row.iter().enumerate() {
             if *c == '#' {
@@ -84,19 +84,19 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
                         let key: (bool, i32) = (true, std::i32::MAX);
                         // https://stackoverflow.com/a/41418147/1035008
                         let heap = map.entry(key).or_insert(BinaryHeap::new());
-                        heap.push(Point { x: diff_x, y: diff_y });
+                        heap.push(SmallPoint { x: diff_x, y: diff_y });
                     }
                     (0, dy) if dy < 0 => {
                         let key = (true, std::i32::MIN);
                         let heap = map.entry(key).or_insert(BinaryHeap::new());
-                        heap.push(Point { x: diff_x, y: diff_y });
+                        heap.push(SmallPoint { x: diff_x, y: diff_y });
                     }
 
                     (dx, dy) => {
                         let value: i32 = ((dy as f32 / dx as f32) * 10000.0) as i32;
                         let key = (dx > 0, value);
                         let heap = map.entry(key).or_insert(BinaryHeap::new());
-                        heap.push(Point { x: diff_x, y: diff_y });
+                        heap.push(SmallPoint { x: diff_x, y: diff_y });
                     }
                 }
             }
@@ -107,7 +107,7 @@ pub fn part2(input: Input<Vec<Vec<char>>>) -> Answer<i32> {
 
     let mut index = 0;
     let mut vaporized_count = 0;
-    let mut last_point = Point { x: 0, y: 0 };
+    let mut last_point = SmallPoint { x: 0, y: 0 };
 
     // Looking for the 200th asteroid to be vaporized
     while vaporized_count < 200 && index < 10000 {

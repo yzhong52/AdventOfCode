@@ -1,5 +1,6 @@
 use super::super::helpers::parser::*;
 use std::ops::RangeInclusive;
+use crate::helpers::puzzle::Puzzle;
 
 fn meet_the_rule(number: i32) -> bool {
     let mut remain = number;
@@ -54,4 +55,24 @@ pub fn part1(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
 pub fn part2(input: Input<RangeInclusive<i32>>) -> Answer<i32> {
     let result: i32 = input.data.map(meet_the_rule_part2).map(|x| x as i32).sum();
     Answer { question: input.question, result }
+}
+
+pub struct Day4 {}
+
+impl Puzzle<Vec<i32>, i32> for Day4 {
+    fn day(&self) -> i8 {
+        4
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i32> {
+        unimplemented!()
+    }
+
+    fn part1(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
+
+    fn part2(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
 }

@@ -1,6 +1,7 @@
 use std::fs;
 
-pub trait Puzzle<Input, Output> where Output: std::fmt::Display {
+// https://github.com/rust-lang/rfcs/issues/1024
+pub trait Puzzle<Input, Output> where Input: std::fmt::Debug, Output: std::fmt::Display {
     fn day(&self) -> i8;
     fn parser(&self) -> fn(filename: String) -> Input;
     fn part1(&self, input: &Input) -> Output;

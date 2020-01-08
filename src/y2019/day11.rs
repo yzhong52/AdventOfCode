@@ -1,7 +1,7 @@
 use super::super::helpers::parser::*;
 use super::super::helpers::utils::*;
 use std::collections::HashMap;
-use crate::helpers::models::Point;
+use crate::helpers::models::SmallPoint;
 use crate::int_code_computers::super_int_code_computer::{SuperIntCodeComputer, SuperIntCodeResult};
 
 const WHITE_COLOR: bool = true;
@@ -11,7 +11,7 @@ const TURN_LEFT: i128 = 0;
 const TURN_RIGHT: i128 = 1;
 
 pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
-    let map: HashMap<Point, bool> = painting(&input.data, WHITE_COLOR);
+    let map: HashMap<SmallPoint, bool> = painting(&input.data, WHITE_COLOR);
 
     let rect = get_rectangle(&map);
 
@@ -37,14 +37,14 @@ pub fn part2(input: Input<Vec<i128>>) -> Answer<String> {
     Answer { question: input.question, result }
 }
 
-fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<Point, bool> {
-    let mut map: HashMap<Point, bool> = HashMap::new();
-    map.insert(Point::origin(), initial_color);
+fn painting(input: &Vec<i128>, initial_color: bool) -> HashMap<SmallPoint, bool> {
+    let mut map: HashMap<SmallPoint, bool> = HashMap::new();
+    map.insert(SmallPoint::origin(), initial_color);
 
     let mut robot = SuperIntCodeComputer::new(input.clone());
 
-    let mut pos = Point::origin();
-    let mut dir = Point { x: 0, y: 1 };
+    let mut pos = SmallPoint::origin();
+    let mut dir = SmallPoint { x: 0, y: 1 };
     loop {
         let color = map.get(&pos).unwrap_or(&false);
         robot.input_queue.push_back(*color as i128);

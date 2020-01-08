@@ -34,7 +34,7 @@ fn read_raw_by(question: Question, pat: char) -> Vec<String> {
     return result.iter().map(|x| x.to_string()).filter(|x| !x.is_empty()).collect();
 }
 
-fn read_file_by(filename: String, pat: char) -> Vec<String> {
+fn parse_file_by(filename: String, pat: char) -> Vec<String> {
     let contents: String = fs::read_to_string(filename).expect("file not found");
     let lines: Vec<&str> = contents.split(pat).collect();
     return lines.iter()
@@ -45,6 +45,10 @@ fn read_file_by(filename: String, pat: char) -> Vec<String> {
 
 fn read_raw_by_line(question: Question) -> Vec<String> {
     read_raw_by(question, '\n')
+}
+
+pub(crate) fn read_lines(filename: String) -> Vec<String> {
+    parse_file_by(filename, '\n')
 }
 
 pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
@@ -61,7 +65,7 @@ pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
 
 pub fn parse_numbers_by<T>(filename: String, pat: char) -> Vec<T>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
-    let data: Vec<T> = read_file_by(filename, pat).iter()
+    let data: Vec<T> = parse_file_by(filename, pat).iter()
         .filter(|x| *x != "\n")
         .map(|x| {
             // Filter out dummy special chars

@@ -1,6 +1,7 @@
 use super::super::helpers::parser::*;
 use std::collections::VecDeque;
 use crate::int_code_computers::basic_int_code_computer::{IntCodeComputer, IntCodeResult};
+use crate::helpers::puzzle::Puzzle;
 
 fn combinations(current: Vec<i32>) -> Vec<Vec<i32>> {
     if current.len() == 1 {
@@ -71,4 +72,24 @@ pub fn part2(input: Input<Vec<i32>>) -> Answer<i32> {
         result = i32::max(result, signal);
     }
     Answer { question: input.question, result }
+}
+
+pub struct Day7 {}
+
+impl Puzzle<Vec<i32>, i32> for Day7 {
+    fn day(&self) -> i8 {
+        7
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i32> {
+        unimplemented!()
+    }
+
+    fn part1(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
+
+    fn part2(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
 }

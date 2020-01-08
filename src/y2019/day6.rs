@@ -1,5 +1,6 @@
 use super::super::helpers::parser::*;
 use std::collections::HashMap;
+use crate::helpers::puzzle::Puzzle;
 
 pub fn index_graph(data: Vec<String>) -> HashMap<String, String> {
     let mut orbits_map: HashMap<String, String> = HashMap::new();
@@ -72,4 +73,24 @@ pub fn part2(input: Input<Vec<String>>) -> Answer<usize> {
 
     let result = your_path.len() - i + santa_path.len() - i - 2;
     return Answer { question: input.question, result };
+}
+
+pub struct Day6 {}
+
+impl Puzzle<Vec<i32>, i32> for Day6 {
+    fn day(&self) -> i8 {
+        unimplemented!()
+    }
+
+    fn parser(&self) -> fn(String) -> Vec<i32> {
+        unimplemented!()
+    }
+
+    fn part1(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
+
+    fn part2(&self, input: &Vec<i32>) -> i32 {
+        unimplemented!()
+    }
 }

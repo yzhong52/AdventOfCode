@@ -42,16 +42,14 @@ mod y2019 {
 }
 
 use helpers::parser::*;
+use crate::helpers::puzzle::Puzzle;
 use std::time::Instant;
 use crate::y2019::day1::Day1;
-use crate::helpers::puzzle::Puzzle;
 use crate::y2019::day2::Day2;
+use crate::y2019::day3::Day3;
+use std::borrow::Borrow;
 
 fn run_completed() {
-    // Day 3: Crossed Wires
-    y2019::day3::part1(&read_strings(Question::y2019(3))).save_part1();
-    y2019::day3::part2(&read_strings(Question::y2019(3))).save_part2();
-
     // Day 4: Secure Container
     y2019::day4::part1(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part1();
     y2019::day4::part2(Input { question: Question::y2019(4), data: 265275..=781584 }).save_part2();
@@ -149,13 +147,14 @@ fn main() {
         };
     }
 
-    let puzzles: [Box<dyn Puzzle<_, _>>; 2] = [
-        Box::new(Day1 {}),
-        Box::new(Day2 {}),
-    ];
+    // [dyn Fn()](https://stackoverflow.com/questions/39083375/expected-closure-found-a-different-closure)
+    let mut puzzles: Vec<Box<dyn Fn()>> = Vec::new();
+    puzzles.push(Box::new(|| { Day1 {}.run() }));
+    puzzles.push(Box::new(|| { Day2 {}.run() }));
+    puzzles.push(Box::new(|| { Day3 {}.run() }));
 
-    for puzzle in puzzles.iter() {
-        puzzle.run();
+    for puzzle in puzzles {
+        puzzle.as_ref()();
     }
 
     println!("Finish running: {:?}", start.elapsed());
