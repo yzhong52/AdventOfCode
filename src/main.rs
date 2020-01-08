@@ -55,6 +55,7 @@ use crate::y2019::day8::Day8;
 use crate::y2019::day9::Day9;
 use crate::y2019::day10::Day10;
 use crate::y2019::day11::Day11;
+use crate::y2019::day24::Day24;
 
 fn run_completed() {
 
@@ -106,9 +107,6 @@ fn run_completed() {
     y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
     y2019::day23::part2(read_numbers_by_comma(Question::y2019(23))).save_part2();
 
-    // Day 24: Planet of Discord
-    y2019::day24::part1(read_grid(Question::y2019(24))).save_part1();
-    y2019::day24::part2(read_grid(Question::y2019(24))).save_part2();
 
     // Day 25
     y2019::day25::part1(read_numbers_by_comma(Question::y2019(25))).save_part1();
@@ -144,6 +142,8 @@ fn main() {
     runnables.push(Box::new(|| { Day10 {}.run() }));
     // Day 11: Space Police
     runnables.push(Box::new(|| { Day11 {}.run() }));
+    // Day 24: Planet of Discord
+    runnables.push(Box::new(|| { Day24 {}.run() }));
 
     for puzzle in runnables {
         puzzle.as_ref()();
