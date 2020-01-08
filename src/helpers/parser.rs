@@ -1,5 +1,6 @@
 use std::fs;
 
+#[deprecated]
 #[derive(Copy, Clone)]
 pub struct Question {
     pub year: i16,
@@ -110,18 +111,6 @@ pub fn read_single_string(question: Question) -> Input<String> {
 
 pub fn parse_single_string(filename: String) -> String {
     read_lines(filename).first().unwrap().to_string()
-}
-
-#[deprecated]
-pub fn read_grid(question: Question) -> Input<Vec<Vec<char>>> {
-    let grid: Vec<Vec<char>> = read_raw_by_line(question)
-        .iter()
-        .map(|input| {
-            input.chars().collect::<Vec<char>>()
-        })
-        .collect();
-
-    Input { question, data: grid }
 }
 
 pub fn parse_grid(filename: String) -> Vec<Vec<char>> {

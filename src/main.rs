@@ -56,6 +56,8 @@ use crate::y2019::day9::Day9;
 use crate::y2019::day10::Day10;
 use crate::y2019::day11::Day11;
 use crate::y2019::day24::Day24;
+use crate::y2019::day20::Day20;
+use crate::y2019::day18::Day18;
 
 fn run_completed() {
 
@@ -83,17 +85,11 @@ fn run_completed() {
     y2019::day17::part1(read_numbers_by_comma(Question::y2019(17))).save_part1();
     y2019::day17::part2(read_numbers_by_comma(Question::y2019(17))).save_part2();
 
-    // Day 18: Many-Worlds Interpretation
-    y2019::day18::part1(read_grid(Question::y2019(18))).save_part1();
-    y2019::day18::part2(read_grid(Question::y2019(18))).save_part2();
 
     // Day 19: Tractor Beam
     y2019::day19::part1(read_numbers_by_comma(Question::y2019(19))).save_part1();
     y2019::day19::part2(read_numbers_by_comma(Question::y2019(19))).save_part2();
 
-    // Day 20: Donut Maze
-    y2019::day20::part1(read_grid(Question::y2019(20))).save_part1();
-    y2019::day20::part2(read_grid(Question::y2019(20))).save_part2();
 
     // Day 21: Springdroid Adventure
     y2019::day21::part1(read_numbers_by_comma(Question::y2019(21))).save_part1();
@@ -106,7 +102,6 @@ fn run_completed() {
     // Day 23: Category Six
     y2019::day23::part1(read_numbers_by_comma(Question::y2019(23))).save_part1();
     y2019::day23::part2(read_numbers_by_comma(Question::y2019(23))).save_part2();
-
 
     // Day 25
     y2019::day25::part1(read_numbers_by_comma(Question::y2019(25))).save_part1();
@@ -142,6 +137,10 @@ fn main() {
     runnables.push(Box::new(|| { Day10 {}.run() }));
     // Day 11: Space Police
     runnables.push(Box::new(|| { Day11 {}.run() }));
+    // Day 18: Many-Worlds Interpretation
+    runnables.push(Box::new(|| { Day18 {}.run() }));
+    // Day 20: Donut Maze
+    runnables.push(Box::new(|| { Day20 {}.run() }));
     // Day 24: Planet of Discord
     runnables.push(Box::new(|| { Day24 {}.run() }));
 
