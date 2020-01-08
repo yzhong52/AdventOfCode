@@ -58,6 +58,7 @@ use crate::y2019::day11::Day11;
 use crate::y2019::day24::Day24;
 use crate::y2019::day20::Day20;
 use crate::y2019::day18::Day18;
+use crate::y2019::day13::Day13;
 
 fn run_completed() {
 
@@ -65,9 +66,6 @@ fn run_completed() {
     y2019::day12::part1(read_numbers_by_line(Question::y2019(12))).save_part1();
     y2019::day12::part2(read_numbers_by_line(Question::y2019(12))).save_part2();
 
-    // Day 13: Care Package
-    y2019::day13::part1(read_numbers_by_comma(Question::y2019(13))).save_part1();
-    y2019::day13::part2(read_numbers_by_comma(Question::y2019(13))).save_part2();
 
     // Day 14: Space Stoichiometry
     y2019::day14::part1(read_strings(Question::y2019(14))).save_part1();
@@ -137,6 +135,8 @@ fn main() {
     runnables.push(Box::new(|| { Day10 {}.run() }));
     // Day 11: Space Police
     runnables.push(Box::new(|| { Day11 {}.run() }));
+    // Day 13: Care Package
+    runnables.push(Box::new(|| { Day13 {}.run() }));
     // Day 18: Many-Worlds Interpretation
     runnables.push(Box::new(|| { Day18 {}.run() }));
     // Day 20: Donut Maze

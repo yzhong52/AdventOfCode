@@ -5,6 +5,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeComputer;
 use crate::int_code_computers::super_int_code_computer::SuperIntCodeResult;
+use crate::helpers::puzzle::Puzzle;
 
 // 0 is an empty tile. No game object appears in this tile.
 const EMPTY_TILE: i128 = 0;
@@ -16,7 +17,6 @@ const BLOCK_TILE: i128 = 2;
 const HORIZONTAL_PADDLE_TILE: i128 = 3;
 // 4 is a ball tile. The ball moves diagonally and bounces off objects.
 const BALL_TILE: i128 = 4;
-
 
 fn play_game(input: &Vec<i128>) -> HashMap<BigPoint, i128> {
     let mut map: HashMap<BigPoint, i128> = HashMap::new();
@@ -45,11 +45,6 @@ fn play_game(input: &Vec<i128>) -> HashMap<BigPoint, i128> {
     map
 }
 
-pub fn part1(input: Input<Vec<i128>>) -> Answer<usize> {
-    let map = play_game(&input.data);
-    let r = map.values().filter(|x| **x == BLOCK_TILE).count();
-    Answer { question: input.question, result: r }
-}
 
 struct ArcadeCabinet {
     computer: SuperIntCodeComputer,
@@ -149,22 +144,40 @@ impl ArcadeCabinet {
     }
 }
 
-pub fn part2(input: Input<Vec<i128>>) -> Answer<i128> {
+pub struct Day13 {}
 
-    // Use part 1 to just get the size of the screen
-    let map = play_game(&input.data);
-    let max_x = map.keys().into_iter().map(|p| p.x).max().unwrap();
-    let max_y = map.keys().into_iter().map(|p| p.y).max().unwrap();
+impl Puzzle<Vec<i128>, i128> for Day13 {
+    fn day(&self) -> i8 {
+        13
+    }
 
-    let screen: Vec<Vec<char>> = vec![vec!['?'; max_x as usize + 1]; max_y as usize + 1];
+    fn parser(&self) -> fn(String) -> Vec<i128> {
+        parse_numbers_by_comma
+    }
 
-    let computer = SuperIntCodeComputer::new(input.data.clone());
+    fn part1(&self, input: &Vec<i128>) -> i128 {
+        let map = play_game(input);
+        let result = map.values().filter(|x| **x == BLOCK_TILE).count();
+        result as i128
+    }
 
-    let mut arcade = ArcadeCabinet { computer, screen, score: 0 };
+    fn part2(&self, input: &Vec<i128>) -> i128 {
 
-    arcade.insert_coin();
+        // Use part 1 to just get the size of the screen
+        let map = play_game(input);
+        let max_x = map.keys().into_iter().map(|p| p.x).max().unwrap();
+        let max_y = map.keys().into_iter().map(|p| p.y).max().unwrap();
 
-    let final_score = arcade.play(true);
+        let screen: Vec<Vec<char>> = vec![vec!['?'; max_x as usize + 1]; max_y as usize + 1];
 
-    Answer { question: input.question, result: final_score }
+        let computer = SuperIntCodeComputer::new(input.clone());
+
+        let mut arcade = ArcadeCabinet { computer, screen, score: 0 };
+
+        arcade.insert_coin();
+
+        let final_score = arcade.play(true);
+
+        final_score
+    }
 }

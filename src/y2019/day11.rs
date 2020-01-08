@@ -58,7 +58,7 @@ impl Puzzle<Vec<i128>, String> for Day11 {
     }
 
     fn part1(&self, input: &Vec<i128>) -> String {
-        let result = painting(&input, BLACK_COLOR).len();
+        let result = painting(input, BLACK_COLOR).len();
         // Just so that we don't have to create different return types for part 1 and part 2
         format!("{}", result)
     }

@@ -80,6 +80,7 @@ pub fn parse_numbers_by<T>(filename: String, pat: char) -> Vec<T>
     data
 }
 
+#[deprecated]
 pub fn read_numbers_by_comma<T>(question: Question) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     return read_numbers_by(question, ',');
