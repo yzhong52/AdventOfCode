@@ -51,6 +51,10 @@ pub(crate) fn read_lines(filename: String) -> Vec<String> {
     parse_file_by(filename, '\n')
 }
 
+fn parse_raw_by_line(filename: String) -> Vec<String> {
+    read_lines(filename)
+}
+
 pub fn read_numbers_by<T>(question: Question, pat: char) -> Input<Vec<T>>
     where T: std::str::FromStr, <T as std::str::FromStr>::Err: std::fmt::Debug {
     let data: Vec<T> = read_raw_by(question, pat).iter()
@@ -99,10 +103,16 @@ pub fn read_strings(question: Question) -> Input<Vec<String>> {
     return Input { question, data: read_raw_by_line(question) };
 }
 
+#[deprecated]
 pub fn read_single_string(question: Question) -> Input<String> {
     return Input { question, data: read_raw_by_line(question).first().unwrap().to_string() };
 }
 
+pub fn parse_single_string(filename: String) -> String {
+    read_lines(filename).first().unwrap().to_string()
+}
+
+#[deprecated]
 pub fn read_grid(question: Question) -> Input<Vec<Vec<char>>> {
     let grid: Vec<Vec<char>> = read_raw_by_line(question)
         .iter()
@@ -112,6 +122,17 @@ pub fn read_grid(question: Question) -> Input<Vec<Vec<char>>> {
         .collect();
 
     Input { question, data: grid }
+}
+
+pub fn parse_grid(filename: String) -> Vec<Vec<char>> {
+    let grid: Vec<Vec<char>> = parse_raw_by_line(filename)
+        .iter()
+        .map(|input| {
+            input.chars().collect::<Vec<char>>()
+        })
+        .collect();
+
+    grid
 }
 
 impl<T> Answer<T> where T: std::fmt::Display {
