@@ -1,6 +1,8 @@
 /target
 **/*.rs.bk
 
-.idea/*
-!.idea/runConfigurations/
-!.idea/codeStyles/
+2019/.idea/*
+2019/!.idea/runConfigurations/
+2019/!.idea/codeStyles/
+
+2020/.idea

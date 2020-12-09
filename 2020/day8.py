@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List
 
 file = open("day8.txt", "r")
 lines = file.readlines()
@@ -9,6 +9,9 @@ lines = file.readlines()
 class Instruction:
     operation: str
     value: int
+
+    def swap_jmp_nop(self):
+        self.operation = 'jmp' if self.operation != 'jmp' else 'nop'
 
 
 parsed_instructions: List[Instruction] = []
@@ -47,27 +50,28 @@ def fix_instructions(instructions: List[Instruction]) -> List[Instruction]:
         else:
             cur += 1
 
+    visited = loop.copy()
     for i in loop:
         if instructions[i].operation == 'acc':
             continue
 
         # Otherwise, let's see if we can exist the loop
-        visited = set()
-        j = 0
-        instructions[i].operation = 'jmp' if instructions[i].operation != 'jmp' else 'nop'
+        cur = i
+        instructions[i].swap_jmp_nop()
+        visited.remove(i)
 
-        while j not in visited and j < len(instructions):
-            visited.add(j)
-            if instructions[j].operation == 'jmp':
-                j += instructions[j].value
+        while cur not in visited and cur < len(instructions):
+            visited.add(cur)
+            if instructions[cur].operation == 'jmp':
+                cur += instructions[cur].value
             else:
-                j += 1
+                cur += 1
 
-        if j == len(instructions):
+        if cur == len(instructions):
             print(f"Found the buggy instruction at {i}")
             return instructions
         else:
-            instructions[i].operation = 'jmp' if instructions[i].operation != 'jmp' else 'nop'
+            instructions[i].swap_jmp_nop()
 
     assert False, "Count not find the buggy instruction"
 
