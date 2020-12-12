@@ -23,9 +23,10 @@ def weak_number(preamble: int, xmas_data: List[int]) -> int:
             sums[to_removed_sum] -= 1
             if sums[to_removed_sum] == 0:
                 del sums[to_removed_sum]
-    assert False, "Cannot find the weak number®"
+    assert False, "Cannot find the weak number"
 
 
+# O(N^2) - this could be improved to O(N) with two pointers
 def encryption_weakness(target: int, xmas_data) -> int:
     for i in range(len(xmas_data)):
         current = xmas_data[i]

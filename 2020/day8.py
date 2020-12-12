@@ -39,6 +39,7 @@ def compute_accumulator(instructions: List[Instruction]):
     return accumulator
 
 
+# O(N)
 def fix_instructions(instructions: List[Instruction]) -> List[Instruction]:
     # Find all points on the loop
     loop = set()
@@ -79,6 +80,6 @@ def fix_instructions(instructions: List[Instruction]) -> List[Instruction]:
 part1 = compute_accumulator(parsed_instructions)
 print(part1)
 
-fixed_instructions = fix_instructions(parsed_instructions.copy())
+fixed_instructions = fix_instructions(parsed_instructions)
 part2 = compute_accumulator(fixed_instructions)
 print(part2)
