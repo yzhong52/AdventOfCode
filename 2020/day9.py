@@ -26,7 +26,7 @@ def weak_number(preamble: int, xmas_data: List[int]) -> int:
     assert False, "Cannot find the weak number"
 
 
-# O(N^2) - this could be improved to O(N) with two pointers
+# O(N^2)
 def encryption_weakness(target: int, xmas_data) -> int:
     for i in range(len(xmas_data)):
         current = xmas_data[i]
@@ -49,3 +49,23 @@ print(part1)
 
 part2 = encryption_weakness(part1, data)
 print(part2)
+
+
+def encryption_weakness_patric(target, xmas_data):
+    """
+    Copied from Patrick. O(N)
+    """
+    xmas_data = xmas_data[:]
+    s = 0
+    ys = []
+    while xmas_data and s != target:
+        if s < target:
+            y = xmas_data.pop(0)
+            ys.append(y)
+            s += y
+        else:
+            s -= ys.pop(0)
+    return min(ys) + max(ys)
+
+
+print(encryption_weakness_patric(part1, data))
