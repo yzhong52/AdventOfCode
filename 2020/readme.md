@@ -2,6 +2,8 @@
 
 Advent of Code 2020 in Python.
 
+![](advant_of_code_2020.png)
+
 ## Day 11: Seating System
 
 ```
