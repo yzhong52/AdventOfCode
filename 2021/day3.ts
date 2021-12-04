@@ -12,3 +12,17 @@ for (let line of lines) {
     }
 }
 console.log("counters", counters);
+
+var gamma = 0;
+var epsilon = 0;
+for (let counter of counters) {
+    gamma *= 2;
+    epsilon *= 2;
+    if (counter >= 0) {
+        gamma += 1;
+    } else if (counter < 0) {
+        epsilon += 1;
+    }
+}
+
+print_result(3, 1, gamma * epsilon)
