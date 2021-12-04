@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-let lines: string[]  = fs.readFileSync('day1', 'utf8').split('\n');
+
+let lines: string[] = fs.readFileSync('day1', 'utf8').split('\n');
 let numbers: number[] = lines.map(line => parseInt(line));
 
 function count_increased(gap: number): number {
