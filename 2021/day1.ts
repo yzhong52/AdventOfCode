@@ -1,7 +1,6 @@
-import * as fs from 'fs';
+import { print_result, readNumbers } from './helpers';
 
-let lines: string[] = fs.readFileSync('day1', 'utf8').split('\n');
-let numbers: number[] = lines.map(line => parseInt(line));
+let numbers: number[] = readNumbers(1);
 
 function count_increased(gap: number): number {
     var count = 0;
@@ -13,5 +12,5 @@ function count_increased(gap: number): number {
     return count;
 }
 
-console.log("Part 1:", count_increased(1));
-console.log("Part 2:", count_increased(3));
+print_result(1, 1, count_increased(1));
+print_result(1, 2, count_increased(3));
