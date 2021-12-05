@@ -28,7 +28,8 @@
     "day22": "npx ts-node day22.ts",
     "day23": "npx ts-node day23.ts",
     "day24": "npx ts-node day24.ts",
-    "day25": "npx ts-node day25.ts"
+    "day25": "npx ts-node day25.ts",
+    "all": "sh run_all.sh"
   },
   "author": "Yuchen Z.",
   "license": "ISC",

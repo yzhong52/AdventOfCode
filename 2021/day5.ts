@@ -16,50 +16,81 @@ class Point {
         this.x = x;
         this.y = y;
     }
+
+    add(point: Point) {
+        this.x += point.x;
+        this.y += point.y;
+    }
+
+    equals(point: Point) {
+        return this.x == point.x && this.y == point.y;
+    }
+
+    get hash() {
+        // It is unfortunate that we don't have hash interface in typescript
+        return `${this.x},${this.y}`
+    }
+
+    clone() {
+        // It is unfortunate that we don't have easy way to clone object in typescript
+        // https://stackoverflow.com/questions/28150967/typescript-cloning-object
+        return new Point(this.x, this.y);
+    }
 }
 
 class Line {
     p1: Point;
     p2: Point;
 
-    constructor(data: string) {
+    static parse(data: string): Line {
         let [p1, p2] = data.split(' -> ').map(value => Point.parse(value));
+        return new Line(p1, p2);
+    }
+
+    constructor(p1: Point, p2: Point) {
         this.p1 = p1;
         this.p2 = p2;
     }
 
-    get delta() {
-        let delta_x = this.p2.x - this.p1.x;
-        let delta_y = this.p2.y - this.p1.y;
-        let length = Math.sqrt(delta_x * delta_x + delta_y * delta_y);
-        return [delta_x / length, delta_y / length];
+    delta(): Point {
+        function normalize(value: number) {
+            return value == 0 ? value : value / Math.abs(value);
+        }
+
+        return new Point(
+            normalize(this.p2.x - this.p1.x),
+            normalize(this.p2.y - this.p1.y)
+        )
     }
 }
 
-let inputLines = data.map(lineData => new Line(lineData))
+let inputLines = data.map(Line.parse)
+
+function add_to_map(map: Map<string, number>, p: Point) {
+    let hash = `${p.x}@${p.y}`;
+    let count = map.get(hash) ?? 0
+    map.set(hash, count + 1);
+}
+
+function counter_intersections(lines: Array<Line>) {
+    let map: Map<string, number> = new Map();
+    for (let line of lines) {
+        let delta = line.delta();
+        for (let p = line.p1.clone(); !p.equals(line.p2); p.add(delta)) {
+            add_to_map(map, p);
+        }
+        add_to_map(map, line.p2);
+    }
+
+    return Array.from(map.values()).reduce((sum, cur) => (cur >= 2) ? sum + 1 : sum, 0);
+}
 
 let horizontal_vertical_lines = inputLines
-    .filter(line => line.p1.x == line.p2.x || line.p1.y == line.p2.y)
-
-let xs = inputLines.map(line => Math.max(line.p1.x, line.p2.x));
-let ys = inputLines.map(line => Math.max(line.p1.y, line.p2.y));
-let maxX = Math.max(...xs);
-let maxY = Math.max(...ys);
-let draw: Array<Array<number>> = new Array(maxX + 1);
-for (let rowId = 0; rowId <= maxX; rowId += 1){
-    draw[rowId] = new Array(maxY + 1).fill(0);
-}
-
-let map: Map<number, number> = new Map();
-for (let line of horizontal_vertical_lines) {
-    let [delta_x, delta_y] = line.delta;
-    for (let x = line.p1.x, y = line.p1.y; x != line.p2.x + delta_x || y != line.p2.y + delta_y; x += delta_x, y += delta_y) {
-        let hash = x * (maxY + 1) + y;
-        let count = map.get(hash) ?? 0
-        draw[x][y] = draw[x][y] + 1;
-        map.set(hash, count + 1)
-    }
-}
-
-let part1 = Array.from(map.values()).reduce((sum, cur) => (cur >= 2) ? sum + 1 : sum, 0);
+    .filter(line => line.p1.x == line.p2.x || line.p1.y == line.p2.y);
+let part1 = counter_intersections(horizontal_vertical_lines);
 print_result(5, 1, part1);
+
+let horizontal_vertical_diagonal_lines = inputLines
+    .filter(line => line.p1.x == line.p2.x || line.p1.y == line.p2.y || Math.abs(line.p1.y - line.p2.y) == Math.abs(line.p1.x - line.p2.x));
+let part2 = counter_intersections(horizontal_vertical_diagonal_lines);
+print_result(5, 2, part2);
