@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 
 export function readStrings(day: number): string[] {
-    return fs.readFileSync(`day${day}`, 'utf8').split('\n');
+    // .trim() here to remove the last line break
+    return fs.readFileSync(`day${day}`, 'utf8').trim().split('\n');
 }
 
 export function readNumbers(day: number): number[] {

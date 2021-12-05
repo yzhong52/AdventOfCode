@@ -1,4 +1,4 @@
-import { readStrings } from "./helpers";
+import { print_result, readStrings } from "./helpers";
 
 let data = readStrings(5)
 
@@ -38,30 +38,28 @@ class Line {
 
 let inputLines = data.map(lineData => new Line(lineData))
 
-
 let horizontal_vertical_lines = inputLines
     .filter(line => line.p1.x == line.p2.x || line.p1.y == line.p2.y)
-console.log(horizontal_vertical_lines);
 
 let xs = inputLines.map(line => Math.max(line.p1.x, line.p2.x));
 let ys = inputLines.map(line => Math.max(line.p1.y, line.p2.y));
 let maxX = Math.max(...xs);
 let maxY = Math.max(...ys);
-let draw: Array<Array<string>> = new Array(maxX + 1).fill(new Array(maxY + 1).fill('.'));
+let draw: Array<Array<number>> = new Array(maxX + 1);
+for (let rowId = 0; rowId <= maxX; rowId += 1){
+    draw[rowId] = new Array(maxY + 1).fill(0);
+}
 
-let map: Map<Point, number> = new Map();
+let map: Map<number, number> = new Map();
 for (let line of horizontal_vertical_lines) {
     let [delta_x, delta_y] = line.delta;
-    console.log("deltas", delta_x, delta_y);
-    console.log("line", line);
-    for (let x = line.p1.x, y = line.p1.y; x != line.p2.x || y != line.p2.y; x += delta_x, y += delta_y) {
-        console.log("x=", x, "y=", y);
-        let p = new Point(x, y);
-        let count = map.get(p) ?? 0
-        draw[x][y] = (count + 1).toString();
-        map.set(p, count + 1)
+    for (let x = line.p1.x, y = line.p1.y; x != line.p2.x + delta_x || y != line.p2.y + delta_y; x += delta_x, y += delta_y) {
+        let hash = x * (maxY + 1) + y;
+        let count = map.get(hash) ?? 0
+        draw[x][y] = draw[x][y] + 1;
+        map.set(hash, count + 1)
     }
 }
-console.log(map);
-console.log(draw.map(line => line.join('')).join('\n'));
 
+let part1 = Array.from(map.values()).reduce((sum, cur) => (cur >= 2) ? sum + 1 : sum, 0);
+print_result(5, 1, part1);
