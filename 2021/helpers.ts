@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 
-export function readStrings(day: number): string[] {
+export function readStrings(day: number, separator: string = '\n'): string[] {
     // .trim() here to remove the last line break
-    return fs.readFileSync(`day${day}`, 'utf8').trim().split('\n');
+    return fs.readFileSync(`day${day}`, 'utf8').trim().split(separator);
 }
 
-export function readNumbers(day: number): number[] {
-    return readStrings(day).map(line => parseInt(line));
+export function readNumbers(day: number, separator: string = '\n'): number[] {
+    return readStrings(day, separator).map(line => parseInt(line));
 }
 
 export function print_result(day: number, part: number, text: any) {
