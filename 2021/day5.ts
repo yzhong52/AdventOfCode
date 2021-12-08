@@ -32,7 +32,7 @@ class Point {
     }
 
     clone() {
-        // It is unfortunate that we don't have easy way to clone object in typescript
+        // It is unfortunate that we don't have an easy way to clone object in typescript
         // https://stackoverflow.com/questions/28150967/typescript-cloning-object
         return new Point(this.x, this.y);
     }

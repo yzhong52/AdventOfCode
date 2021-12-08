@@ -11,9 +11,9 @@ var right = Math.max(...crabs.keys())
 var leftCount = crabs.get(left)!
 var rightCount = crabs.get(right)!
 
-var total = 0;
+var part1 = 0;
 while (left < right) {
-    total += Math.min(leftCount, rightCount);
+    part1 += Math.min(leftCount, rightCount);
     if (leftCount < rightCount) {
         left += 1;
         leftCount += (crabs.get(left) ?? 0);
@@ -23,4 +23,43 @@ while (left < right) {
     }
 }
 
-print_result(7, 1, total);
+// Let's do binary search for part 2
+
+var left = Math.min(...crabs.keys())
+var right = Math.max(...crabs.keys())
+
+function calculate_fuel(distance: number): number {
+    return distance * (distance + 1) / 2
+}
+
+function calculate_total_fuel(position: number): number {
+    var sum = 0;
+    for (let [crab_pos, crab_count] of crabs) {
+        sum += crab_count * calculate_fuel(Math.abs(crab_pos - position))
+    }
+    return sum
+}
+
+let t0 = new Date();
+
+var part2 = 0;
+while (left < right) {
+    var middle = Math.floor((left + right) / 2);
+
+    let m0 = calculate_total_fuel(middle);
+    let m1 = calculate_total_fuel(middle + 1);
+
+    part2 = Math.min(m1, m0);
+    if (m0 > m1) {
+        left = middle + 1;
+    } else if (m0 < m1) {
+        right = middle;
+    } else {
+        break;
+    }
+}
+let t1 = new Date()
+console.log(t0, t1, t1.getMilliseconds() - t0.getMilliseconds())
+
+print_result(7, 1, part1);
+print_result(7, 1, part2);
