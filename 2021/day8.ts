@@ -2,22 +2,24 @@ import { print_result, readStrings } from "./helpers";
 
 let lines = readStrings(8);
 
-let map: Map<number, string> = new Map();
-map.set(0, "abcefg")
-map.set(1, "cf");
-map.set(2, "acdeg");
-map.set(3, "acdfg")
-map.set(4, "bcdf")
-map.set(5, "abdfg")
-map.set(6, "abdefg")
-map.set(7, "acf")
-map.set(8, "abcdefg")
-map.set(9, "abcdfg")
+const DEFAULT_ASSIGNMENT = "abcdefg";
+
+let digitToDisplay: Map<number, string> = new Map();
+digitToDisplay.set(0, "abcefg")
+digitToDisplay.set(1, "cf");
+digitToDisplay.set(2, "acdeg");
+digitToDisplay.set(3, "acdfg")
+digitToDisplay.set(4, "bcdf")
+digitToDisplay.set(5, "abdfg")
+digitToDisplay.set(6, "abdefg")
+digitToDisplay.set(7, "acf")
+digitToDisplay.set(8, "abcdefg")
+digitToDisplay.set(9, "abcdfg")
 
 let displayToDigit: Map<string, number> = new Map();
 
 let lengthIndex: Map<number, Array<number>> = new Map();
-for (let [key, value] of map) {
+for (let [key, value] of digitToDisplay) {
     var current: Array<number> = lengthIndex.get(value.length) ?? new Array();
     current.push(key);
     lengthIndex.set(value.length, current);
@@ -41,17 +43,16 @@ print_result(8, 1, part1);
 
 // For part 2, since there are only 7 segments, we only have
 // 7! = 5040 combinations. Let's generate them all.
-var combinations: Array<string> = new Array("");
+var assignmentCombinations: Array<string> = new Array("");
 for (let char of "abcdefg") {
     var nextCombinations: Array<string> = new Array();
-    for (let currentPattern of combinations) {
-        let currentLength = currentPattern.length;
-        for (var index = 0; index <= currentLength; index++) {
+    for (let currentPattern of assignmentCombinations) {
+        for (var index = 0; index <= currentPattern.length; index++) {
             let nextPattern = currentPattern.slice(0, index) + char + currentPattern.slice(index)
             nextCombinations.push(nextPattern);
         }
     }
-    combinations = nextCombinations;
+    assignmentCombinations = nextCombinations;
 }
 
 function convert(value: string, from: string, to: string): string {
@@ -59,14 +60,15 @@ function convert(value: string, from: string, to: string): string {
     for (var i = 0; i < from.length; i += 1) {
         mapping.set(from[i], to[i]);
     }
-
     return Array.from(value).map(char => mapping.get(char)!).sort().join('');
 }
 
 // For each of the assignment, calculate how the 10 digit is represented
 let assignmentIndex: Map<string, string> = new Map();
-for (let assignment of combinations) {
-    let displays = Array.from(map.values()).map(value => convert(value, "abcdefg", assignment))
+for (let assignment of assignmentCombinations) {
+    let displays = Array.from(digitToDisplay.values()).map(value => {
+        return convert(value, DEFAULT_ASSIGNMENT, assignment);
+    })
     let key = displays.sort().join(' ');
     assignmentIndex.set(key, assignment);
 }
@@ -78,13 +80,11 @@ for (let line of lines) {
         return Array.from(display).sort().join('')
     }).sort().join(" ")
 
-    let index = assignmentIndex.get(key)!;
-
-    var currentNumber = 0;
-    values.split(' ').map(value => {
-        let convertedDisplay = convert(value, index, "abcdefg")
-        currentNumber = currentNumber * 10 + displayToDigit.get(convertedDisplay)!
-    })
+    let assignment = assignmentIndex.get(key)!;
+    let currentNumber = values.split(' ').reduce((sum, cur) => {
+        let convertedDisplay = convert(cur, assignment, DEFAULT_ASSIGNMENT)
+        return sum * 10 + displayToDigit.get(convertedDisplay)!
+    }, 0);
     part2 += currentNumber;
 }
 print_result(8, 2, part2);
