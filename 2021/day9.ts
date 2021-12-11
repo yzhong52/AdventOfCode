@@ -1,13 +1,6 @@
-import { print_result, readStrings } from "./helpers";
+import { print_result, readGrid } from "./helpers";
 
-let lines = readStrings(9);
-
-let grid: Array<Array<number>> = lines.map(line => {
-    // This is a stupic behaviour in typescript
-    // https://stackoverflow.com/q/262427/1035008
-    // 'Array.from(line).map(parseInt)' won't produce correct result.
-    return Array.from(line).map(value => parseInt(value))
-})
+let grid = readGrid(9);
 
 let maxX = grid.length;
 let maxY = grid[0].length;
