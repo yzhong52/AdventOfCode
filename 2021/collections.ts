@@ -1,6 +1,6 @@
 
 // https://stackoverflow.com/a/51321724/1035008
-export class DefaultDict<K, V> extends Map {
+export class DefaultDict<K, V> extends Map<K, V> {
     defaultFunc: () => V;
 
     constructor(defaultFunc: (() => V)) {
@@ -9,9 +9,23 @@ export class DefaultDict<K, V> extends Map {
     }
 
     override get(key: K): V {
-        if (!super.has(key)) {
-            super.set(key, this.defaultFunc())
+        let value = super.get(key)
+        if (value) {
+            return value
+        } else {
+            let defaultValue = this.defaultFunc()
+            super.set(key, defaultValue)
+            return defaultValue
         }
-        return super.get(key)
+    }
+}
+
+export class Counter<K> extends DefaultDict<K, number> {
+    constructor() {
+        super(() => 0)
+    }
+
+    add(key: K, count: number) {
+        super.set(key, super.get(key) + count)
     }
 }
