@@ -25,8 +25,11 @@ async function main(display: boolean = false) {
     var part1_flashes = 0;
     var part2_step = 0;
 
-    print_grid(PADDING + "      Step 0");
-    await sleep(5000);
+    if (display) {
+        print_grid(PADDING + "      Step 0");
+        await sleep(5000);
+    }
+
 
     function should_speed_up(step: number) {
         return step >= 15 && step < 350;
@@ -107,4 +110,4 @@ async function main(display: boolean = false) {
     }
 }
 
-main(true)
+main(false)

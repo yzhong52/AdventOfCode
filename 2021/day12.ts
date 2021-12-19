@@ -1,5 +1,6 @@
-import { clone, print_result, readStrings } from "./helpers";
+import { print_result, readStrings } from "./helpers";
 import { DefaultDict } from "./collections";
+import "./clones";
 
 let lines = readStrings(12)
 
@@ -9,7 +10,6 @@ for (let row of lines) {
     graph.get(fromNode).push(toNode)
     graph.get(toNode).push(fromNode)
 }
-
 
 function countPath(canVisitOneSmallCaveTwice: boolean): number {
     let count: number = 0
@@ -38,7 +38,7 @@ function countPath(canVisitOneSmallCaveTwice: boolean): number {
         } else {
             for (let nextNode of graph.get(node)) {
                 if (nextNode != "start") {
-                    stack.push([nextNode, hasVisitedOneSmallCaveTwice, clone(visitedSmallCaves)])
+                    stack.push([nextNode, hasVisitedOneSmallCaveTwice, visitedSmallCaves.clone()])
                 }
             }
         }

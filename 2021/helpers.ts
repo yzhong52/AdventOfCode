@@ -23,7 +23,7 @@ export function readGrid(day: number): Array<Array<number>> {
 }
 
 export function print_result(day: number, part: number, text: any) {
-    console.log(`Day${day} Part${part}:`, text);
+    console.log(`Day${day} Part${part}:\n${text}`);
     fs.writeFileSync(`results/day${day}_part${part}.txt`, `${text}`);
 }
 
