@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 
-export function readStrings(day: number, separator: string = '\n'): string[] {
-    // .trim() here to remove the last line break
-    return fs.readFileSync(`day${day}`, 'utf8').trim().split(separator);
+export function readStrings(day: number, separator: string = '\n', suffix = ''): string[] {
+    // `.trim()` here to remove the last line break
+    // `suffix` can be 'test1', 'test2', for example, when we have multiple test files for a particular day, e.g. day 18
+    return fs.readFileSync(`day${day}${suffix}`, 'utf8').trim().split(separator);
 }
 
 export function readNumbers(day: number, separator: string = '\n'): number[] {
