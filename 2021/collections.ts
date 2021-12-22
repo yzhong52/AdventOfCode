@@ -1,3 +1,4 @@
+import { textSpanIntersectsWithPosition } from "typescript";
 
 // https://stackoverflow.com/a/51321724/1035008
 export class DefaultDict<K, V> extends Map<K, V> {
@@ -29,3 +30,17 @@ export class Counter<K> extends DefaultDict<K, number> {
         super.set(key, super.get(key) + count)
     }
 }
+
+// For adding a clone function to Set
+// https://stackoverflow.com/q/38434337/1035008
+declare global {
+    interface Array<T> {
+        top(): T | undefined
+    }
+}
+
+Array.prototype.top = function () {
+    return this.at(this.length - 1)
+}
+
+export { };
