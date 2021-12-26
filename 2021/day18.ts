@@ -87,7 +87,6 @@ class Node {
 
                     if (currentLeftNumber != undefined && currentRightNumber != undefined) {
                         exploded = true
-                        console.log(`..Exploding pair ${currentLeftNumber}, ${currentRightNumber}`)
                         if (previousLeafNode) {
                             assert(typeof previousLeafNode.value === 'number')
                             previousLeafNode.value = currentLeftNumber + previousLeafNode.getValue()!
@@ -103,10 +102,6 @@ class Node {
             }
         }
         visit(0, this)
-
-        if (exploded) {
-            console.log("E", this.toString())
-        }
         return exploded
     }
 
@@ -125,7 +120,6 @@ class Node {
             if (node.getValue() != undefined) {
                 let value = node.getValue()!
                 if (value >= 10) {
-                    console.log("..Splitting number", value)
                     hasSplit = true
                     node.value = new Pair(
                         new Node(Math.floor(value / 2)),
@@ -139,9 +133,6 @@ class Node {
             }
         }
         visit(this)
-        if (hasSplit) {
-            console.log("S", this.toString())
-        }
         return hasSplit
     }
 
@@ -150,12 +141,8 @@ class Node {
         return this
     }
 
-    add(node: Node): Node {
-        console.log(" ", this.toString())
-        console.log("+", node.toString())
-        let result = new Node(new Pair(this.clone(), node.clone()))
-        console.log("=", result.toString(), "\n")
-        return result
+    static add(node1: Node, node2: Node): Node {
+        return new Node(new Pair(node1.clone(), node2.clone()))
     }
 
     clone(): Node {
@@ -168,7 +155,6 @@ class Node {
     }
 
     reduce(): Node {
-        console.log('b', this.toString())
         while (true) {
             // During reduction, at most one action applies, after which the process returns
             // to the top of the list of actions. For example, if split produces a pair that
@@ -181,7 +167,6 @@ class Node {
             }
             break
         }
-        console.log("R", this.toString())
         return this
     }
 
@@ -196,7 +181,7 @@ class Node {
     static sum(nodes: Array<Node>): Node {
         return nodes
             .slice(1)
-            .reduce((previous, current) => previous.add(current).reduce(), nodes[0])
+            .reduce((previous, current) => Node.add(previous, current).reduce(), nodes[0])
     }
 }
 
@@ -240,8 +225,10 @@ assertEqual(
 
 
 assertEqual(
-    Node.parse('[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]')
-        .add(Node.parse('[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]'))
+    Node.add(
+        Node.parse('[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]'),
+        Node.parse('[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]')
+    )
         .reduce().toString(),
     "[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]"
 )
@@ -269,10 +256,12 @@ print_result(18, 1, Node.sum(nodes).magnitude())
 
 
 let part2 = 0
-for (let i = 0; i < nodes.length - 1; i++) {
-    for (let j = 1; j < nodes.length; j++) {
-        let magnitude = nodes[i].add(nodes[j]).magnitude()
-        part2 = Math.max(part2, magnitude)
+for (let i = 0; i < nodes.length; i++) {
+    for (let j = 0; j < nodes.length; j++) {
+        if (i != j) {
+            let magnitude = Node.add(nodes[i], nodes[j]).reduce().magnitude()
+            part2 = Math.max(part2, magnitude)
+        }
     }
 }
 print_result(18, 2, part2)
