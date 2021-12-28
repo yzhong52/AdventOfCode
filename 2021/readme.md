@@ -27,3 +27,7 @@ Interesting tree problem.
 > To explode a pair, the pair's left value is added to the first regular number to the left of the exploding pair (if any), and the pair's right value is added to the first regular number to the right of the exploding pair (if any). Exploding pairs will always consist of two regular numbers. Then, the entire exploding pair is replaced with the regular number 0.
 >
 > To split a regular number, replace it with a pair; the left element of the pair should be the regular number divided by two and rounded down, while the right element of the pair should be the regular number divided by two and rounded up. For example, 10 becomes [5,5], 11 becomes [5,6], 12 becomes [6,6], and so on.
+
+## Day 19: Beacon Scanner
+
+Good problem about [Affine transformation](https://en.wikipedia.org/wiki/Affine_transformation).

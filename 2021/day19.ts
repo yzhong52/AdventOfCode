@@ -1,7 +1,5 @@
 import { assert } from "console";
-import { sign } from "crypto";
-import { exit } from "process";
-import { readStrings } from "./helpers";
+import { print_result, readStrings } from "./helpers";
 
 type Point3D = [number, number, number]
 
@@ -11,9 +9,9 @@ class Beacon {
 
     rotate(rotationMetrix: RotationMetrix): Beacon {
         let newPos: Point3D = [0, 0, 0]
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                newPos[i] += rotationMetrix[j][i] * this.pos[i]
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                newPos[row] += rotationMetrix[row][col] * this.pos[col]
             }
         }
         return new Beacon(newPos)
@@ -110,17 +108,12 @@ function build_rotations(axis: number[], signs: boolean[], remaining: number[]) 
 build_rotations([], [], [0, 1, 2])
 
 
-function countOverlap(scaner1: Scanner, scaner2: Scanner, rotation: RotationMetrix, transform: Point3D): number {
+function countOverlap(signatures: Set<string>, scaner2: Scanner, rotation: RotationMetrix, transform: Point3D): number {
     let counter = 0
-    let seen: Set<string> = new Set()
-
-    for (let beacon1 of scaner1.beacons) {
-        seen.add(beacon1.toString())
-    }
 
     for (let beacon2 of scaner2.beacons) {
         let signature = beacon2.rotate(rotation).add(transform).toString()
-        if (seen.has(signature)) {
+        if (signatures.has(signature)) {
             counter += 1
         }
     }
@@ -130,11 +123,16 @@ function countOverlap(scaner1: Scanner, scaner2: Scanner, rotation: RotationMetr
 
 
 function findMatch(scaner1: Scanner, scaner2: Scanner): [RotationMetrix, Point3D] | undefined {
+    let signatures: Set<string> = new Set()
+    for (let beacon1 of scaner1.beacons) {
+        signatures.add(beacon1.toString())
+    }
+
     for (let beacon1 of scaner1.beacons) {
         for (let beacon2 of scaner2.beacons) {
             for (let rotation of rotations) {
                 let transform = beacon1.subtract(beacon2.rotate(rotation))
-                let overlaps = countOverlap(scaner1, scaner2, rotation, transform)
+                let overlaps = countOverlap(signatures, scaner2, rotation, transform)
                 if (overlaps >= 12) {
                     return [rotation, transform]
                 }
@@ -144,35 +142,46 @@ function findMatch(scaner1: Scanner, scaner2: Scanner): [RotationMetrix, Point3D
     return undefined
 }
 
-for (var i = 0; i < scanners.length; i++) {
-    for (var j = 0; j < scanners.length; j++) {
-        if (i != j) {
-            console.log(`${i} and ${j}`, findMatch(scanners[i], scanners[j]))
+let finalizedScanners = []
+let alignedScanners = [scanners[0]]
+var pendingScanners = new Array(...scanners.slice(1))
+let transforms = []
+while (alignedScanners.length) {
+    let current = alignedScanners.pop()!
+    finalizedScanners.push(current)
+
+    let nextPending = []
+    for (let pending of pendingScanners) {
+        let matchingMatrix = findMatch(current, pending)
+        if (matchingMatrix) {
+            let [rotation, transformation] = matchingMatrix
+            console.log(`Found a match: R(${rotation}) and T(${transformation})`)
+            let aligned = pending.rotate(rotation).add(transformation)
+            transforms.push(transformation)
+            alignedScanners.push(aligned)
+        } else {
+            nextPending.push(pending)
         }
     }
+    pendingScanners = nextPending
 }
 
-// let finalizedScanners = []
-// let alignedScanners = [scanners[0]]
-// var pendingScanners = new Array(...scanners.slice(1))
-// while (alignedScanners.length) {
-//     let current = alignedScanners.pop()!
-//     finalizedScanners.push(current)
+let beaconSet: Set<string> = new Set()
+for (let scanner of finalizedScanners) {
+    for (let beacon of scanner.beacons) {
+        beaconSet.add(beacon.toString())
+    }
+}
+print_result(19, 1, beaconSet.size)
 
-//     let nextPending = []
-//     for (let pending of pendingScanners) {
-//         let matchingMatrix = findMatch(current, pending)
-//         if (matchingMatrix) {
-//             let [rotation, transformation] = matchingMatrix
-//             console.log(`We found a match! ${rotation} and ${transformation}`)
-//             let aligned = pending.rotate(rotation).add(transformation)
-//             alignedScanners.push(aligned)
-//         } else {
-//             nextPending.push(pending)
-//         }
-//     }
-//     pendingScanners = nextPending
-// }
-
-// console.log(rotations)
-// console.log(finalizedScanners)
+var distance = 0
+for (let i = 0; i < transforms.length; i ++) {
+    for (let j = 0; j < transforms.length; j ++) {
+        let manhattanDistance = 0
+        for (let k = 0; k < 3; k ++) {
+            manhattanDistance += Math.abs(transforms[i][k] - transforms[j][k])
+        }
+        distance = Math.max(distance, manhattanDistance)
+    }
+}
+print_result(19, 2, distance)
