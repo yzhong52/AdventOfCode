@@ -35,3 +35,7 @@ Good problem about [Affine transformation](https://en.wikipedia.org/wiki/Affine_
 # Day 21: Dirac Dice
 
 Dynamic programming problem.
+
+# Day 22: Reactor Reboot
+
+Divide and conquer problem.
