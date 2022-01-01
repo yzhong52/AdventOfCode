@@ -31,3 +31,7 @@ Interesting tree problem.
 ## Day 19: Beacon Scanner
 
 Good problem about [Affine transformation](https://en.wikipedia.org/wiki/Affine_transformation).
+
+# Day 21: Dirac Dice
+
+Dynamic programming problem.

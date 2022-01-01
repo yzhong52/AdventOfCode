@@ -1,4 +1,4 @@
-export function assertEqual(left: string, right: string) {
+export function assertEqual<T>(left: T, right: T) {
     if (left == right) {
         console.log(`✅ Equal:\n - ${left}\n - ${right}\n`)
     } else {

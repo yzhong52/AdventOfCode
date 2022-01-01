@@ -36,11 +36,17 @@ export class Counter<K> extends DefaultDict<K, number> {
 declare global {
     interface Array<T> {
         top(): T | undefined
+
+        sum(): T
     }
 }
 
 Array.prototype.top = function () {
     return this.at(this.length - 1)
+}
+
+Array.prototype.sum = function () {
+    return this.reduce((a, b) => a + b, 0)
 }
 
 export { };
