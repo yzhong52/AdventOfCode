@@ -1,113 +1,93 @@
 import PriorityQueue from "ts-priority-queue";
-import { readStrings } from "./helpers";
+import { print_result, readStrings } from "./helpers";
 import "./collections"
-
-let rawInput = readStrings(23)
-
-let wall: Set<string> = new Set()
-let initialAmphipods: Map<string, Amphipod> = new Map()
-
-type Pos = { y: number, x: number }
 
 const seperator = '-'
 
-function key(pos: Pos): string {
-    return `${pos.y}${seperator}${pos.x}`
+class Pos {
+    y: number
+    x: number
+
+    constructor(pos: { y: number, x: number }) {
+        this.y = pos.y
+        this.x = pos.x
+    }
+
+    get isInRoom() {
+        return this.y >= 2
+    }
+
+    get key() {
+        return `${this.y}${seperator}${this.x}`
+    }
+
+    add(pos: { y: number, x: number }): Pos {
+        return new Pos({ y: this.y + pos.y, x: this.x + pos.x })
+    }
 }
+
 
 type AmphipodType = 'A' | 'B' | 'C' | 'D'
 
 class Amphipod {
     constructor(public type: AmphipodType, public moves: number, public pos: Pos) { }
 
-    key() {
-        return key(this.pos)
+    get key() {
+        return this.pos.key
     }
+
     get energy() {
         return Math.pow(10, this.type.charCodeAt(0) - 'A'.charCodeAt(0))
     }
 
-    clone(props: {
-        moves: number,
-        pos: Pos
-    }): Amphipod {
+    clone(props: { moves: number, pos: Pos }): Amphipod {
         return new Amphipod(
             this.type,
             props.moves,
             props.pos
         )
     }
-}
 
-for (let y = 0; y < rawInput.length; y++) {
-    for (let x = 0; x < rawInput[y].length; x++) {
-        let cell = rawInput[y][x]
-        if (cell == '#') {
-            wall.add(key({ y: y, x: x }))
-        } else if (cell == '.' || cell == ' ') {
-            continue
-        } else {
-            let amphipod = new Amphipod(cell as AmphipodType, 0, { x: x, y: y })
-            initialAmphipods.set(amphipod.key(), amphipod)
-        }
+    targetX() {
+        return 2 * (this.type.charCodeAt(0) - 'A'.charCodeAt(0)) + 3
+    }
+
+    isInTargetRoom(): boolean {
+        return this.pos.x == this.targetX() && this.pos.isInRoom
     }
 }
-let immediatelyOutsideRoomPos: Pos[] = [
-    { y: 1, x: 3 },
-    { y: 1, x: 5 },
-    { y: 1, x: 7 },
-    { y: 1, x: 9 },
-]
 
-let immediatelyOutsideRoomPosSet = new Set(immediatelyOutsideRoomPos.map(pos => key(pos)))
-console.log(initialAmphipods)
-console.log(immediatelyOutsideRoomPosSet)
+const immediatelyOutsideRoomPosSet = new Set([
+    new Pos({ y: 1, x: 3 }).key,
+    new Pos({ y: 1, x: 5 }).key,
+    new Pos({ y: 1, x: 7 }).key,
+    new Pos({ y: 1, x: 9 }).key,
+])
 
-let offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]]
-
-let targetPos = new Map<AmphipodType, Set<string>>()
-for (let type of ['A', 'B', 'C', 'D']) {
-    let x = 2 * (type.charCodeAt(0) - 'A'.charCodeAt(0)) + 3
-    targetPos.set(
-        type as AmphipodType,
-        new Set([
-            key({ y: 2, x: x }),
-            key({ y: 3, x: x })
-        ])
-    )
-}
-console.log("Target Pos", targetPos)
-
+const offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
 class State {
     constructor(public energy: number, public amphipods: Map<string, Amphipod>) { }
 
-    isFinal(): boolean {
-        for (let [_, amphipod] of this.amphipods) {
-            if (!targetPos.get(amphipod.type)!.has(amphipod.key())) {
-                return false
-            }
-        }
-        return true
+    isSatisfied(): boolean {
+        return new Array(...this.amphipods.values())
+            .every(amphipod => amphipod.isInTargetRoom())
     }
 
-    clone(props: {
-        energy: number,
-        amphipods: Map<string, Amphipod>
-    }): State {
-        return new State(
-            props.energy,
-            props.amphipods
-        )
+    clone(props: { energy: number, amphipods: Map<string, Amphipod> }): State {
+        return new State(props.energy, props.amphipods)
     }
 
     key() {
-        let buffer: Array<Array<string>> = new Array()
-        for (let i = 0; i < rawInput.length; i++) {
-            buffer.push(new Array(rawInput[i].length).fill(' '))
-        }
+        let amphipods = new Array(...this.amphipods.values())
+        let maxY = Math.max(...amphipods.map(amphipod => amphipod.pos.y)) + 1
+        let maxX = Math.max(...amphipods.map(amphipod => amphipod.pos.x)) + 1
 
-        for (let amphipod of this.amphipods.values()) {
+        let buffer: Array<Array<string>> = new Array()
+        for (let i = 0; i < maxY; i++) {
+            buffer.push(new Array(maxX).fill(' '))
+        }
+        for (let amphipod of amphipods) {
             buffer[amphipod.pos.y][amphipod.pos.x] = amphipod.type
         }
 
@@ -115,7 +95,11 @@ class State {
     }
 }
 
-function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amphipod>): Array<[Pos, number]> {
+function getPotentialMoves(
+    movingAmphipod: Amphipod,
+    amphipods: Map<string, Amphipod>,
+    wall: Set<string>
+): Array<[Pos, number]> {
     if (movingAmphipod.moves >= 2) {
         // Each amphipod can make no more than 2 moves. It will move
         // out of the room, and then move back to the right room.
@@ -124,58 +108,54 @@ function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amph
 
     let result: Array<[Pos, number]> = new Array()
     let visited: Set<string> = new Set()
-    function dfs(current: Pos, distance: number) {
-        let k = key(current)
-        if (visited.has(k)) {
-            return
-        }
-        if (wall.has(k)) {
-            return
-        }
-        if (amphipods.has(k)) {
-            return
-        }
-        visited.add(k)
 
-        // cannot stop right outside of the room
-        if (!immediatelyOutsideRoomPosSet.has(k)) {
+    function dfs(current: Pos, distance: number) {
+        if (visited.has(current.key)) {
+            return
+        }
+        if (wall.has(current.key)) {
+            return
+        }
+        if (amphipods.has(current.key)) {
+            return
+        }
+        visited.add(current.key)
+
+        // Cannot stop right outside of the room
+        if (!immediatelyOutsideRoomPosSet.has(current.key)) {
             if (movingAmphipod.moves == 0) {
                 // If we are moving outside, then y has to be 1
-                if (current.y == 1) {
+                if (!current.isInRoom) {
                     result.push([current, distance])
                 }
             } else if (movingAmphipod.moves == 1) {
                 // Amphipods will never move from the hallway into a room unless
                 // 1) that room is their destination room and;
                 // 2) that room contains no amphipods
-                let isDestination = targetPos.get(movingAmphipod.type)!.has(k)
-
-                let posBelow = key({ y: current.y + 1, x: current.x })
-
-                if (
-                    isDestination &&
-                    (wall.has(posBelow) || amphipods.get(posBelow)?.type == movingAmphipod.type)
-                ) {
+                let posBelow = current.add({ y: 1, x: 0 }).key
+                let hasNoConflicts = wall.has(posBelow) || amphipods.get(posBelow)?.type == movingAmphipod.type
+                if (movingAmphipod.targetX() == current.x && current.isInRoom && hasNoConflicts) {
                     result.push([current, distance])
                 }
             }
         }
         for (let [dx, dy] of offsets) {
-            dfs({ x: current.x + dx, y: current.y + dy }, distance + 1)
+            dfs(current.add({ x: dx, y: dy }), distance + 1)
         }
     }
 
     for (let [dx, dy] of offsets) {
-        dfs({ x: movingAmphipod.pos.x + dx, y: movingAmphipod.pos.y + dy }, 1)
+        dfs(movingAmphipod.pos.add({ x: dx, y: dy }), 1)
     }
 
     return result
 }
 
-function debug(amphipods: Iterable<Amphipod>) {
+function debug(amphipods: Iterable<Amphipod>, wall: Set<string>, height: number, width: number) {
     let buffer: Array<Array<string>> = new Array()
-    for (let i = 0; i < rawInput.length; i++) {
-        buffer.push(new Array(rawInput[i].length).fill(' '))
+
+    for (let i = 0; i < height; i++) {
+        buffer.push(new Array(width).fill(' '))
     }
 
     for (let w of wall) {
@@ -190,51 +170,89 @@ function debug(amphipods: Iterable<Amphipod>) {
     console.log(buffer.map(row => row.join('')).join('\n'))
 }
 
-let initialState = new State(0, initialAmphipods)
-let pq: PriorityQueue<State> = new PriorityQueue({
-    comparator: (s1, s2) => s1.energy - s2.energy,
-    initialValues: [initialState]
-})
-let seen: Set<string> = new Set()
+function parse(rawInput: Array<string>): [Map<string, Amphipod>, Set<string>] {
+    let wall: Set<string> = new Set()
+    let initialAmphipods: Map<string, Amphipod> = new Map()
 
-let iteration = 0
-while (pq.length != 0 && pq.length < 3620000) {
-    iteration++
-    let currentState = pq.dequeue()!
-    if (seen.has(currentState.key())) {
-        continue
-    }
-    seen.add(currentState.key())
-
-    if (iteration % 50000 == 0 || currentState.isFinal()) {
-        console.log("\nIteration:", iteration)
-        console.log("Current energy:", currentState.energy)
-        console.log("Total states:", pq.length)
-        debug(currentState.amphipods.values())
-    }
-
-    if (currentState.isFinal()) {
-        console.log(currentState.energy)
-        break
-    }
-
-    for (let [_, amphipod] of currentState.amphipods) {
-        let potentialMoves = getPotentialMoves(amphipod, currentState.amphipods)
-        for (let [newPos, step] of potentialMoves) {
-            let newAmphipod = amphipod.clone({
-                pos: newPos,
-                moves: amphipod.moves + 1
-            })
-            let newAmphipods = currentState.amphipods.clone()
-            newAmphipods.delete(amphipod.key())
-            newAmphipods.set(newAmphipod.key(), newAmphipod)
-            let newState = new State(
-                step * amphipod.energy + currentState.energy,
-                newAmphipods
-            )
-            if (!seen.has(newState.key())) {
-                pq.queue(newState)
+    for (let y = 0; y < rawInput.length; y++) {
+        for (let x = 0; x < rawInput[y].length; x++) {
+            let cell = rawInput[y][x]
+            let cellPos = new Pos({ y: y, x: x })
+            if (cell == '#') {
+                wall.add(cellPos.key)
+            } else if (cell == '.' || cell == ' ') {
+                continue
+            } else {
+                let amphipod = new Amphipod(cell as AmphipodType, 0, cellPos)
+                initialAmphipods.set(amphipod.key, amphipod)
             }
         }
     }
+    return [initialAmphipods, wall]
 }
+
+function run(rawInput: Array<string>) {
+    let [initialAmphipods, wall] = parse(rawInput)
+
+    let initialState = new State(0, initialAmphipods)
+    let pq: PriorityQueue<State> = new PriorityQueue({
+        comparator: (s1, s2) => s1.energy - s2.energy,
+        initialValues: [initialState]
+    })
+    let seen: Set<string> = new Set()
+
+    let iteration = 0
+    let result = -1
+    while (pq.length != 0) {
+        iteration++
+        let currentState = pq.dequeue()!
+        if (seen.has(currentState.key())) {
+            continue
+        }
+        seen.add(currentState.key())
+
+        if (iteration % 500 == 0 || currentState.isSatisfied()) {
+            console.log("\nIteration:", iteration)
+            console.log("Current energy:", currentState.energy)
+            console.log("Total states:", pq.length)
+            debug(currentState.amphipods.values(), wall, rawInput.length, rawInput[0].length)
+        }
+
+        if (currentState.isSatisfied()) {
+            result = currentState.energy
+            break
+        }
+
+        for (let [_, amphipod] of currentState.amphipods) {
+            let potentialMoves = getPotentialMoves(amphipod, currentState.amphipods, wall)
+            for (let [newPos, step] of potentialMoves) {
+                let newAmphipod = amphipod.clone({
+                    pos: newPos,
+                    moves: amphipod.moves + 1
+                })
+                let newAmphipods = currentState.amphipods.clone()
+                newAmphipods.delete(amphipod.key)
+                newAmphipods.set(newAmphipod.key, newAmphipod)
+                let newState = new State(
+                    step * amphipod.energy + currentState.energy,
+                    newAmphipods
+                )
+                if (!seen.has(newState.key())) {
+                    pq.queue(newState)
+                }
+            }
+        }
+    }
+    return result
+}
+
+let part1Input: string[] = readStrings(23)
+let part1 = run(part1Input)
+print_result(23, 1, part1)
+
+let part2Input: string[] = part1Input.slice(0, 3)
+    .concat("  #D#C#B#A#", "  #D#B#A#C#")
+    .concat(...part1Input.slice(3))
+console.log(part2Input)
+let part2 = run(part2Input)
+print_result(23, 2, part2)
