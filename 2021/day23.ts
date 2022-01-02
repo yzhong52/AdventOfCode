@@ -1,7 +1,6 @@
 import PriorityQueue from "ts-priority-queue";
 import { readStrings } from "./helpers";
 import "./collections"
-import { exit } from "process";
 
 let rawInput = readStrings(23)
 
@@ -9,7 +8,9 @@ let wall: Set<string> = new Set()
 let initialAmphipods: Map<string, Amphipod> = new Map()
 
 type Pos = { y: number, x: number }
+
 const seperator = '-'
+
 function key(pos: Pos): string {
     return `${pos.y}${seperator}${pos.x}`
 }
@@ -99,9 +100,28 @@ class State {
             props.amphipods
         )
     }
+
+    key() {
+        let buffer: Array<Array<string>> = new Array()
+        for (let i = 0; i < rawInput.length; i++) {
+            buffer.push(new Array(rawInput[i].length).fill(' '))
+        }
+
+        for (let amphipod of this.amphipods.values()) {
+            buffer[amphipod.pos.y][amphipod.pos.x] = amphipod.type
+        }
+
+        return buffer.map(row => row.join('')).join('\n')
+    }
 }
 
 function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amphipod>): Array<[Pos, number]> {
+    if (movingAmphipod.moves >= 2) {
+        // Each amphipod can make no more than 2 moves. It will move
+        // out of the room, and then move back to the right room.
+        return []
+    }
+
     let result: Array<[Pos, number]> = new Array()
     let visited: Set<string> = new Set()
     function dfs(current: Pos, distance: number) {
@@ -120,12 +140,11 @@ function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amph
         // cannot stop right outside of the room
         if (!immediatelyOutsideRoomPosSet.has(k)) {
             if (movingAmphipod.moves == 0) {
-                // if we are moving outside, then y has to be 1
+                // If we are moving outside, then y has to be 1
                 if (current.y == 1) {
                     result.push([current, distance])
                 }
-            }
-            if (movingAmphipod.moves == 1) {
+            } else if (movingAmphipod.moves == 1) {
                 // Amphipods will never move from the hallway into a room unless
                 // 1) that room is their destination room and;
                 // 2) that room contains no amphipods
@@ -142,17 +161,12 @@ function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amph
             }
         }
         for (let [dx, dy] of offsets) {
-            dfs({
-                x: current.x + dx,
-                y: current.y + dy
-            }, distance + 1)
+            dfs({ x: current.x + dx, y: current.y + dy }, distance + 1)
         }
     }
+
     for (let [dx, dy] of offsets) {
-        dfs({
-            x: movingAmphipod.pos.x + dx,
-            y: movingAmphipod.pos.y + dy
-        }, 1)
+        dfs({ x: movingAmphipod.pos.x + dx, y: movingAmphipod.pos.y + dy }, 1)
     }
 
     return result
@@ -176,19 +190,28 @@ function debug(amphipods: Iterable<Amphipod>) {
     console.log(buffer.map(row => row.join('')).join('\n'))
 }
 
-let pq: PriorityQueue<State> = new PriorityQueue({ comparator: (s1, s2) => s1.energy - s2.energy })
-pq.queue(new State(0, initialAmphipods))
+let initialState = new State(0, initialAmphipods)
+let pq: PriorityQueue<State> = new PriorityQueue({
+    comparator: (s1, s2) => s1.energy - s2.energy,
+    initialValues: [initialState]
+})
+let seen: Set<string> = new Set()
 
 let iteration = 0
-let maxSize = 0
-while (pq.length != 0 && pq.length < 80000) {
-    let currentState = pq.dequeue()!
-    maxSize = Math.max(pq.length, maxSize)
+while (pq.length != 0 && pq.length < 3620000) {
     iteration++
-    console.log("\nIteration:", iteration)
-    console.log("Current energy:", currentState.energy)
-    console.log("Total states:", pq.length)
-    debug(currentState.amphipods.values())
+    let currentState = pq.dequeue()!
+    if (seen.has(currentState.key())) {
+        continue
+    }
+    seen.add(currentState.key())
+
+    if (iteration % 50000 == 0 || currentState.isFinal()) {
+        console.log("\nIteration:", iteration)
+        console.log("Current energy:", currentState.energy)
+        console.log("Total states:", pq.length)
+        debug(currentState.amphipods.values())
+    }
 
     if (currentState.isFinal()) {
         console.log(currentState.energy)
@@ -196,12 +219,6 @@ while (pq.length != 0 && pq.length < 80000) {
     }
 
     for (let [_, amphipod] of currentState.amphipods) {
-        if (amphipod.moves >= 1) {
-            // Each amphipod can make no more than 2 moves. It will move
-            // out of the room, and then move back to the right room.
-            continue
-        }
-
         let potentialMoves = getPotentialMoves(amphipod, currentState.amphipods)
         for (let [newPos, step] of potentialMoves) {
             let newAmphipod = amphipod.clone({
@@ -215,9 +232,9 @@ while (pq.length != 0 && pq.length < 80000) {
                 step * amphipod.energy + currentState.energy,
                 newAmphipods
             )
-            pq.queue(newState)
+            if (!seen.has(newState.key())) {
+                pq.queue(newState)
+            }
         }
     }
 }
-
-console.log(maxSize)
