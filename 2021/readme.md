@@ -38,4 +38,4 @@ Dynamic programming problem.
 
 # Day 22: Reactor Reboot
 
-Divide and conquer problem.
+Divide and conquer problem a 3D space.
