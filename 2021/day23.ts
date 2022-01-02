@@ -64,24 +64,27 @@ console.log(immediatelyOutsideRoomPosSet)
 
 let offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
+let targetPos = new Map<AmphipodType, Set<string>>()
+for (let type of ['A', 'B', 'C', 'D']) {
+    let x = 2 * (type.charCodeAt(0) - 'A'.charCodeAt(0)) + 3
+    targetPos.set(
+        type as AmphipodType,
+        new Set([
+            key({ y: 2, x: x }),
+            key({ y: 3, x: x })
+        ])
+    )
+}
+console.log("Target Pos", targetPos)
+
 
 class State {
     constructor(public energy: number, public amphipods: Map<string, Amphipod>) { }
 
     isFinal(): boolean {
-        for (let [_, value] of this.amphipods) {
-            if (value.pos.y < 2) {
-                // There is an amphipod not in the room
+        for (let [_, amphipod] of this.amphipods) {
+            if (!targetPos.get(amphipod.type)!.has(amphipod.key())) {
                 return false
-            }
-            for (let [dx, dy] of offsets) {
-                let neighbour = this.amphipods.get(key({ y: value.pos.y + dy, x: value.pos.x + dx }))
-                if (neighbour) {
-                    // If there is a neighbour, it has to be of the same type
-                    if (neighbour.type != value.type) {
-                        return false
-                    }
-                }
             }
         }
         return true
@@ -98,7 +101,7 @@ class State {
     }
 }
 
-function getPotentialMoves(pos: Pos, amphipods: Map<string, Amphipod>, outsideRoom: boolean = true): Array<[Pos, number]> {
+function getPotentialMoves(movingAmphipod: Amphipod, amphipods: Map<string, Amphipod>): Array<[Pos, number]> {
     let result: Array<[Pos, number]> = new Array()
     let visited: Set<string> = new Set()
     function dfs(current: Pos, distance: number) {
@@ -113,11 +116,30 @@ function getPotentialMoves(pos: Pos, amphipods: Map<string, Amphipod>, outsideRo
             return
         }
         visited.add(k)
-        if (
-            !immediatelyOutsideRoomPosSet.has(k) // cannot stop right outside of the room
-            && (outsideRoom && current.y == 1) // if we are moving outside, then y has to be 1
-        ) {
-            result.push([current, distance])
+
+        // cannot stop right outside of the room
+        if (!immediatelyOutsideRoomPosSet.has(k)) {
+            if (movingAmphipod.moves == 0) {
+                // if we are moving outside, then y has to be 1
+                if (current.y == 1) {
+                    result.push([current, distance])
+                }
+            }
+            if (movingAmphipod.moves == 1) {
+                // Amphipods will never move from the hallway into a room unless
+                // 1) that room is their destination room and;
+                // 2) that room contains no amphipods
+                let isDestination = targetPos.get(movingAmphipod.type)!.has(k)
+
+                let posBelow = key({ y: current.y + 1, x: current.x })
+
+                if (
+                    isDestination &&
+                    (wall.has(posBelow) || amphipods.get(posBelow)?.type == movingAmphipod.type)
+                ) {
+                    result.push([current, distance])
+                }
+            }
         }
         for (let [dx, dy] of offsets) {
             dfs({
@@ -128,8 +150,8 @@ function getPotentialMoves(pos: Pos, amphipods: Map<string, Amphipod>, outsideRo
     }
     for (let [dx, dy] of offsets) {
         dfs({
-            x: pos.x + dx,
-            y: pos.y + dy
+            x: movingAmphipod.pos.x + dx,
+            y: movingAmphipod.pos.y + dy
         }, 1)
     }
 
@@ -174,17 +196,13 @@ while (pq.length != 0 && pq.length < 80000) {
     }
 
     for (let [_, amphipod] of currentState.amphipods) {
-        if (amphipod.moves >= 1) { // TODO: change back to 1
+        if (amphipod.moves >= 1) {
             // Each amphipod can make no more than 2 moves. It will move
             // out of the room, and then move back to the right room.
             continue
         }
-        // if (amphipod.type != 'B' && amphipod.type != 'C' && amphipod.type != 'D') {
-        //     // Let's just move a tyep for now
-        //     continue
-        // }
 
-        let potentialMoves = getPotentialMoves(amphipod.pos, currentState.amphipods)
+        let potentialMoves = getPotentialMoves(amphipod, currentState.amphipods)
         for (let [newPos, step] of potentialMoves) {
             let newAmphipod = amphipod.clone({
                 pos: newPos,
