@@ -1,5 +1,3 @@
-import { textSpanIntersectsWithPosition } from "typescript";
-
 // https://stackoverflow.com/a/51321724/1035008
 export class DefaultDict<K, V> extends Map<K, V> {
     defaultFunc: () => V;
@@ -47,6 +45,17 @@ Array.prototype.top = function () {
 
 Array.prototype.sum = function () {
     return this.reduce((a, b) => a + b, 0)
+}
+
+// Add clone method to Map
+declare global {
+    interface Map<K, V> {
+        clone(): Map<K, V>
+    }
+}
+
+Map.prototype.clone = function () {
+    return new Map(this.entries())
 }
 
 export { };
