@@ -39,3 +39,7 @@ Dynamic programming problem.
 # Day 22: Reactor Reboot
 
 Divide and conquer problem a 3D space.
+
+# Day 25: Sea Cucumber
+
+![](day25_sea_cucumber.gif)
