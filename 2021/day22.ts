@@ -59,7 +59,7 @@ class Region {
             .reduce((a, b) => a * b, 1)
     }
 
-    subtract(other1: Region): Region[] {
+    subtract(other: Region): Region[] {
         // Given a range in 1D, we can break it into 3 regions.
         // [===|===|===]
         //
@@ -70,11 +70,11 @@ class Region {
         // 2) There are some of them are not valid (e.g. count is 0)
         // We can filter out both of these.
 
-        let intersection = this.intersect(other1)
+        let intersection = this.intersect(other)
         if (intersection.count() == 0) {
             return [this]
         }
-        
+
         let segments = [0, 2, 4].map(index => {
             return [
                 [

@@ -211,7 +211,7 @@ function run(rawInput: Array<string>) {
         }
         seen.add(currentState.key())
 
-        if (iteration % 500 == 0 || currentState.isSatisfied()) {
+        if (iteration % 5000 == 0 || currentState.isSatisfied()) {
             console.log("\nIteration:", iteration)
             console.log("Current energy:", currentState.energy)
             console.log("Total states:", pq.length)

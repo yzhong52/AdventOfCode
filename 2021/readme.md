@@ -40,6 +40,33 @@ Dynamic programming problem.
 
 Divide and conquer problem a 3D space.
 
+# Day 23: Amphipod
+
+Input:
+```
+#############
+#...........#
+###D#D#B#A###
+  #D#C#B#A#
+  #D#B#A#C#
+  #C#A#B#C#
+  #########
+```
+
+Output:
+```
+Iteration: 226659
+Current energy: 43626
+Total states: 70
+#############
+#           #
+###A#B#C#D###
+  #A#B#C#D#
+  #A#B#C#D#
+  #A#B#C#D#
+  #########
+```
+
 # Day 25: Sea Cucumber
 
 ![](day25_sea_cucumber.gif)
