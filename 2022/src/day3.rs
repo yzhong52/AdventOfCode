@@ -39,7 +39,7 @@ fn day3_run(content: String) -> (u32, u32) {
 
     let part1: u32 = priorities.into_iter().sum();
 
-    println!("Part 1: {:?}", part1);
+    println!("Day 3 Part 1: {:?}", part1);
 
     // Convert each row to HashSet
     let set_rows = rows
@@ -50,22 +50,24 @@ fn day3_run(content: String) -> (u32, u32) {
     // Break into chunks of 3
     let chunks: Chunks<HashSet<char>> = set_rows.chunks(3);
 
-    let groups: Vec<u32> = chunks.map(|chunk| {
+    let groups: Vec<u32> = chunks
+        .map(|chunk| {
             let first = chunk[0].clone();
 
-            let output_set = &chunk[1..].iter().fold(first, |acc, x| {
-                acc.intersection(x).map(|x| *x).collect()
-            });
+            let output_set = &chunk[1..]
+                .iter()
+                .fold(first, |acc, x| acc.intersection(x).map(|x| *x).collect());
 
             // There is should be only one intersect element
             let ch = *output_set.iter().next().unwrap();
 
             score(ch)
-        }).collect();
+        })
+        .collect();
 
     let part2 = groups.iter().sum();
 
-    println!("Part 2: {:?}", part2);
+    println!("Day 3 Part 2: {:?}", part2);
 
     (part1, part2)
 }
