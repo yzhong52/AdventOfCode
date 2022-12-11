@@ -82,8 +82,8 @@ fn day2_run(content: String) -> (u32, u32) {
 
     let part2 = compute_score(&part2_pairs);
 
-    println!("Day 2 Part 1: {:?}", part1);
-    println!("Day 2 Part 2: {:?}", part2);
+    println!("day2 part1: {:?}", part1);
+    println!("day2 part2: {:?}", part2);
 
     (part1, part2)
 }

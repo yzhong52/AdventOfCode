@@ -39,7 +39,7 @@ fn day3_run(content: String) -> (u32, u32) {
 
     let part1: u32 = priorities.into_iter().sum();
 
-    println!("Day 3 Part 1: {:?}", part1);
+    println!("day3 part1: {:?}", part1);
 
     // Convert each row to HashSet
     let set_rows = rows
@@ -67,7 +67,7 @@ fn day3_run(content: String) -> (u32, u32) {
 
     let part2 = groups.iter().sum();
 
-    println!("Day 3 Part 2: {:?}", part2);
+    println!("day3 part2: {:?}", part2);
 
     (part1, part2)
 }

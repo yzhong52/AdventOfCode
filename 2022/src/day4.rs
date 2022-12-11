@@ -50,8 +50,8 @@ fn day4_run(content: String) -> (usize, usize) {
         })
         .count();
 
-    println!("Day 4 part 1: {:?}", part1);
-    println!("Day 4 part 2: {:?}", part2);
+    println!("day4 part1: {:?}", part1);
+    println!("day4 part2: {:?}", part2);
 
     (part1, part2)
 }

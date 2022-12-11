@@ -106,8 +106,8 @@ fn day5_run(content: String) -> (String, String) {
         .map(|stack| stack[stack.len() - 1])
         .join("");
 
-    println!("Day 4 part 1: {:?}", part1);
-    println!("Day 4 part 2: {:?}", part2);
+    println!("day5 part1: {:?}", part1);
+    println!("day5 part2: {:?}", part2);
 
     (part1, part2)
 }

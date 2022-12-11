@@ -13,8 +13,8 @@ fn run(content: String) -> (String, String) {
     let part1 = find_distinct(content, 4);
     let part2 = find_distinct(content, 14);
 
-    println!("Day 4 part 1: {:?}", part1);
-    println!("Day 4 part 2: {:?}", part2);
+    println!("day6 part1: {:?}", part1);
+    println!("day6 part2: {:?}", part2);
 
     (part1.to_string(), part2.to_string())
 }

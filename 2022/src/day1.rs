@@ -26,8 +26,8 @@ pub fn day1() -> (i32, i32) {
 
     let part1: i32 = *nums.last().unwrap();
     let part2: i32 = max3;
-    println!("Day 1 Part 1: {:?}", part1);
-    println!("Day 1 Part 2: {:?}", part2);
+    println!("day1 part1: {:?}", part1);
+    println!("day1 part2: {:?}", part2);
 
     (part1, part2)
 }
