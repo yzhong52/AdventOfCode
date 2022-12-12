@@ -16,6 +16,7 @@ struct Folder {
 }
 
 impl Folder {
+    #[allow(dead_code)]
     fn printstd(&self, depth: usize) {
         println!("{}- {} (dir)", " ".repeat(depth), self.name);
         for file in &self.files {
@@ -34,6 +35,7 @@ struct File {
 }
 
 impl File {
+    #[allow(dead_code)]
     fn printstd(&self, depth: usize) {
         println!(
             "{}- {} (file, size={})",
@@ -113,12 +115,12 @@ fn run(content: String) -> (String, String) {
         i += 1;
     }
 
-    root.borrow().printstd(0);
+    // Uncomment to print the tree
+    // root.borrow().printstd(0);
 
     let (total_used_size, part1) = calculate_part1(&root);
 
     let size_to_delete = 30000000 - (70000000 - total_used_size);
-    println!("Size to delete: {}", size_to_delete);
 
     let (_, part2) = find_target_folder(&root, size_to_delete);
 

@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use std::fs;
 
 pub fn day8() -> (String, String) {
@@ -103,20 +102,14 @@ fn run(content: String) -> (String, String) {
     let mut part2 = 0;
     for i in 0..grid.len() {
         for j in 0..grid[i].len() {
-            print!("{} ", left[i][j] * right[i][j] * up[i][j] * down[i][j]);
             part2 = usize::max(part2, left[i][j] * right[i][j] * up[i][j] * down[i][j])
         }
-        println!("");
     }
 
-    println!(
-        "grid\n{}",
-        grid.iter()
-            .map(|row| row.iter().map(|num| num.to_string()).join(""))
-            .join("\n")
-    );
+    println!("day8 part 1: {:?}", part1);
+    println!("day8 part 2: {:?}", part2);
 
-    (format!("{}", part1).to_string(), part2.to_string())
+    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
