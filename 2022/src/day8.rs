@@ -116,7 +116,7 @@ fn run(content: String) -> (String, String) {
             .join("\n")
     );
 
-    (format!("{}", part1).to_string(), part2.to_string())
+    (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
