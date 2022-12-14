@@ -52,8 +52,8 @@ fn run(content: String) -> (String, String) {
         .collect::<Vec<_>>()
         .join("\n");
 
-    println!("day10 part 1: {:?}", part1);
-    println!("day10 part 2: \n{}", part2);
+    println!("day10 part1: {:?}", part1);
+    println!("day10 part2: \n{}", part2);
 
     (part1.to_string(), part2.to_string())
 }

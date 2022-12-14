@@ -106,8 +106,8 @@ fn run(content: String) -> (String, String) {
         }
     }
 
-    println!("day8 part 1: {:?}", part1);
-    println!("day8 part 2: {:?}", part2);
+    println!("day8 part1: {:?}", part1);
+    println!("day8 part2: {:?}", part2);
 
     (part1.to_string(), part2.to_string())
 }

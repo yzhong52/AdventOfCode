@@ -124,8 +124,8 @@ fn run(content: String) -> (String, String) {
 
     let (_, part2) = find_target_folder(&root, size_to_delete);
 
-    println!("day7 part 1: {:?}", part1);
-    println!("day7 part 2: {:?}", part2);
+    println!("day7 part1: {:?}", part1);
+    println!("day7 part2: {:?}", part2);
 
     (part1.to_string(), part2.to_string())
 }

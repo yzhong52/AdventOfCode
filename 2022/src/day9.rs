@@ -13,7 +13,7 @@ struct Pos {
     y: i32,
 }
 
-#[warn(dead_code)]
+#[allow(dead_code)]
 fn printstd(pos: &Vec<Pos>) {
     let max_x = pos.iter().map(|p| p.x).max().unwrap() as i32;
     let max_y = pos.iter().map(|p| p.y).max().unwrap() as i32;
@@ -130,8 +130,8 @@ fn run(content: String) -> (String, String) {
     let part1 = part1_visited.len();
     let part2 = part2_visited.len();
 
-    println!("day9 part 1: {:?}", part1);
-    println!("day9 part 2: {:?}", part2);
+    println!("day9 part1: {:?}", part1);
+    println!("day9 part2: {:?}", part2);
 
     (part1.to_string(), part2.to_string())
 }
