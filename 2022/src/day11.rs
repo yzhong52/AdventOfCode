@@ -134,7 +134,7 @@ mod tests {
     fn day11_test() {
         let (part1, part2) = day11();
         assert_eq!(part1, "107822");
-        assert_eq!(part2, "0");
+        assert_eq!(part2, "27267163742");
     }
 
     #[test]
