@@ -178,19 +178,14 @@ fn run(content: String) -> (String, String) {
 
     let part2 = index1 * index2;
 
+    println!("day12 part1: {}", part1);
+    println!("day12 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn day13_test() {
-        let (part1, part2) = day13();
-        assert_eq!(part1, "6656");
-        assert_eq!(part2, "19716");
-    }
 
     #[test]
     fn day13_example_test() {
@@ -223,5 +218,12 @@ mod tests {
         let (part1, part2) = run(input);
         assert_eq!(part1, "13");
         assert_eq!(part2, "140");
+    }
+
+    #[test]
+    fn day13_test() {
+        let (part1, part2) = day13();
+        assert_eq!(part1, "6656");
+        assert_eq!(part2, "19716");
     }
 }
