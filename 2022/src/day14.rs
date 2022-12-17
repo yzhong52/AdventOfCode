@@ -7,6 +7,12 @@ use std::{
 
 use itertools::Itertools;
 
+// Coordinates for day 14
+// +--> x
+// |
+// |
+// y
+
 pub fn day14() -> (String, String) {
     let content = fs::read_to_string("input/day14").unwrap();
     run(content, false)
@@ -22,7 +28,7 @@ fn print(buffer: &Vec<Vec<char>>, overlap: Option<(i32, i32)>) {
     }
 
     println!(
-        "{}",
+        "{}\n",
         buffer2
             .iter()
             .map(|line| line.iter().collect::<String>())
@@ -45,14 +51,15 @@ fn get(buffer: &Vec<Vec<char>>, x: i32, y: i32) -> char {
 }
 
 fn simulate(buffer: &mut Vec<Vec<char>>, start_x: i32, start_y: i32, animate: bool) {
+    if animate {
+        print(&buffer, None);
+        thread::sleep(Duration::from_millis(5000));
+    }
+
     let mut should_continue = true;
     while should_continue {
         let mut cur_x = start_x;
         let mut cur_y = start_y;
-        // +--> x
-        // |
-        // |
-        // y
 
         should_continue = false;
         while cur_y < buffer.len() as i32 && cur_x < buffer[0].len() as i32 && cur_x >= 0 {
@@ -66,6 +73,10 @@ fn simulate(buffer: &mut Vec<Vec<char>>, start_x: i32, start_y: i32, animate: bo
                 cur_y += 1;
             } else {
                 paint(buffer, cur_x, cur_y, 'o');
+                if animate {
+                    print(&buffer, None);
+                    thread::sleep(Duration::from_millis(20));
+                }
                 if cur_x == start_x && cur_y == start_y {
                     should_continue = false;
                 } else {
@@ -76,7 +87,7 @@ fn simulate(buffer: &mut Vec<Vec<char>>, start_x: i32, start_y: i32, animate: bo
 
             if animate {
                 print(buffer, Some((cur_x, cur_y)));
-                thread::sleep(Duration::from_millis(10));
+                thread::sleep(Duration::from_millis(20));
             }
         }
     }
@@ -124,8 +135,10 @@ fn solve(
 
     simulate(&mut buffer, start_x, start_y, animate);
 
-    println!("Boundary: ({}, {}) ({}, {})", min_x, min_y, max_x, max_y);
-    print(&buffer, None);
+    if !animate {
+        println!("Boundary: ({}, {}) ({}, {})", min_x, min_y, max_x, max_y);
+        print(&buffer, None);
+    }
 
     buffer
         .iter()
@@ -156,11 +169,6 @@ pub fn run(content: String, animate: bool) -> (String, String) {
     let all_x = all_points.iter().map(|(left, _)| left).collect_vec();
     let all_y = all_points.iter().map(|(_, right)| right).collect_vec();
 
-    // +--> x
-    // |
-    // |
-    // y
-
     let max_x: i32 = i32::max(SAND_ORIGIN_X, **all_x.iter().max().unwrap());
     let min_x: i32 = i32::min(SAND_ORIGIN_X, **all_x.iter().min().unwrap());
     let max_y: i32 = i32::max(SAND_ORIGIN_Y, **all_y.iter().max().unwrap());
@@ -174,8 +182,11 @@ pub fn run(content: String, animate: bool) -> (String, String) {
     let part1: usize = solve(&lines, max_x, min_x, max_y, min_y, false, animate);
     let part2 = solve(&lines, max_x2, min_x2, max_y2, min_y, true, animate);
 
-    println!("day12 part1: {}", part1);
-    println!("day12 part2: {}", part2);
+    if !animate {
+        println!("day12 part1: {}", part1);
+        println!("day12 part2: {}", part2);
+    }
+
     (part1.to_string(), part2.to_string())
 }
 
