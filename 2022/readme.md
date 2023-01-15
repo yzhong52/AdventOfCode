@@ -58,6 +58,6 @@ $ cargo run -- day14
 
 https://www.reddit.com/r/adventofcode/comments/zn6k1l/2022_day_16_solutions/
 
-Without much optimization, but heavily inspired by discussion in reddit.
+Heavily inspired by discussion in reddit.
 
-Solved with back-tracing and Floyd-Warshall algorithm. 
+Without much optimization, solved with back-tracing and Floyd-Warshall algorithm, in about 45 seconds. 
