@@ -92,6 +92,8 @@ fn run(content: String, target_y: i32, search_range: (i32, i32)) -> (String, Str
     let part1 = solve_part1(&lines, target_y);
     let part2 = solve_part2(&lines, search_range);
 
+    println!("day15 part1: {}", part1);
+    println!("day15 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 

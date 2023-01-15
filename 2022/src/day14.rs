@@ -182,11 +182,8 @@ pub fn run(content: String, animate: bool) -> (String, String) {
     let part1: usize = solve(&lines, max_x, min_x, max_y, min_y, false, animate);
     let part2 = solve(&lines, max_x2, min_x2, max_y2, min_y, true, animate);
 
-    if !animate {
-        println!("day12 part1: {}", part1);
-        println!("day12 part2: {}", part2);
-    }
-
+    println!("day14 part1: {}", part1);
+    println!("day14 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 

@@ -1,7 +1,6 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 use std::fs;
-use std::process::exit;
 use std::{thread, time::Duration};
 
 // "vertical chamber is exactly seven units wide"
@@ -49,62 +48,6 @@ fn print(bottom: &Vec<[char; 9]>) {
 fn simulate(
     rocks: &[Vec<Vec<char>>; 5],
     patterns: &Vec<char>,
-    rock_count: usize,
-    debug: bool,
-) -> usize {
-    let mut bottom: Vec<[char; 9]> = vec![INITIAL_BOTTOM];
-
-    let mut pattern_id = 0;
-    for _rock_id in 0..rock_count {
-        let rock = &rocks[_rock_id % rocks.len()];
-        println!("Rock {}", _rock_id);
-
-        // "Each rock appears so that its left edge is two units away from the
-        // left wall and its bottom edge is three units above the highest rock
-        // in the room (or the floor, if there isn't one)"
-        let mut x = 3;
-        let mut y = bottom.len() + 3;
-
-        // Add some chamber wall so that it is easier to check to make sure the
-        // moving of the rock won't fall out
-        for _ in 0..3 + rock.len() {
-            bottom.push(CHAMBER_WALL);
-        }
-
-        loop {
-            let pattern = patterns[pattern_id % patterns.len()];
-            pattern_id += 1;
-            if pattern == '<' && !has_overlap(&rock, &bottom, x - 1, y) {
-                // move to the left
-                x -= 1;
-            } else if pattern == '>' && !has_overlap(&rock, &bottom, x + 1, y) {
-                // move to the right
-                x += 1;
-            }
-            if !has_overlap(&rock, &bottom, x, y - 1) {
-                // move down
-                y -= 1;
-            } else {
-                // cannot move down anymore
-                add_to_bottom(&rock, &mut bottom, x, y);
-                // remove empty chamber wall
-                while bottom.last().unwrap() == &CHAMBER_WALL {
-                    bottom.pop();
-                }
-                break;
-            }
-        }
-
-        if debug {
-            print(&bottom);
-        }
-    }
-    bottom.len() - 1
-}
-
-fn simulate_part2(
-    rocks: &[Vec<Vec<char>>; 5],
-    patterns: &Vec<char>,
     total_falling_rock_count: usize,
     debug: bool,
 ) -> usize {
@@ -115,37 +58,43 @@ fn simulate_part2(
 
     let mut height_skipped: usize = 0;
     let mut step_idx = 0;
+    let mut multiplier_calculated = false;
     while step_idx < total_falling_rock_count {
-
         let rock_idx = step_idx % rocks.len();
         let rock = &rocks[rock_idx];
 
         // Just a magic number, it is unlikely to repeat more than this number and start becoming
         // different.
-        const PATTERN_TEST_HEIGHT: usize = 100;
-        if height_skipped == 0 && bottom.len() > PATTERN_TEST_HEIGHT {
-            let bottom_pattern: Vec<_> = bottom[bottom.len() - PATTERN_TEST_HEIGHT..].iter().collect();
+        const PATTERN_TEST_HEIGHT: usize = 30;
+        if !multiplier_calculated && bottom.len() > PATTERN_TEST_HEIGHT {
+            let bottom_pattern: Vec<_> = bottom[bottom.len() - PATTERN_TEST_HEIGHT..]
+                .iter()
+                .collect();
             let bottom_pattern: String = bottom_pattern
                 .iter()
                 .map(|row| row.iter().join(""))
                 .join("\n");
-            let key = bottom_pattern.clone();
+            let key = (bottom_pattern.clone(), rock_idx, pattern_id);
             if cache.contains_key(&key) {
-                let (last_step, last_rock_idx, last_pattern_idx, last_height) = cache.get(&key).unwrap();
-                println!(
-                    "Last time this is seen, we were at step: {last_step}, rock idx: {last_rock_idx}, pattern idx: {last_pattern_idx}"
-                );
-                println!("We are now at step: {step_idx}, rock idx: {rock_idx}, pattern id: {pattern_id}");
+                if debug {
+                    print(&bottom);
+                }
+                let (last_step, last_height) = cache.get(&key).unwrap();
+                println!("Last time this is seen, we were at step: {last_step}");
+                println!("We are now at step: {step_idx}");
                 let height_difference = bottom.len() - last_height;
                 let step_difference = step_idx - last_step;
-                println!("height difference: {height_difference}, step difference: {step_difference}");
+                println!(
+                    "height difference: {height_difference}, step difference: {step_difference}"
+                );
 
                 let multiplier = (total_falling_rock_count - step_idx) / step_difference;
                 println!("multiplier {multiplier}");
                 step_idx += multiplier * step_difference;
                 height_skipped = multiplier * height_difference;
+                multiplier_calculated = true;
             }
-            cache.insert(key, (step_idx, rock_idx, pattern_id, bottom.len()));
+            cache.insert(key, (step_idx, bottom.len()));
         }
 
         // "Each rock appears so that its left edge is two units away from the
@@ -183,10 +132,6 @@ fn simulate_part2(
                 break;
             }
         }
-        //
-        // if debug {
-        //     print(&bottom);
-        // }
         step_idx += 1;
     }
     bottom.len() - 1 + height_skipped
@@ -194,6 +139,7 @@ fn simulate_part2(
 
 fn run(content: String, debug: bool) -> (String, String) {
     let patterns: Vec<char> = content.trim().chars().collect();
+
     let rocks: [Vec<Vec<char>>; 5] = [
         vec!["####"],
         vec![
@@ -223,11 +169,14 @@ fn run(content: String, debug: bool) -> (String, String) {
             .collect_vec()
     });
 
-    let part1 = simulate_part2(&rocks, &patterns, 2022, debug);
+    let part1 = simulate(&rocks, &patterns, 2022, debug);
 
     // There is no way to simulate all 1000000000000 moves. But at some point, the
-    // pattern is going to repeat?
-    let part2 = simulate_part2(&rocks, &patterns, 1000000000000, true);
+    // pattern is going to repeat.
+    let part2 = simulate(&rocks, &patterns, 1000000000000, debug);
+
+    println!("day17 part1: {}", part1);
+    println!("day17 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 

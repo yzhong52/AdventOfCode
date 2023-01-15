@@ -1,8 +1,8 @@
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::time::Instant;
 use std::{collections::HashMap, fs};
-
 type Valve = usize;
 
 #[derive(Debug, Clone)]
@@ -42,11 +42,11 @@ fn parse(content: String) -> HashMap<Valve, ValveProp> {
             .unwrap()
             .as_str()
             .split(", ")
-            .map(|s| {
-                if !name_to_index.contains_key(s) {
-                    name_to_index.insert(s, name_to_index.len());
+            .map(|leading_valve_str| {
+                if !name_to_index.contains_key(leading_valve_str) {
+                    name_to_index.insert(leading_valve_str, name_to_index.len());
                 }
-                *name_to_index.get(s).unwrap()
+                *name_to_index.get(leading_valve_str).unwrap()
             })
             .collect();
 
@@ -168,6 +168,7 @@ fn partitions(values: Vec<Valve>) -> Vec<(Vec<Valve>, Vec<Valve>)> {
 }
 
 fn run(content: String) -> (String, String) {
+    println!("day16: this can take a while...");
     let all_valves = parse(content);
 
     let valves_with_positive_flow_rate: Vec<Valve> = all_valves
@@ -180,6 +181,8 @@ fn run(content: String) -> (String, String) {
     let valve_distances = floyd_warshall(&all_valves);
 
     let mut cache: HashMap<(Valve, Vec<Valve>, i32), i32> = HashMap::new();
+
+    let start = Instant::now();
     let part1 = solve(
         &all_valves,
         &valve_distances,
@@ -188,19 +191,24 @@ fn run(content: String) -> (String, String) {
         valves_with_positive_flow_rate.clone(),
         30,
     );
+    let duration = start.elapsed();
+    println!("part1 time elapsed: {:?}", duration);
 
+    let start = Instant::now();
     let part2 = partitions(valves_with_positive_flow_rate)
         .into_iter()
         .map(|(left, right)| {
             let left = solve(&all_valves, &valve_distances, &mut cache, 0, left, 26);
-
             let right = solve(&all_valves, &valve_distances, &mut cache, 0, right, 26);
-
             left + right
         })
         .max()
         .unwrap();
+    let duration = start.elapsed();
+    println!("part2 time elapsed: {:?}", duration);
 
+    println!("day16 part1: {}", part1);
+    println!("day16 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 
