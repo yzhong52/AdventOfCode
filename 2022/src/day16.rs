@@ -7,19 +7,16 @@ use std::{
     fs,
 };
 
-pub fn day16() -> (String, String) {
-    let content = fs::read_to_string("input/day16").unwrap();
-    run(content)
-}
+type Valve = i32;
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 struct VisitedState {
     // The current valve position
-    current_valve: ValveName,
+    current_valve: Valve,
 
     // FIXME: This should be 'HashSet'. But itself cannot be hashed.
     // - https://github.com/rust-lang/rust/pull/48366
-    opened_valves: BTreeSet<ValveName>,
+    opened_valves: BTreeSet<Valve>,
 }
 
 #[derive(Debug, Clone)]
@@ -28,18 +25,66 @@ struct Pressure {
     total: i32,
 }
 
-type ValveName = i32;
-
 #[derive(Debug, Clone)]
 struct ValveProp {
     rate: i32,
-    leading_valves: Vec<ValveName>,
+    leading_valves: Vec<Valve>,
+}
+
+fn parse(content: String) -> HashMap<Valve, ValveProp> {
+    lazy_static! {
+        // Examples
+        // Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
+        // Valve HH has flow rate=22; tunnel leads to valve GG
+        static ref RE: Regex =
+            Regex::new(r"^Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? (.*)$")
+                .unwrap();
+    }
+
+    let mut result: HashMap<Valve, ValveProp> = HashMap::new();
+
+    let mut name_to_index: HashMap<&str, Valve> = [("AA", 0)].into_iter().collect();
+
+    for line in content.trim().split("\n") {
+        let capture = RE
+            .captures(line.trim())
+            .expect(&format!("Unable to unwrap string '{}'.", line.trim()));
+
+        let source_str: &str = capture.get(1).unwrap().as_str();
+        if !name_to_index.contains_key(source_str) {
+            name_to_index.insert(source_str, name_to_index.len() as i32);
+        }
+
+        let source: Valve = *name_to_index.get(source_str).unwrap();
+        let rate: i32 = capture.get(2).unwrap().as_str().parse::<i32>().unwrap();
+        let leading_valves: Vec<Valve> = capture
+            .get(3)
+            .unwrap()
+            .as_str()
+            .split(", ")
+            .map(|s| {
+                if !name_to_index.contains_key(s) {
+                    name_to_index.insert(s, name_to_index.len() as i32);
+                }
+                *name_to_index.get(s).unwrap()
+            })
+            .collect();
+
+        let valve_prop = ValveProp {
+            rate,
+            leading_valves,
+        };
+
+        result.insert(source, valve_prop);
+    }
+
+    result
 }
 
 fn solve(
     initial_state: VisitedState,
-    all_valves: &HashMap<ValveName, ValveProp>,
-    openable_valves: HashSet<ValveName>,
+    all_valves: &HashMap<Valve, ValveProp>,
+    openable_valves: HashSet<Valve>,
     total_steps: i32,
 ) -> i32 {
     let mut visited_states: HashMap<VisitedState, i32> = HashMap::new();
@@ -167,59 +212,9 @@ fn solve(
         .unwrap()
 }
 
-fn parse(content: String) -> HashMap<ValveName, ValveProp> {
-    lazy_static! {
-        // Examples
-        // Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
-        // Valve HH has flow rate=22; tunnel leads to valve GG
-        static ref RE: Regex =
-            Regex::new(r"^Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? (.*)$")
-                .unwrap();
-    }
-
-    let mut result: HashMap<ValveName, ValveProp> = HashMap::new();
-
-    let mut name_to_index: HashMap<&str, ValveName> = [("AA", 0)].into_iter().collect();
-
-    for line in content.trim().split("\n") {
-        let capture = RE
-            .captures(line.trim())
-            .expect(&format!("Unable to unwrap string '{}'.", line.trim()));
-
-        let source_str: &str = capture.get(1).unwrap().as_str();
-        if !name_to_index.contains_key(source_str) {
-            name_to_index.insert(source_str, name_to_index.len() as i32);
-        }
-
-        let source: ValveName = *name_to_index.get(source_str).unwrap();
-        let rate: i32 = capture.get(2).unwrap().as_str().parse::<i32>().unwrap();
-        let leading_valves: Vec<ValveName> = capture
-            .get(3)
-            .unwrap()
-            .as_str()
-            .split(", ")
-            .map(|s| {
-                if !name_to_index.contains_key(s) {
-                    name_to_index.insert(s, name_to_index.len() as i32);
-                }
-                *name_to_index.get(s).unwrap()
-            })
-            .collect();
-
-        let valve_prop = ValveProp {
-            rate,
-            leading_valves,
-        };
-
-        result.insert(source, valve_prop);
-    }
-
-    result
-}
-
-fn partitions(values: Vec<ValveName>) -> Vec<(Vec<ValveName>, Vec<ValveName>)> {
+fn partitions(values: Vec<Valve>) -> Vec<(Vec<Valve>, Vec<Valve>)> {
     // We can assume the first value is always assigned to the left (due to symmetry)
-    let mut result: Vec<Vec<ValveName>> = vec![vec![values[0].clone()]];
+    let mut result: Vec<Vec<Valve>> = vec![vec![values[0].clone()]];
 
     for value in &values[1..] {
         let mut new_result = result.clone();
@@ -252,13 +247,13 @@ fn run(content: String) -> (String, String) {
     };
 
     let all_valves_cloned = all_valves.clone();
-    let valves_with_positive_flow_rate: Vec<ValveName> = all_valves_cloned
+    let valves_with_positive_flow_rate: Vec<Valve> = all_valves_cloned
         .into_iter()
         .filter(|(_value_name, valve_property)| valve_property.rate > 0)
         .map(|(value_name, _valve_property)| value_name)
         .collect_vec();
 
-    let openable_valves: HashSet<ValveName> =
+    let openable_valves: HashSet<Valve> =
         HashSet::from_iter(valves_with_positive_flow_rate.clone());
 
     let part1 = solve(initial_state.clone(), &all_valves, openable_valves, 30);
@@ -291,6 +286,11 @@ fn run(content: String) -> (String, String) {
         .unwrap();
 
     (part1.to_string(), part2.to_string())
+}
+
+pub fn day16() -> (String, String) {
+    let content = fs::read_to_string("input/day16").unwrap();
+    run(content)
 }
 
 #[cfg(test)]
