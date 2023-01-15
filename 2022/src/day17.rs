@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 use std::fs;
+use std::process::exit;
 use std::{thread, time::Duration};
 
 // "vertical chamber is exactly seven units wide"
@@ -36,13 +37,13 @@ fn add_to_bottom(rock: &Vec<Vec<char>>, bottom: &mut Vec<[char; 9]>, x: usize, y
 
 fn print(bottom: &Vec<[char; 9]>) {
     let mut buffer = vec![];
-    for i in 0..bottom.len().min(15) {
+    for i in 0..bottom.len().min(1000) {
         let row = bottom[bottom.len() - 1 - i];
         let row_str = row.iter().join("");
         buffer.push(row_str);
     }
     println!("{}", buffer.join("\n"));
-    thread::sleep(Duration::from_millis(500));
+    thread::sleep(Duration::from_millis(100));
 }
 
 fn simulate(
@@ -104,7 +105,7 @@ fn simulate(
 fn simulate_part2(
     rocks: &[Vec<Vec<char>>; 5],
     patterns: &Vec<char>,
-    rock_count: usize,
+    total_falling_rock_count: usize,
     debug: bool,
 ) -> usize {
     let mut bottom: Vec<[char; 9]> = vec![INITIAL_BOTTOM];
@@ -112,15 +113,40 @@ fn simulate_part2(
 
     let mut cache = HashMap::new();
 
-    for _rock_id in 0..rock_count {
-        let rock = &rocks[_rock_id % rocks.len()];
-        println!("Rock {} {}", _rock_id, cache.len());
+    let mut height_skipped: usize = 0;
+    let mut step_idx = 0;
+    while step_idx < total_falling_rock_count {
 
-        let key = (_rock_id, pattern_id);
-        if cache.contains_key(&key) {
-            panic!("Repeated at {:?}", key);
+        let rock_idx = step_idx % rocks.len();
+        let rock = &rocks[rock_idx];
+
+        // Just a magic number, it is unlikely to repeat more than this number and start becoming
+        // different.
+        const PATTERN_TEST_HEIGHT: usize = 100;
+        if height_skipped == 0 && bottom.len() > PATTERN_TEST_HEIGHT {
+            let bottom_pattern: Vec<_> = bottom[bottom.len() - PATTERN_TEST_HEIGHT..].iter().collect();
+            let bottom_pattern: String = bottom_pattern
+                .iter()
+                .map(|row| row.iter().join(""))
+                .join("\n");
+            let key = bottom_pattern.clone();
+            if cache.contains_key(&key) {
+                let (last_step, last_rock_idx, last_pattern_idx, last_height) = cache.get(&key).unwrap();
+                println!(
+                    "Last time this is seen, we were at step: {last_step}, rock idx: {last_rock_idx}, pattern idx: {last_pattern_idx}"
+                );
+                println!("We are now at step: {step_idx}, rock idx: {rock_idx}, pattern id: {pattern_id}");
+                let height_difference = bottom.len() - last_height;
+                let step_difference = step_idx - last_step;
+                println!("height difference: {height_difference}, step difference: {step_difference}");
+
+                let multiplier = (total_falling_rock_count - step_idx) / step_difference;
+                println!("multiplier {multiplier}");
+                step_idx += multiplier * step_difference;
+                height_skipped = multiplier * height_difference;
+            }
+            cache.insert(key, (step_idx, rock_idx, pattern_id, bottom.len()));
         }
-        cache.insert((_rock_id, pattern_id), bottom.len());
 
         // "Each rock appears so that its left edge is two units away from the
         // left wall and its bottom edge is three units above the highest rock
@@ -135,8 +161,8 @@ fn simulate_part2(
         }
 
         loop {
-            let pattern = patterns[pattern_id % patterns.len()];
-            pattern_id += 1;
+            let pattern = patterns[pattern_id];
+            pattern_id = (pattern_id + 1) % patterns.len();
             if pattern == '<' && !has_overlap(&rock, &bottom, x - 1, y) {
                 // move to the left
                 x -= 1;
@@ -157,12 +183,13 @@ fn simulate_part2(
                 break;
             }
         }
-
-        if debug {
-            print(&bottom);
-        }
+        //
+        // if debug {
+        //     print(&bottom);
+        // }
+        step_idx += 1;
     }
-    bottom.len() - 1
+    bottom.len() - 1 + height_skipped
 }
 
 fn run(content: String, debug: bool) -> (String, String) {
@@ -196,12 +223,11 @@ fn run(content: String, debug: bool) -> (String, String) {
             .collect_vec()
     });
 
-    // let part1 = simulate(&patterns, 2022, debug);
-    let part1 = 3068;
+    let part1 = simulate_part2(&rocks, &patterns, 2022, debug);
 
     // There is no way to simulate all 1000000000000 moves. But at some point, the
     // pattern is going to repeat?
-    let part2 = simulate_part2(&rocks, &patterns, 1000000000000, false);
+    let part2 = simulate_part2(&rocks, &patterns, 1000000000000, true);
     (part1.to_string(), part2.to_string())
 }
 
@@ -219,14 +245,14 @@ mod tests {
         let input = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>".to_string();
 
         let (part1, part2) = run(input, true);
-        assert_eq!(part1, "3068");
         assert_eq!(part2, "1514285714288");
+        assert_eq!(part1, "3068");
     }
 
     #[test]
     fn day17_test() {
         let (part1, part2) = day17();
-        assert_eq!(part1, "x");
-        assert_eq!(part2, "x");
+        assert_eq!(part1, "3159");
+        assert_eq!(part2, "1566272189352");
     }
 }
