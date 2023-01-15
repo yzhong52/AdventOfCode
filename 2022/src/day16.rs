@@ -42,11 +42,11 @@ fn parse(content: String) -> HashMap<Valve, ValveProp> {
             .unwrap()
             .as_str()
             .split(", ")
-            .map(|s| {
-                if !name_to_index.contains_key(s) {
-                    name_to_index.insert(s, name_to_index.len());
+            .map(|leading_valve_str| {
+                if !name_to_index.contains_key(leading_valve_str) {
+                    name_to_index.insert(leading_valve_str, name_to_index.len());
                 }
-                *name_to_index.get(s).unwrap()
+                *name_to_index.get(leading_valve_str).unwrap()
             })
             .collect();
 
