@@ -1,29 +1,9 @@
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::collections::HashSet;
-use std::{
-    collections::{BTreeSet, HashMap},
-    fs,
-};
+use std::{collections::HashMap, fs};
 
-type Valve = i32;
-
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
-struct VisitedState {
-    // The current valve position
-    current_valve: Valve,
-
-    // FIXME: This should be 'HashSet'. But itself cannot be hashed.
-    // - https://github.com/rust-lang/rust/pull/48366
-    opened_valves: BTreeSet<Valve>,
-}
-
-#[derive(Debug, Clone)]
-struct Pressure {
-    releasing: i32,
-    total: i32,
-}
+type Valve = usize;
 
 #[derive(Debug, Clone)]
 struct ValveProp {
@@ -52,7 +32,7 @@ fn parse(content: String) -> HashMap<Valve, ValveProp> {
 
         let source_str: &str = capture.get(1).unwrap().as_str();
         if !name_to_index.contains_key(source_str) {
-            name_to_index.insert(source_str, name_to_index.len() as i32);
+            name_to_index.insert(source_str, name_to_index.len());
         }
 
         let source: Valve = *name_to_index.get(source_str).unwrap();
@@ -64,7 +44,7 @@ fn parse(content: String) -> HashMap<Valve, ValveProp> {
             .split(", ")
             .map(|s| {
                 if !name_to_index.contains_key(s) {
-                    name_to_index.insert(s, name_to_index.len() as i32);
+                    name_to_index.insert(s, name_to_index.len());
                 }
                 *name_to_index.get(s).unwrap()
             })
@@ -82,134 +62,82 @@ fn parse(content: String) -> HashMap<Valve, ValveProp> {
 }
 
 fn solve(
-    initial_state: VisitedState,
     all_valves: &HashMap<Valve, ValveProp>,
-    openable_valves: HashSet<Valve>,
-    total_steps: i32,
+    valve_distances: &Vec<Vec<usize>>,
+    cache: &mut HashMap<(Valve, Vec<Valve>, i32), i32>,
+    current_valve: Valve,
+    pending_valves: Vec<Valve>,
+    remaining_steps: i32,
 ) -> i32 {
-    let mut visited_states: HashMap<VisitedState, i32> = HashMap::new();
-    visited_states.insert(initial_state.clone(), 0);
-
-    let mut visiting_states: Vec<(VisitedState, Pressure)> = vec![(
-        initial_state,
-        Pressure {
-            releasing: 0,
-            total: 0,
-        },
-    )];
-
-    // To keep track of the states, we only need to know
-    //
-    // 1) where we are currently located, `current_valve`
-    // 2) what the valves that have been opened, `opened_valves`
-    //
-    // Every step, we can take two actions,
-    //
-    // 1) open the current valve, which will add one more entry to `opened_valves`
-    // 2) move to another vale, which will change the value of `opened_valve`.
-    //
-    // Now, when we have multiple states to expand our search, which one should we start with
-    // so that we can find the optimal solution fastest?
-    for _steps in 1..=total_steps {
-        let mut next_visiting_states = vec![];
-
-        for (current_visiting_state, pressure) in &visiting_states {
-            let current_valve = &current_visiting_state.current_valve;
-
-            // Try to open the current valve
-            // Only consider opening the valve if it is not yet opened
-            if !current_visiting_state.opened_valves.contains(current_valve) {
-                let current_valve_property = all_valves.get(current_valve).unwrap();
-
-                // Only consider opening the valve if the flow rate is greater than 0
-                if openable_valves.contains(current_valve) {
-                    let mut new_state = current_visiting_state.clone();
-                    new_state.opened_valves.insert(current_valve.clone());
-                    let new_pressure = Pressure {
-                        releasing: pressure.releasing + current_valve_property.rate,
-                        total: pressure.total + pressure.releasing,
-                    };
-                    if visited_states
-                        .get(&new_state)
-                        .map(|total_pressure| total_pressure < &new_pressure.total)
-                        .unwrap_or(true)
-                    {
-                        visited_states.insert(new_state.clone(), new_pressure.total);
-                        next_visiting_states.push((new_state, new_pressure));
-                    }
-                }
-            }
-
-            // Try to move on to the next valve
-            let new_pressure = Pressure {
-                releasing: pressure.releasing,
-                total: pressure.total + pressure.releasing,
-            };
-
-            for next_valve in &all_valves.get(current_valve).unwrap().leading_valves {
-                let mut new_state = current_visiting_state.clone();
-                new_state.current_valve = next_valve.clone();
-
-                if visited_states
-                    .get(&new_state)
-                    .map(|total_pressure| total_pressure < &new_pressure.total)
-                    .unwrap_or(true)
-                {
-                    visited_states.insert(new_state.clone(), new_pressure.total);
-                    next_visiting_states.push((new_state, new_pressure.clone()));
-                }
-            }
-
-            // Do nothing
-            visited_states.insert(current_visiting_state.clone(), new_pressure.total);
-            next_visiting_states.push((current_visiting_state.clone(), new_pressure));
-        }
-
-        // Can we do some more pruning?
-        let next_visiting_states_len = next_visiting_states.len();
-
-        let steps_remained = 30 - _steps;
-
-        let overall_minimum_release_pressure = next_visiting_states
-            .iter()
-            .map(|(_state, pressure)| pressure.releasing * steps_remained + pressure.total)
-            .max()
-            .unwrap();
-
-        visiting_states = next_visiting_states
-            .into_iter()
-            .filter(|(state, pressure)| {
-                // From all the remaining valves, find the one with the maximum flow that is not yet
-                // opened.
-                let max_unopened_flow = all_valves
-                    .iter()
-                    .filter(|(valve_name, _)| !state.opened_valves.contains(*valve_name))
-                    .map(|(_, valve_property)| valve_property.rate)
-                    .max()
-                    .unwrap_or(0);
-
-                let maximum_release_pressure = (max_unopened_flow * ((total_steps - _steps) / 2)
-                    + pressure.releasing)
-                    * steps_remained
-                    + pressure.total;
-
-                maximum_release_pressure >= overall_minimum_release_pressure
-            })
-            .collect_vec();
-
-        // println!(
-        //     "steps: {}, potential states count: {}, states pruned: {}",
-        //     _steps,
-        //     next_visiting_states_len,
-        //     next_visiting_states_len as i32 - visiting_states.len() as i32,
-        // );
+    let mut result = 0;
+    let key = (current_valve, pending_valves.clone(), remaining_steps);
+    if cache.contains_key(&key) {
+        return *cache.get(&key).unwrap();
     }
 
-    visiting_states
-        .iter()
-        .map(|(_, pressure)| pressure.total)
-        .max()
-        .unwrap()
+    for i in 0..pending_valves.len() {
+        let next_pending_valve = pending_valves[i];
+
+        // Number of steps required to move from `current_valve` to `next_valve`
+        let steps = valve_distances[current_valve][next_pending_valve];
+
+        // 1 more step to open the valve
+        let next_remaining_steps = remaining_steps - steps as i32 - 1;
+
+        if next_remaining_steps > 0 {
+            let next_pending_valves = pending_valves[0..i]
+                .to_vec()
+                .into_iter()
+                .chain(pending_valves[i + 1..].to_vec())
+                .collect();
+
+            let next_result = solve(
+                all_valves,
+                valve_distances,
+                cache,
+                next_pending_valve,
+                next_pending_valves,
+                next_remaining_steps,
+            );
+
+            // With the total pressure released by opening the `next_pending_valve`
+            let current_result = next_result
+                + all_valves.get(&next_pending_valve).unwrap().rate * next_remaining_steps;
+
+            result = result.max(current_result);
+        }
+    }
+    cache.insert(key, result);
+    result
+}
+
+fn floyd_warshall(all_valves: &HashMap<Valve, ValveProp>) -> Vec<Vec<usize>> {
+    let num_of_valves = all_valves.len();
+
+    // divide by 2 in case of integer overflow later during addition
+    let mut valve_distances = vec![vec![usize::MAX / 2; num_of_valves]; num_of_valves];
+
+    for (valve, valve_prop) in all_valves {
+        for leading_valve in &valve_prop.leading_valves {
+            valve_distances[*valve][*leading_valve] = 1;
+            valve_distances[*leading_valve][*valve] = 1;
+        }
+    }
+
+    for i in 0..num_of_valves {
+        valve_distances[i][i] = 0;
+    }
+
+    for k in 0..num_of_valves {
+        for i in 0..num_of_valves {
+            for j in 0..num_of_valves {
+                valve_distances[i][j] =
+                    valve_distances[i][j].min(valve_distances[i][k] + valve_distances[k][j]);
+            }
+        }
+    }
+
+    valve_distances
 }
 
 fn partitions(values: Vec<Valve>) -> Vec<(Vec<Valve>, Vec<Valve>)> {
@@ -241,44 +169,32 @@ fn partitions(values: Vec<Valve>) -> Vec<(Vec<Valve>, Vec<Valve>)> {
 
 fn run(content: String) -> (String, String) {
     let all_valves = parse(content);
-    let initial_state = VisitedState {
-        current_valve: 0,
-        opened_valves: BTreeSet::new(),
-    };
 
-    let all_valves_cloned = all_valves.clone();
-    let valves_with_positive_flow_rate: Vec<Valve> = all_valves_cloned
+    let valves_with_positive_flow_rate: Vec<Valve> = all_valves
+        .clone()
         .into_iter()
         .filter(|(_value_name, valve_property)| valve_property.rate > 0)
         .map(|(value_name, _valve_property)| value_name)
         .collect_vec();
 
-    let openable_valves: HashSet<Valve> =
-        HashSet::from_iter(valves_with_positive_flow_rate.clone());
+    let valve_distances = floyd_warshall(&all_valves);
 
-    let part1 = solve(initial_state.clone(), &all_valves, openable_valves, 30);
+    let mut cache: HashMap<(Valve, Vec<Valve>, i32), i32> = HashMap::new();
+    let part1 = solve(
+        &all_valves,
+        &valve_distances,
+        &mut cache,
+        0,
+        valves_with_positive_flow_rate.clone(),
+        30,
+    );
 
-    // Inspired by discussion https://www.reddit.com/r/adventofcode/comments/zn6k1l/2022_day_16_solutions/
-    // We don't have to simulate both agent at once, we can partition the sets into two.
-    let partitions = partitions(valves_with_positive_flow_rate);
-    let partitions_size = partitions.len();
-    let part2 = partitions
-        .iter()
-        .enumerate()
-        .map(|(size, (left, right))| {
-            println!("{}/{}", size, partitions_size);
-            let left = solve(
-                initial_state.clone(),
-                &all_valves,
-                HashSet::from_iter(left.clone()),
-                26,
-            );
-            let right = solve(
-                initial_state.clone(),
-                &all_valves,
-                HashSet::from_iter(right.clone()),
-                26,
-            );
+    let part2 = partitions(valves_with_positive_flow_rate)
+        .into_iter()
+        .map(|(left, right)| {
+            let left = solve(&all_valves, &valve_distances, &mut cache, 0, left, 26);
+
+            let right = solve(&all_valves, &valve_distances, &mut cache, 0, right, 26);
 
             left + right
         })
@@ -322,6 +238,6 @@ mod tests {
     fn day16_test() {
         let (part1, part2) = day16();
         assert_eq!(part1, "2181");
-        assert_eq!(part2, "xx");
+        assert_eq!(part2, "2824");
     }
 }

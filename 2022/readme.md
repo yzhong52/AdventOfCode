@@ -56,14 +56,8 @@ $ cargo run -- day14
 
 ## Day 16: Proboscidea Volcanium
 
-People solve this with various ways: DFS, BFS, bitset, back-tracing, and even Floyd-Warshall algorithm. 
+https://www.reddit.com/r/adventofcode/comments/zn6k1l/2022_day_16_solutions/
 
-I haven't done much of those and simply using BFS here. 
+Without much optimization, but heavily inspired by discussion in reddit.
 
-But the biggest hint that help me through part 2 this is:
-
-> I don't have to simulate both actors at once. One of us visits a certain subset of the valves, the other visits the 
-> complement of that set. So it's just a matter of simulating visiting all possible subsets, then calculating the best 
-> possible pressure of each complement pair of sets.
-
-Otherwise, the complexity is too high.
+Solved with back-tracing and Floyd-Warshall algorithm. 
