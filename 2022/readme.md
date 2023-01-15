@@ -53,3 +53,11 @@ $ cargo run -- day14
 ![](./2022day14-2.gif)
 
 ![](./2022day14.png)
+
+## Day 16: Proboscidea Volcanium
+
+https://www.reddit.com/r/adventofcode/comments/zn6k1l/2022_day_16_solutions/
+
+Heavily inspired by discussion in reddit.
+
+Without much optimization, solved with back-tracing and Floyd-Warshall algorithm, in about 45 seconds. 

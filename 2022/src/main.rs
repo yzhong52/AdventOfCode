@@ -13,6 +13,8 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
+mod day16;
 
 use crate::day1::day1;
 use crate::day2::day2;
@@ -29,6 +31,8 @@ use crate::day11::day11;
 use crate::day12::day12;
 use crate::day13::day13;
 use crate::day14::day14;
+use crate::day15::day15;
+use crate::day16::day16;
 
 use clap::Parser;
 #[derive(clap::ValueEnum, Clone)]
@@ -62,6 +66,8 @@ fn main() {
             day12();
             day13();
             day14();
+            day15();
+            day16();
         }
         Day::Day14 => {
             // Run a single day 14 with animation
