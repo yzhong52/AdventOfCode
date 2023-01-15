@@ -1,6 +1,11 @@
 use itertools::Itertools;
+use std::collections::HashMap;
 use std::fs;
+use std::{thread, time::Duration};
+
+// "vertical chamber is exactly seven units wide"
 const CHAMBER_WALL: [char; 9] = ['|', '.', '.', '.', '.', '.', '.', '.', '|'];
+const INITIAL_BOTTOM: [char; 9] = ['+', '-', '-', '-', '-', '-', '-', '-', '+'];
 
 fn has_overlap(rock: &Vec<Vec<char>>, bottom: &Vec<[char; 9]>, x: usize, y: usize) -> bool {
     for (i, row) in rock.iter().enumerate() {
@@ -37,9 +42,131 @@ fn print(bottom: &Vec<[char; 9]>) {
         buffer.push(row_str);
     }
     println!("{}", buffer.join("\n"));
+    thread::sleep(Duration::from_millis(500));
 }
 
-fn simulate(patterns: &Vec<char>, rock_count: usize, debug: bool) -> usize {
+fn simulate(
+    rocks: &[Vec<Vec<char>>; 5],
+    patterns: &Vec<char>,
+    rock_count: usize,
+    debug: bool,
+) -> usize {
+    let mut bottom: Vec<[char; 9]> = vec![INITIAL_BOTTOM];
+
+    let mut pattern_id = 0;
+    for _rock_id in 0..rock_count {
+        let rock = &rocks[_rock_id % rocks.len()];
+        println!("Rock {}", _rock_id);
+
+        // "Each rock appears so that its left edge is two units away from the
+        // left wall and its bottom edge is three units above the highest rock
+        // in the room (or the floor, if there isn't one)"
+        let mut x = 3;
+        let mut y = bottom.len() + 3;
+
+        // Add some chamber wall so that it is easier to check to make sure the
+        // moving of the rock won't fall out
+        for _ in 0..3 + rock.len() {
+            bottom.push(CHAMBER_WALL);
+        }
+
+        loop {
+            let pattern = patterns[pattern_id % patterns.len()];
+            pattern_id += 1;
+            if pattern == '<' && !has_overlap(&rock, &bottom, x - 1, y) {
+                // move to the left
+                x -= 1;
+            } else if pattern == '>' && !has_overlap(&rock, &bottom, x + 1, y) {
+                // move to the right
+                x += 1;
+            }
+            if !has_overlap(&rock, &bottom, x, y - 1) {
+                // move down
+                y -= 1;
+            } else {
+                // cannot move down anymore
+                add_to_bottom(&rock, &mut bottom, x, y);
+                // remove empty chamber wall
+                while bottom.last().unwrap() == &CHAMBER_WALL {
+                    bottom.pop();
+                }
+                break;
+            }
+        }
+
+        if debug {
+            print(&bottom);
+        }
+    }
+    bottom.len() - 1
+}
+
+fn simulate_part2(
+    rocks: &[Vec<Vec<char>>; 5],
+    patterns: &Vec<char>,
+    rock_count: usize,
+    debug: bool,
+) -> usize {
+    let mut bottom: Vec<[char; 9]> = vec![INITIAL_BOTTOM];
+    let mut pattern_id = 0;
+
+    let mut cache = HashMap::new();
+
+    for _rock_id in 0..rock_count {
+        let rock = &rocks[_rock_id % rocks.len()];
+        println!("Rock {} {}", _rock_id, cache.len());
+
+        let key = (_rock_id, pattern_id);
+        if cache.contains_key(&key) {
+            panic!("Repeated at {:?}", key);
+        }
+        cache.insert((_rock_id, pattern_id), bottom.len());
+
+        // "Each rock appears so that its left edge is two units away from the
+        // left wall and its bottom edge is three units above the highest rock
+        // in the room (or the floor, if there isn't one)"
+        let mut x = 3;
+        let mut y = bottom.len() + 3;
+
+        // Add some chamber wall so that it is easier to check to make sure the
+        // moving of the rock won't fall out
+        for _ in 0..3 + rock.len() {
+            bottom.push(CHAMBER_WALL);
+        }
+
+        loop {
+            let pattern = patterns[pattern_id % patterns.len()];
+            pattern_id += 1;
+            if pattern == '<' && !has_overlap(&rock, &bottom, x - 1, y) {
+                // move to the left
+                x -= 1;
+            } else if pattern == '>' && !has_overlap(&rock, &bottom, x + 1, y) {
+                // move to the right
+                x += 1;
+            }
+            if !has_overlap(&rock, &bottom, x, y - 1) {
+                // move down
+                y -= 1;
+            } else {
+                // cannot move down anymore
+                add_to_bottom(&rock, &mut bottom, x, y);
+                // remove empty chamber wall
+                while bottom.last().unwrap() == &CHAMBER_WALL {
+                    bottom.pop();
+                }
+                break;
+            }
+        }
+
+        if debug {
+            print(&bottom);
+        }
+    }
+    bottom.len() - 1
+}
+
+fn run(content: String, debug: bool) -> (String, String) {
+    let patterns: Vec<char> = content.trim().chars().collect();
     let rocks: [Vec<Vec<char>>; 5] = [
         vec!["####"],
         vec![
@@ -69,63 +196,12 @@ fn simulate(patterns: &Vec<char>, rock_count: usize, debug: bool) -> usize {
             .collect_vec()
     });
 
-    // "vertical chamber is exactly seven units wide"
-    let mut bottom: Vec<[char; 9]> = vec![['+', '-', '-', '-', '-', '-', '-', '-', '+']];
-    let mut pattern_id = 0;
-    for _rock_id in 0..rock_count {
-        let rock = &rocks[_rock_id % rocks.len()];
-        println!("Rock {}", _rock_id);
+    // let part1 = simulate(&patterns, 2022, debug);
+    let part1 = 3068;
 
-        // "Each rock appears so that its left edge is two units away from the
-        // left wall and its bottom edge is three units above the highest rock
-        // in the room (or the floor, if there isn't one)"
-        let mut x = 3;
-        let mut y = bottom.len() + 3;
-
-        // Add some chamber wall so that it is easier to check to make sure the
-        // moving of the rock won't fall out
-        for _ in 0..3 + rock.len() {
-            bottom.push(CHAMBER_WALL);
-        }
-        if debug {
-            print(&bottom);
-        }
-
-        loop {
-            let pattern = patterns[pattern_id % patterns.len()];
-            pattern_id += 1;
-            if pattern == '<' && !has_overlap(&rock, &bottom, x - 1, y) {
-                // move to the left
-                x -= 1;
-            } else if pattern == '>' && !has_overlap(&rock, &bottom, x + 1, y) {
-                // move to the right
-                x += 1;
-            }
-            if !has_overlap(&rock, &bottom, x, y - 1) {
-                // move down
-                y -= 1;
-            } else {
-                // cannot move down anymore
-                add_to_bottom(&rock, &mut bottom, x, y);
-                if debug {
-                    print(&bottom);
-                }
-                // remove empty chamber wall
-                while bottom.last().unwrap() == &CHAMBER_WALL {
-                    bottom.pop();
-                }
-                break;
-            }
-        }
-    }
-    bottom.len() - 1
-}
-
-fn run(content: String, debug: bool) -> (String, String) {
-    let patterns: Vec<char> = content.trim().chars().collect();
-    let part1 = simulate(&patterns, 2022, debug);
-    // let part2 = simulate(&patterns, 1000000000000);
-    let part2 = simulate(&patterns, 1000000, false);
+    // There is no way to simulate all 1000000000000 moves. But at some point, the
+    // pattern is going to repeat?
+    let part2 = simulate_part2(&rocks, &patterns, 1000000000000, false);
     (part1.to_string(), part2.to_string())
 }
 
