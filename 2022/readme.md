@@ -18,6 +18,12 @@ To run tests for a specific day. For example, for day 10:
 cargo test day10
 ```
 
+To run tests with print output:
+
+```
+cargo test day10 -- --nocapture
+```
+
 To run a specific day, with animation (usually). For example, for day 14:
 
 ```
