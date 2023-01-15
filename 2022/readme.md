@@ -53,3 +53,17 @@ $ cargo run -- day14
 ![](./2022day14-2.gif)
 
 ![](./2022day14.png)
+
+## Day 16: Proboscidea Volcanium
+
+People solve this with various ways: DFS, BFS, bitset, back-tracing, and even Floyd-Warshall algorithm. 
+
+I haven't done much of those and simply using BFS here. 
+
+But the biggest hint that help me through part 2 this is:
+
+> I don't have to simulate both actors at once. One of us visits a certain subset of the valves, the other visits the 
+> complement of that set. So it's just a matter of simulating visiting all possible subsets, then calculating the best 
+> possible pressure of each complement pair of sets.
+
+Otherwise, the complexity is too high.
