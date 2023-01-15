@@ -15,11 +15,11 @@ pub fn day16() -> (String, String) {
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 struct VisitedState {
     // The current valve position
-    current_valve: String,
+    current_valve: ValveName,
 
     // FIXME: This should be 'HashSet'. But itself cannot be hashed.
     // - https://github.com/rust-lang/rust/pull/48366
-    opened_valves: BTreeSet<String>,
+    opened_valves: BTreeSet<ValveName>,
 }
 
 #[derive(Debug, Clone)]
@@ -28,7 +28,7 @@ struct Pressure {
     total: i32,
 }
 
-type ValveName = String;
+type ValveName = i32;
 
 #[derive(Debug, Clone)]
 struct ValveProp {
@@ -176,38 +176,50 @@ fn parse(content: String) -> HashMap<ValveName, ValveProp> {
             Regex::new(r"^Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? (.*)$")
                 .unwrap();
     }
-    let parsed: HashMap<ValveName, ValveProp> = content
-        .trim()
-        .split("\n")
-        .map(|line| -> (String, ValveProp) {
-            let capture = RE
-                .captures(line.trim())
-                .expect(&format!("Unable to unwrap string '{}'.", line.trim()));
 
-            let source: ValveName = capture.get(1).unwrap().as_str().to_owned();
-            let rate: i32 = capture.get(2).unwrap().as_str().parse::<i32>().unwrap();
-            let leading_valves: Vec<ValveName> = capture
-                .get(3)
-                .unwrap()
-                .as_str()
-                .to_owned()
-                .split(", ")
-                .map(|value| value.to_string())
-                .collect();
+    let mut result: HashMap<ValveName, ValveProp> = HashMap::new();
 
-            let value_prop = ValveProp {
-                rate,
-                leading_valves,
-            };
-            (source, value_prop)
-        })
-        .collect();
-    parsed
+    let mut name_to_index: HashMap<&str, ValveName> = [("AA", 0)].into_iter().collect();
+
+    for line in content.trim().split("\n") {
+        let capture = RE
+            .captures(line.trim())
+            .expect(&format!("Unable to unwrap string '{}'.", line.trim()));
+
+        let source_str: &str = capture.get(1).unwrap().as_str();
+        if !name_to_index.contains_key(source_str) {
+            name_to_index.insert(source_str, name_to_index.len() as i32);
+        }
+
+        let source: ValveName = *name_to_index.get(source_str).unwrap();
+        let rate: i32 = capture.get(2).unwrap().as_str().parse::<i32>().unwrap();
+        let leading_valves: Vec<ValveName> = capture
+            .get(3)
+            .unwrap()
+            .as_str()
+            .split(", ")
+            .map(|s| {
+                if !name_to_index.contains_key(s) {
+                    name_to_index.insert(s, name_to_index.len() as i32);
+                }
+                *name_to_index.get(s).unwrap()
+            })
+            .collect();
+
+        let valve_prop = ValveProp {
+            rate,
+            leading_valves,
+        };
+
+        result.insert(source, valve_prop);
+    }
+
+    result
 }
 
-fn partitions(values: Vec<String>) -> Vec<(Vec<String>, Vec<String>)> {
-    // We can assume the first value is always assigned to the left (due to symetry)
-    let mut result: Vec<Vec<String>> = vec![vec![values[0].clone()]];
+fn partitions(values: Vec<ValveName>) -> Vec<(Vec<ValveName>, Vec<ValveName>)> {
+    // We can assume the first value is always assigned to the left (due to symmetry)
+    let mut result: Vec<Vec<ValveName>> = vec![vec![values[0].clone()]];
 
     for value in &values[1..] {
         let mut new_result = result.clone();
@@ -235,18 +247,18 @@ fn partitions(values: Vec<String>) -> Vec<(Vec<String>, Vec<String>)> {
 fn run(content: String) -> (String, String) {
     let all_valves = parse(content);
     let initial_state = VisitedState {
-        current_valve: "AA".to_string(),
+        current_valve: 0,
         opened_valves: BTreeSet::new(),
     };
 
     let all_valves_cloned = all_valves.clone();
-    let valves_with_positive_flow_rate: Vec<String> = all_valves_cloned
+    let valves_with_positive_flow_rate: Vec<ValveName> = all_valves_cloned
         .into_iter()
         .filter(|(_value_name, valve_property)| valve_property.rate > 0)
         .map(|(value_name, _valve_property)| value_name)
         .collect_vec();
 
-    let openable_valves: HashSet<String> =
+    let openable_valves: HashSet<ValveName> =
         HashSet::from_iter(valves_with_positive_flow_rate.clone());
 
     let part1 = solve(initial_state.clone(), &all_valves, openable_valves, 30);
@@ -256,7 +268,8 @@ fn run(content: String) -> (String, String) {
     let partitions = partitions(valves_with_positive_flow_rate);
     let partitions_size = partitions.len();
     let part2 = partitions
-        .iter().enumerate()
+        .iter()
+        .enumerate()
         .map(|(size, (left, right))| {
             println!("{}/{}", size, partitions_size);
             let left = solve(
