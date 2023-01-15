@@ -127,7 +127,7 @@ fn parse(pairs: Vec<char>) -> Packet {
         })
         .collect_vec();
 
-    Packet { children: children }
+    Packet { children }
 }
 
 impl Display for Packet {
@@ -178,8 +178,8 @@ fn run(content: String) -> (String, String) {
 
     let part2 = index1 * index2;
 
-    println!("day12 part1: {}", part1);
-    println!("day12 part2: {}", part2);
+    println!("day13 part1: {}", part1);
+    println!("day13 part2: {}", part2);
     (part1.to_string(), part2.to_string())
 }
 

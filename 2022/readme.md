@@ -18,6 +18,12 @@ To run tests for a specific day. For example, for day 10:
 cargo test day10
 ```
 
+To run tests with print output:
+
+```
+cargo test day10 -- --nocapture
+```
+
 To run a specific day, with animation (usually). For example, for day 14:
 
 ```
@@ -60,4 +66,12 @@ https://www.reddit.com/r/adventofcode/comments/zn6k1l/2022_day_16_solutions/
 
 Heavily inspired by discussion in reddit.
 
-Without much optimization, solved with back-tracing and Floyd-Warshall algorithm, in about 45 seconds. 
+Solved with simple back-tracking and Floyd-Warshall algorithm. Without any heuristic optimization of early return, still able to produce result in about 45 seconds.
+
+```
+day16: this can take a while...
+part1 time elapsed: 551.908516ms
+part2 time elapsed: 44.178084961s
+day16 part1: 2181
+day16 part2: 2824
+```
